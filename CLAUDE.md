@@ -16,7 +16,7 @@ LVXE's tokens or guardrails, LVXE wins.
 - Replace the LVXE tokens (Obsidian, Charcoal, Bone, Gray, Burgundy) or add
   icon/emoji decoration, glass blur, gradients or pill badges.
 
-## Component generators (21st.dev Magic MCP, `.mcp.json`)
+## Component generators (21st.dev MCP over HTTP, `.mcp.json`, key in `API_KEY_21ST`)
 
 Magic returns generic UI components. Treat its output as raw material: strip
 anything off-brand (rounded cards, gradients, glass, icons, stock imagery)
