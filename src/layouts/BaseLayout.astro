@@ -1,7 +1,9 @@
 ---
 import { Font } from 'astro:assets';
+import { ClientRouter } from 'astro:transitions';
 import SiteHeader from '@/components/SiteHeader.astro';
 import SiteFooter from '@/components/SiteFooter.astro';
+import FullscreenNav from '@/components/FullscreenNav.astro';
 import BookingBand from '@/components/BookingBand.astro';
 import { site } from '@/data/site';
 import '@/styles/global.css';
@@ -9,19 +11,19 @@ import '@/styles/global.css';
 interface Props {
   title?: string;
   description?: string;
-  /** `light-gallery` switches the page to the white-cube exhibition palette. */
-  theme?: 'dark' | 'light-gallery';
+  /** Spine label in the right margin, e.g. "Work / Plate 03". */
+  label?: string;
   /** Hide the closing booking band (used on /book itself). */
   hideBooking?: boolean;
 }
 
-const { title, description = site.description, theme = 'dark', hideBooking = false } = Astro.props;
+const { title, description = site.description, label = 'Issue 01', hideBooking = false } = Astro.props;
 const pageTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.artist}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!doctype html>
-<html lang="en" data-theme={theme === 'light-gallery' ? 'light-gallery' : undefined}>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -29,7 +31,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <meta name="theme-color" content={theme === 'light-gallery' ? '#FDFCFA' : '#0B0B0D'} />
+    <meta name="theme-color" content="#0B0B0D" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={site.name} />
@@ -37,20 +39,43 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
 
-    <!-- Self-hosted fonts with size-adjusted fallbacks. Every face visible
-         above the fold is preloaded (Latin subset only), including the
-         Newsreader italic used for the hero headline. -->
+    <!-- Enables motion start states. Without JS, everything renders at rest. -->
+    <script is:inline>document.documentElement.classList.add('js');</script>
+
+    <!-- Self-hosted fonts with size-adjusted fallbacks; above-the-fold faces preloaded. -->
     <Font cssVariable="--font-newsreader" preload />
     <Font cssVariable="--font-geist" preload />
     <Font cssVariable="--font-geist-mono" preload />
+
+    <ClientRouter fallback="none" />
   </head>
-  <body>
+  <body class="grain">
     <a href="#main" class="skip-link text-meta">Skip to content</a>
+
+    <!-- Margin spines (wide screens): the practice on the left, place in the issue on the right. -->
+    <p
+      aria-hidden="true"
+      class="v-label text-meta pointer-events-none fixed bottom-8 left-[calc(var(--spacing-gutter)/2-0.35rem)] z-30 hidden 2xl:block"
+    >
+      {site.disciplines.join(' / ')}
+    </p>
+    <p
+      aria-hidden="true"
+      class="v-label text-meta pointer-events-none fixed right-[calc(var(--spacing-gutter)/2-0.35rem)] bottom-8 z-30 hidden 2xl:block"
+    >
+      {label}
+    </p>
+
     <SiteHeader />
     <main id="main">
       <slot />
     </main>
     {hideBooking ? <div class="mt-32 sm:mt-48" /> : <BookingBand />}
     <SiteFooter />
+    <FullscreenNav />
+
+    <script>
+      import '@/scripts/motion';
+    </script>
   </body>
 </html>

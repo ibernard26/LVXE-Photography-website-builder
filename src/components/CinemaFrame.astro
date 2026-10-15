@@ -1,0 +1,36 @@
+---
+/**
+ * Cinema frame — one plate hung on a full-bleed dark band, like a still on
+ * a screen. The frame keeps its native ratio and is sized by height (max
+ * 86vh) so a portrait never balloons past the viewport. Letterbox hairlines
+ * above and below; a vertical label rides the left edge. Scroll settles the
+ * frame from 94% to full scale (CSS scroll-driven, where supported).
+ */
+import Plate from '@/components/Plate.astro';
+import { frameOf, plateNumber, type Plate as PlateT } from '@/data/plates';
+
+interface Props {
+  plate: PlateT;
+  line?: string;
+}
+const { plate, line } = Astro.props;
+const { orientation, ratio } = frameOf(plate);
+const r = plate.image.width / plate.image.height;
+---
+
+<section aria-label={`Plate ${plateNumber(plate)}`} class="relative border-y border-border bg-obsidian py-12 sm:py-20">
+  <div class="mx-auto grid max-w-screen-2xl grid-cols-12 items-end gap-x-4 px-gutter lg:gap-x-8">
+    <p class="v-label text-meta col-span-1 hidden self-end lg:block">
+      Pl. {plateNumber(plate)} — {plate.tone} — {orientation} {ratio}
+    </p>
+    <div class="col-span-12 flex justify-center lg:col-span-10">
+      <div class="scroll-settle w-full" style={`max-width: calc(86vh * ${r.toFixed(4)})`}>
+        <Plate plate={plate} sizes="(min-width: 1024px) 60vw, 100vw" />
+      </div>
+    </div>
+    <div class="col-span-12 mt-6 flex items-baseline justify-between gap-6 lg:col-span-1 lg:mt-0 lg:block lg:text-right">
+      <p class="text-meta lg:hidden">Pl. {plateNumber(plate)} — {plate.tone}</p>
+      {line && <p class="text-heading text-[1.125rem] lg:text-[1rem]">{line}</p>}
+    </div>
+  </div>
+</section>

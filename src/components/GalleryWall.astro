@@ -1,0 +1,63 @@
+---
+/**
+ * Gallery wall — a light, white-cube magazine spread of every plate.
+ * Asymmetric 12-column placements; each frame keeps its native ratio and
+ * links to its exhibition room with a shared-element transition.
+ * Hover: siblings recede (dim-set), the caption rule grows.
+ */
+import Plate from '@/components/Plate.astro';
+import { plateList, plateNumber, frameOf } from '@/data/plates';
+
+interface Props {
+  heading?: string;
+  intro?: string;
+}
+const { heading = 'Plates', intro } = Astro.props;
+
+// Placement per catalogue position: [column classes, offset classes].
+const placements = [
+  'col-span-12 sm:col-span-7 lg:col-span-6',
+  'col-span-8 col-start-5 sm:col-span-5 sm:col-start-auto lg:col-span-3 lg:col-start-9 sm:mt-48',
+  'col-span-9 sm:col-span-5 sm:col-start-2 lg:col-span-4 lg:col-start-2 sm:-mt-24 lg:-mt-40',
+  'col-span-12 sm:col-span-6 sm:col-start-7 lg:col-span-5 lg:col-start-7 sm:mt-24',
+  'col-span-10 col-start-2 sm:col-span-6 sm:col-start-4 lg:col-span-4 lg:col-start-4',
+];
+const sizes = [
+  '(min-width: 1024px) 48vw, (min-width: 640px) 56vw, 100vw',
+  '(min-width: 1024px) 24vw, (min-width: 640px) 40vw, 66vw',
+  '(min-width: 1024px) 32vw, (min-width: 640px) 40vw, 75vw',
+  '(min-width: 1024px) 40vw, (min-width: 640px) 48vw, 100vw',
+  '(min-width: 1024px) 32vw, (min-width: 640px) 48vw, 84vw',
+];
+---
+
+<section aria-labelledby="gallery-wall" class="wall py-24 sm:py-36">
+  <div class="mx-auto max-w-screen-2xl px-gutter">
+    <div class="grid grid-cols-12 items-end gap-x-4 gap-y-6 border-b border-border pb-6 lg:gap-x-8">
+      <h2 id="gallery-wall" class="reveal-lines col-span-12 sm:col-span-8">
+        <span class="line-mask"><span class="text-display">{heading}</span></span>
+      </h2>
+      <p class="text-meta col-span-12 sm:col-span-4 sm:text-right">
+        {String(plateList.length).padStart(2, '0')} frames · native ratios, uncropped
+      </p>
+      {intro && <p class="text-body col-span-12 max-w-measure sm:col-span-6">{intro}</p>}
+    </div>
+
+    <div class="dim-set mt-16 grid grid-cols-12 gap-x-4 gap-y-16 sm:mt-24 sm:gap-y-24 lg:gap-x-8">
+      {
+        plateList.map((plate, i) => (
+          <div class:list={['dim-item', placements[i % placements.length]]}>
+            <Plate
+              plate={plate}
+              href={`/work/${plate.id}`}
+              transitionName={`plate-${plate.id}`}
+              label={`Pl. ${plateNumber(plate)}`}
+              note={`${plate.tone} · ${frameOf(plate).ratio}`}
+              sizes={sizes[i % sizes.length]}
+            />
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

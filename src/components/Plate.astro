@@ -5,51 +5,86 @@
  * Integrity rules (README §2.2):
  *  - Only `widths` are passed to the optimiser, never a target height, so
  *    every derivative is a proportional resize of the original frame.
- *  - The rendered <img> carries the intrinsic width/height attributes and is
- *    sized with `width: 100%; height: auto` — the browser reserves the exact
- *    native-ratio box before the file arrives (zero CLS). No object-fit.
+ *  - The <img> carries intrinsic width/height and is sized `width:100%;
+ *    height:auto` — the exact native-ratio box is reserved before decode
+ *    (zero CLS). No object-fit, no rounding, no card chrome.
+ *  - The masked reveal animates `clip-path` on the frame and ends at
+ *    `inset(0)`: the photograph is never cropped at rest.
+ *
+ * `transitionName` pairs the plate with the same plate on another page so
+ * the View Transitions API can morph it during navigation.
  */
 import { Picture } from 'astro:assets';
 import type { Plate } from '@/data/plates';
 
 interface Props {
   plate: Plate;
-  /** Responsive `sizes` attribute describing the plate's rendered width. */
+  /** Responsive `sizes` attribute describing the rendered width. */
   sizes: string;
-  /** Visible plate number, e.g. "01". */
-  index?: string;
+  /** Caption line under the frame, e.g. "Pl. 03". */
+  label?: string;
+  /** Secondary caption on the right, e.g. "Monochrome". */
+  note?: string;
   /** Set on the single LCP image only. */
   priority?: boolean;
+  /** Animate the frame in with a masked reveal. */
+  reveal?: boolean;
+  /** Stagger index for the reveal. */
+  i?: number;
+  href?: string;
+  transitionName?: string;
   class?: string;
+  imgClass?: string;
 }
 
-const { plate, sizes, index, priority = false, class: className } = Astro.props;
+const {
+  plate,
+  sizes,
+  label,
+  note,
+  priority = false,
+  reveal = true,
+  i = 0,
+  href,
+  transitionName,
+  class: className,
+  imgClass,
+} = Astro.props;
 
 const nativeWidth = plate.image.width;
 const candidateWidths = [480, 720, 960, 1280, 1600, 2000, 2400];
 // Never upscale: cap derivatives at the master's own width.
 const widths = [...candidateWidths.filter((w) => w < nativeWidth), nativeWidth];
+const Wrapper = href ? 'a' : 'div';
 ---
 
 <figure class:list={['plate', className]}>
-  <Picture
-    src={plate.image}
-    alt={plate.alt}
-    widths={widths}
-    sizes={sizes}
-    formats={['webp']}
-    fallbackFormat="jpg"
-    quality={82}
-    loading={priority ? 'eager' : 'lazy'}
-    fetchpriority={priority ? 'high' : 'auto'}
-    decoding={priority ? 'sync' : 'async'}
-    class="w-full h-auto bg-charcoal"
-  />
+  <Wrapper
+    href={href}
+    class:list={['block', reveal && 'reveal-mask', href && 'group']}
+    style={`--i:${i}`}
+  >
+    <div transition:name={transitionName}>
+    <Picture
+      src={plate.image}
+      alt={plate.alt}
+      widths={widths}
+      sizes={sizes}
+      formats={['webp']}
+      fallbackFormat="jpg"
+      quality={82}
+      loading={priority ? 'eager' : 'lazy'}
+      fetchpriority={priority ? 'high' : 'auto'}
+      decoding={priority ? 'sync' : 'async'}
+      class:list={['h-auto w-full bg-charcoal', imgClass]}
+    />
+    </div>
+  </Wrapper>
   {
-    (index || plate.caption) && (
-      <figcaption class="text-meta mt-3 flex gap-4">
-        {index && <span aria-hidden="true">{index}</span>}
-        {plate.caption && <span>{plate.caption}</span>}
+    (label || note) && (
+      <figcaption class="text-meta mt-3 flex items-baseline justify-between gap-4">
+        <span>{label}</span>
+        {note && <span>{note}</span>}
       </figcaption>
     )
   }

@@ -1,19 +1,29 @@
 ---
+/**
+ * Booking — two clear doors (portrait session or commercial brief) sharing
+ * one form. Progressive enhancement: without JS both sections show and
+ * only shared fields are required; with JS the chosen path's section is
+ * shown, the other is disabled, and `?type=commercial` preselects.
+ */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHead from '@/components/PageHead.astro';
 import { commercial, onRequest, sessionPackages } from '@/data/packages';
 import { site } from '@/data/site';
 
 const endpoint = site.bookingEndpoint;
-const field = 'mt-3 w-full border-0 border-b border-soft-gray bg-transparent py-2 text-bone text-[1rem] focus:border-bone focus:outline-none';
+const field =
+  'mt-3 w-full rounded-none border-0 border-b border-soft-gray/60 bg-transparent py-3 text-[1.0625rem] text-bone placeholder:text-soft-gray/70 focus:border-bone focus:outline-none';
 const label = 'text-meta block';
+const usage = ['Web', 'Social', 'Print', 'Campaign / out of home', 'Internal'];
 ---
 
-<BaseLayout title="Book" hideBooking description={`Book a session with LVXE across ${site.region}.`}>
+<BaseLayout title="Book" label="Issue 01 / Book" hideBooking description={`Book a portrait session or send a commercial brief to LVXE, ${site.region}.`}>
   <PageHead
-    eyebrow="Book"
-    title="Start an inquiry."
-    lede="Share the session you have in mind, your dates, and the best way to reach you."
+    number="No. 04"
+    section="Book"
+    title="Book"
+    counter="a session."
+    lede="Choose a portrait session or send a commercial brief. Both arrive in the same place."
   />
 
   <section class="mx-auto max-w-screen-2xl px-gutter">
@@ -22,63 +32,123 @@ const label = 'text-meta block';
       method="post"
       action={endpoint || undefined}
       data-connected={endpoint ? 'true' : 'false'}
-      class="grid gap-x-8 gap-y-12 border-t border-border pt-12 lg:grid-cols-12"
+      class="grid grid-cols-12 gap-x-4 gap-y-14 border-t border-border pt-12 lg:gap-x-8"
     >
-      <div class="lg:col-span-5">
-        <label for="name" class={label}>Name</label>
-        <input id="name" name="name" type="text" autocomplete="name" required class={field} />
-      </div>
-      <div class="lg:col-span-5 lg:col-start-7">
-        <label for="email" class={label}>Email</label>
-        <input id="email" name="email" type="email" autocomplete="email" required class={field} />
-      </div>
-
-      <div class="lg:col-span-5">
-        <label for="package" class={label}>Package</label>
-        <select id="package" name="package" required class={`${field} appearance-none`}>
-          <option value="" class="bg-obsidian">Choose one</option>
-          {sessionPackages.map((p) => <option class="bg-obsidian">{p.name}</option>)}
-          {onRequest.map((p) => <option class="bg-obsidian">{p}</option>)}
-          {commercial.map((p) => <option class="bg-obsidian">{p}</option>)}
-        </select>
-      </div>
-      <div class="lg:col-span-5 lg:col-start-7">
-        <label for="instagram" class={label}>Instagram</label>
-        <input id="instagram" name="instagram" type="text" placeholder="@handle" class={field} />
-      </div>
-
-      <fieldset class="lg:col-span-5">
-        <legend class={label}>Preferred dates</legend>
-        <div class="grid grid-cols-2 gap-x-6">
-          <div>
-            <label for="date-from" class="sr-only">From</label>
-            <input id="date-from" name="date_from" type="date" class={field} />
-          </div>
-          <div>
-            <label for="date-to" class="sr-only">To</label>
-            <input id="date-to" name="date_to" type="date" class={field} />
-          </div>
+      <!-- Path choice -->
+      <fieldset class="col-span-12">
+        <legend class="text-meta mb-6">01 — Type of work</legend>
+        <div class="grid gap-px bg-border sm:grid-cols-2">
+          <label class="path-option group relative cursor-pointer bg-obsidian p-6 sm:p-8">
+            <input type="radio" name="type" value="portrait" class="peer sr-only" checked />
+            <span class="text-meta block">Models, creatives, private clients</span>
+            <span class="mt-4 block font-sans text-[clamp(1.75rem,3.5vw,2.75rem)] font-[500] leading-none tracking-[-0.04em]">
+              Portrait session
+            </span>
+            <span class="rule-grow mt-6 w-full" aria-hidden="true"></span>
+          </label>
+          <label class="path-option group relative cursor-pointer bg-obsidian p-6 sm:p-8">
+            <input type="radio" name="type" value="commercial" class="peer sr-only" />
+            <span class="text-meta block">Brands, companies, events</span>
+            <span class="mt-4 block font-sans text-[clamp(1.75rem,3.5vw,2.75rem)] font-[500] leading-none tracking-[-0.04em]">
+              Commercial brief
+            </span>
+            <span class="rule-grow mt-6 w-full" aria-hidden="true"></span>
+          </label>
         </div>
       </fieldset>
-      <div class="lg:col-span-5 lg:col-start-7">
-        <label for="references" class={label}>References</label>
-        <input
-          id="references"
-          name="references"
-          type="text"
-          placeholder="Links to moodboards or images"
-          class={field}
-        />
-      </div>
 
-      <div class="lg:col-span-11">
-        <label for="message" class={label}>Concept</label>
-        <textarea id="message" name="message" rows="4" class={`${field} resize-y`}></textarea>
-      </div>
+      <!-- Shared -->
+      <fieldset class="col-span-12 grid grid-cols-12 gap-x-4 gap-y-10 lg:gap-x-8">
+        <legend class="text-meta mb-6">02 — Contact</legend>
+        <div class="col-span-12 md:col-span-6">
+          <label for="name" class={label}>Name</label>
+          <input id="name" name="name" type="text" autocomplete="name" required class={field} />
+        </div>
+        <div class="col-span-12 md:col-span-6">
+          <label for="email" class={label}>Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" required class={field} />
+        </div>
+      </fieldset>
 
-      <div class="flex flex-wrap items-baseline gap-x-10 gap-y-4 lg:col-span-11">
-        <button type="submit" class="text-meta link-book cursor-pointer bg-transparent p-0">
-          Send inquiry
+      <!-- Portrait path -->
+      <fieldset data-path="portrait" class="col-span-12 grid grid-cols-12 gap-x-4 gap-y-10 lg:gap-x-8">
+        <legend class="text-meta mb-6">03 — Portrait session</legend>
+        <div class="col-span-12 md:col-span-6">
+          <label for="package" class={label}>Package</label>
+          <select id="package" name="package" class={`${field} appearance-none`}>
+            <option value="" class="bg-obsidian">Choose one</option>
+            {sessionPackages.map((p) => <option class="bg-obsidian">{p.name}</option>)}
+            {onRequest.map((p) => <option class="bg-obsidian">{p}</option>)}
+          </select>
+        </div>
+        <div class="col-span-12 md:col-span-6">
+          <label for="instagram" class={label}>Instagram</label>
+          <input id="instagram" name="instagram" type="text" placeholder="@handle" class={field} />
+        </div>
+        <div class="col-span-12 md:col-span-6">
+          <label for="references" class={label}>References</label>
+          <input id="references" name="references" type="text" placeholder="Links to moodboards or images" class={field} />
+        </div>
+      </fieldset>
+
+      <!-- Commercial path -->
+      <fieldset data-path="commercial" class="col-span-12 grid grid-cols-12 gap-x-4 gap-y-10 lg:gap-x-8">
+        <legend class="text-meta mb-6">03 — Commercial brief</legend>
+        <div class="col-span-12 md:col-span-6">
+          <label for="company" class={label}>Company</label>
+          <input id="company" name="company" type="text" autocomplete="organization" class={field} />
+        </div>
+        <div class="col-span-12 md:col-span-6">
+          <label for="service" class={label}>Work required</label>
+          <select id="service" name="service" class={`${field} appearance-none`}>
+            <option value="" class="bg-obsidian">Choose one</option>
+            {commercial.map((c) => <option class="bg-obsidian">{c}</option>)}
+          </select>
+        </div>
+        <div class="col-span-12 md:col-span-6">
+          <label for="deliverables" class={label}>Deliverables</label>
+          <input id="deliverables" name="deliverables" type="text" placeholder="e.g. 12 portraits, 3 campaign images" class={field} />
+        </div>
+        <fieldset class="col-span-12 md:col-span-6">
+          <legend class={label}>Usage</legend>
+          <div class="mt-4 flex flex-wrap gap-2">
+            {
+              usage.map((u, i) => (
+                <label class="cursor-pointer">
+                  <input type="checkbox" name="usage" value={u} id={`usage-${i}`} class="peer sr-only" />
+                  <span class="text-meta inline-block border border-soft-gray/50 px-3 py-2 transition-colors duration-300 peer-checked:border-bone peer-checked:bg-bone peer-checked:text-obsidian peer-focus-visible:outline peer-focus-visible:outline-1 peer-focus-visible:outline-offset-2">
+                    {u}
+                  </span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+      </fieldset>
+
+      <!-- Shared closing -->
+      <fieldset class="col-span-12 grid grid-cols-12 gap-x-4 gap-y-10 lg:gap-x-8">
+        <legend class="text-meta mb-6">04 — Timing &amp; concept</legend>
+        <div class="col-span-6 md:col-span-3">
+          <label for="date-from" class={label}>From</label>
+          <input id="date-from" name="date_from" type="date" class={field} />
+        </div>
+        <div class="col-span-6 md:col-span-3">
+          <label for="date-to" class={label}>To</label>
+          <input id="date-to" name="date_to" type="date" class={field} />
+        </div>
+        <div class="col-span-12">
+          <label for="message" class={label}>Concept or brief</label>
+          <textarea id="message" name="message" rows="4" class={`${field} resize-y`}></textarea>
+        </div>
+      </fieldset>
+
+      <div class="col-span-12 flex flex-wrap items-center gap-x-10 gap-y-4 border-t border-border pt-10">
+        <button
+          type="submit"
+          class="group cursor-pointer bg-bone px-8 py-5 font-sans text-[1.125rem] font-[500] tracking-[-0.02em] text-obsidian transition-colors duration-300 hover:bg-soft-gray"
+        >
+          <span data-submit-label>Send inquiry</span>
         </button>
         <p id="inquiry-status" role="status" class="text-meta"></p>
       </div>
@@ -86,15 +156,52 @@ const label = 'text-meta block';
   </section>
 </BaseLayout>
 
-<script>
-  // Until a booking endpoint is configured in src/data/site.ts the form cannot
-  // deliver anything, so say so plainly instead of pretending it was sent.
-  const form = document.getElementById('inquiry') as HTMLFormElement | null;
-  const status = document.getElementById('inquiry-status');
-  if (form && status && form.dataset.connected !== 'true') {
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      status.textContent = 'Online inquiries are not connected yet. Nothing was sent.';
-    });
+<style>
+  .path-option:has(:checked) {
+    background-color: var(--color-charcoal);
   }
+  .path-option:has(:checked) .rule-grow {
+    transform: scaleX(1);
+  }
+  .path-option:has(:focus-visible) {
+    outline: 1px solid var(--color-bone);
+    outline-offset: -1px;
+  }
+</style>
+
+<script>
+  function setup() {
+    const form = document.getElementById('inquiry') as HTMLFormElement | null;
+    if (!form) return;
+    const status = document.getElementById('inquiry-status')!;
+    const label = form.querySelector('[data-submit-label]')!;
+    const radios = form.querySelectorAll<HTMLInputElement>('input[name="type"]');
+    const paths = form.querySelectorAll<HTMLFieldSetElement>('[data-path]');
+
+    const apply = (type: string) => {
+      paths.forEach((p) => {
+        const on = p.dataset.path === type;
+        p.hidden = !on;
+        p.disabled = !on;
+      });
+      label.textContent = type === 'commercial' ? 'Send brief' : 'Send inquiry';
+    };
+
+    const preset = new URLSearchParams(location.search).get('type');
+    if (preset === 'commercial' || preset === 'portrait') {
+      radios.forEach((r) => (r.checked = r.value === preset));
+    }
+    apply(form.querySelector<HTMLInputElement>('input[name="type"]:checked')?.value ?? 'portrait');
+    radios.forEach((r) => r.addEventListener('change', () => apply(r.value)));
+
+    // Until an endpoint is configured in src/data/site.ts the form cannot
+    // deliver anything — say so plainly instead of pretending it was sent.
+    if (form.dataset.connected !== 'true') {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        status.textContent = 'Online inquiries are not connected yet. Nothing was sent.';
+      });
+    }
+  }
+  document.addEventListener('astro:page-load', setup);
 </script>

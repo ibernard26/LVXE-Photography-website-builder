@@ -1,53 +1,40 @@
 ---
 /**
- * Minimal LVXE header. Static (not sticky, no blur), zero JavaScript.
- * On narrow screens the navigation drops to its own row beneath the wordmark
- * instead of hiding behind a menu toggle — three words don't need a drawer.
- * Book carries the site's one burgundy accent; the current page gets a bone underline.
+ * Masthead rail: wordmark, issue line, booking link and the menu toggle.
+ * Thin, mono, static (no sticky blur bar). Navigation lives in the
+ * full-screen menu; Book stays one tap away in the rail.
  */
-import { navigation, site } from '@/data/site';
-
-const path = Astro.url.pathname.replace(/\/$/, '') || '/';
-const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`);
+import { issue, site } from '@/data/site';
 ---
 
-<header class="border-b border-border">
+<header class="relative z-40">
   <div
-    class="mx-auto flex max-w-screen-2xl flex-wrap items-baseline justify-between gap-x-10 gap-y-4 px-gutter pt-6 pb-5 sm:pt-8 sm:pb-6"
+    class="mx-auto grid max-w-screen-2xl grid-cols-[1fr_auto] items-center gap-x-6 px-gutter py-5 md:grid-cols-[1fr_auto_1fr]"
   >
-    <a href="/" class="group flex items-baseline gap-3" aria-label={`${site.name} — home`}>
-      <span class="font-display text-[1.375rem] leading-none tracking-[0.3em] text-bone">
-        {site.name}
+    <a href="/" class="flex items-baseline gap-4" aria-label={`${site.name}, home`}>
+      <span class="font-sans text-[1.0625rem] font-[750] leading-none tracking-[-0.04em] text-bone">
+        {site.name}<span class="text-burgundy">.</span>
       </span>
-      <span class="text-meta hidden md:inline">{site.artist}</span>
+      <span class="text-meta hidden sm:inline">Issue {issue.number} — {issue.year}</span>
     </a>
 
-    <nav aria-label="Primary" class="w-full sm:w-auto">
-      <ul class="flex flex-wrap gap-x-6 gap-y-2 sm:gap-x-8">
-        {
-          navigation.map((item) => {
-            const current = isCurrent(item.href);
-            return (
-              <li>
-                <a
-                  href={item.href}
-                  aria-current={current ? 'page' : undefined}
-                  class:list={[
-                    'text-meta inline-block border-b pb-1 transition-colors duration-200 ease-editorial hover:text-bone',
-                    item.accent
-                      ? 'border-b-2 border-burgundy text-bone'
-                      : current
-                        ? 'border-bone text-bone'
-                        : 'border-transparent',
-                  ]}
-                >
-                  {item.label}
-                </a>
-              </li>
-            );
-          })
-        }
-      </ul>
-    </nav>
+    <p class="text-meta hidden text-center md:block">{site.region}</p>
+
+    <div class="flex items-center justify-end gap-6 sm:gap-8">
+      <a href="/book" class="text-meta link-book hidden sm:inline">Book</a>
+      <button
+        type="button"
+        class="text-meta group flex cursor-pointer items-center gap-3 bg-transparent p-0 text-bone"
+        aria-controls="site-menu"
+        aria-expanded="false"
+        data-menu-open
+      >
+        <span>Menu</span>
+        <span aria-hidden="true" class="flex w-6 flex-col gap-[5px]">
+          <span class="block h-px w-full bg-bone transition-transform duration-300 ease-editorial group-hover:scale-x-75 origin-right"></span>
+          <span class="block h-px w-full bg-bone"></span>
+        </span>
+      </button>
+    </div>
   </div>
 </header>

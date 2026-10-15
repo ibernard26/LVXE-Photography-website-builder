@@ -1,19 +1,33 @@
 ---
 /**
- * Full-width booking band that closes every page except /book
- * (Vision Board: Monolith's booking bar, Veil's red reserved for booking).
+ * Closing booking spread on every page except /book. Two doors: a portrait
+ * session or a commercial brief — the corporate path is never buried.
  */
 import { site } from '@/data/site';
 ---
 
-<aside aria-label="Booking" class="mt-32 border-t border-border bg-charcoal sm:mt-48">
-  <div
-    class="mx-auto flex max-w-screen-2xl flex-wrap items-baseline justify-between gap-x-10 gap-y-4 px-gutter py-10 sm:py-14"
-  >
-    <p class="text-heading italic">Book a session.</p>
-    <div class="flex flex-wrap items-baseline gap-x-10 gap-y-3">
-      <span class="text-meta">{site.region}</span>
-      <a href="/book" class="text-meta link-book">Start an inquiry</a>
+<aside aria-labelledby="booking-band" class="mt-32 bg-charcoal sm:mt-48">
+  <div class="mx-auto grid max-w-screen-2xl gap-y-10 px-gutter py-16 sm:py-24 lg:grid-cols-12 lg:gap-x-8">
+    <div class="lg:col-span-7">
+      <p class="text-meta">Bookings — {site.region}</p>
+      <h2 id="booking-band" class="reveal-lines mt-6">
+        <span class="line-mask"><span class="text-display" style="--i:0">Book a</span></span>
+        <span class="line-mask"><span class="text-display-serif pl-[0.6em]" style="--i:1">session.</span></span>
+      </h2>
     </div>
+    <ul class="grid content-end gap-y-px self-end lg:col-span-5">
+      <li>
+        <a href="/book?type=portrait" class="group flex items-baseline justify-between gap-6 border-t border-soft-gray/30 py-5">
+          <span class="text-heading">Portrait &amp; editorial</span>
+          <span class="text-meta link-book">Start</span>
+        </a>
+      </li>
+      <li>
+        <a href="/book?type=commercial" class="group flex items-baseline justify-between gap-6 border-y border-soft-gray/30 py-5">
+          <span class="text-heading">Commercial &amp; corporate</span>
+          <span class="text-meta link-book">Brief</span>
+        </a>
+      </li>
+    </ul>
   </div>
 </aside>
