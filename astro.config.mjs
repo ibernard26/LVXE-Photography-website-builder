@@ -58,6 +58,11 @@ export default defineConfig({
   // defaults to `fit: cover`. <Plate> passes explicit `widths` + `sizes` instead,
   // so every image is resized proportionally and never cropped.
 
+  build: {
+    // Emit hashed assets to /assets instead of Astro's default /_astro.
+    assets: 'assets',
+  },
+
   vite: {
     plugins: [tailwindcss()],
   },
