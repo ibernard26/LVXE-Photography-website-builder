@@ -173,3 +173,33 @@
     border-color: var(--lvxe-burgundy);
   }
 }
+
+/* ==========================================================================
+   Curatorial Split / Archival Vault
+   ========================================================================== */
+@layer components {
+  /* Sticky only on wide AND tall-enough screens, so panel content can never be
+     clipped; it is position:sticky in normal flow, not a nested scroll box. */
+  @media (min-width: 64rem) and (min-height: 44rem) {
+    .split-panel {
+      position: sticky;
+      top: 0;
+      height: 100dvh;
+      align-self: start;
+    }
+  }
+
+  /* Vault preview: desktop pointer devices only. */
+  .vault-preview {
+    display: none;
+  }
+  @media (min-width: 64rem) and (hover: hover) and (pointer: fine) {
+    .vault-preview {
+      display: block;
+    }
+  }
+  .vault-row:hover,
+  .vault-row:focus-within {
+    background-color: var(--lvxe-charcoal);
+  }
+}

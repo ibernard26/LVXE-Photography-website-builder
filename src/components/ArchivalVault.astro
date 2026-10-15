@@ -1,0 +1,101 @@
+---
+/**
+ * Archival Vault: a dense, semantic index of every plate.
+ * Hover / keyboard focus on a row link shows the plate in a fixed-size preview
+ * box (reserved, so no layout shift). The image sits inside at its native ratio
+ * (object-fit: contain, never cover). The preview is a progressive enhancement:
+ * hidden below lg and on touch/no-hover devices; the table works without JS.
+ */
+import { getImage } from 'astro:assets';
+import PortfolioControls from '@/components/PortfolioControls.astro';
+import { disciplineLabel, plateNo, type Discipline, type PlateEntry } from '@/lib/plates';
+import { ratioFromDimensions } from '@/lib/ratio';
+
+interface Props { plates: PlateEntry[]; active?: Discipline }
+const { plates, active } = Astro.props;
+
+const rows = await Promise.all(
+  plates.map(async (p) => {
+    const { width, height } = p.data.image;
+    const preview = await getImage({ src: p.data.image, width: Math.min(640, width), format: 'webp', quality: 75 });
+    return {
+      p, no: plateNo(p.data.plateNo), ratio: ratioFromDimensions(width, height),
+      preview: { src: preview.src, w: preview.attributes.width ?? width, h: preview.attributes.height ?? height },
+    };
+  }),
+);
+const exhibitionBase = active ? `/portfolio/category/${active}` : '/portfolio';
+---
+
+<section class="mx-auto max-w-screen-2xl px-gutter pt-16 sm:pt-24" aria-labelledby="vault-title">
+  <div class="flex flex-wrap items-end justify-between gap-8">
+    <div>
+      <p class="text-meta">Portfolio</p>
+      <h1 id="vault-title" class="text-display mt-4">Archival Vault</h1>
+    </div>
+    <PortfolioControls view="vault" active={active} />
+  </div>
+
+  <div class="mt-16 lg:grid lg:grid-cols-[1fr_22rem] lg:gap-x-12">
+    <div class="overflow-x-auto">
+      <table class="w-full min-w-[36rem] border-collapse text-left">
+        <caption class="sr-only">
+          Index of plates{active ? `, ${disciplineLabel[active]}` : ''}. Focus or hover a title to preview.
+        </caption>
+        <thead>
+          <tr class="border-b border-hairline">
+            <th scope="col" class="text-meta py-3 pr-6 font-normal">Plate No.</th>
+            <th scope="col" class="text-meta py-3 pr-6 font-normal">Project Title</th>
+            <th scope="col" class="text-meta py-3 pr-6 font-normal">Year</th>
+            <th scope="col" class="text-meta py-3 pr-6 font-normal">Ratio</th>
+            <th scope="col" class="text-meta py-3 font-normal">Discipline</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.length === 0 && (
+            <tr><td colspan="5" class="text-body py-6">No plates in this discipline yet.</td></tr>
+          )}
+          {rows.map(({ p, no, ratio, preview }) => (
+            <tr class="vault-row border-b border-hairline">
+              <td class="text-meta py-3 pr-6 tabular-nums">{no}</td>
+              <td class="py-3 pr-6">
+                <a href={`${exhibitionBase}#plate-${no}`} class="text-body link-quiet text-bone"
+                  data-preview-src={preview.src} data-preview-w={preview.w} data-preview-h={preview.h}
+                  data-preview-alt={p.data.alt}>
+                  {p.data.title}
+                </a>
+              </td>
+              <td class="text-meta py-3 pr-6 tabular-nums">{p.data.year}</td>
+              <td class="text-meta py-3 pr-6 tabular-nums">{ratio}</td>
+              <td class="text-meta py-3">{disciplineLabel[p.data.discipline]}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Reserved preview box: fixed size, so showing an image never shifts layout. -->
+    <div class="vault-preview" aria-hidden="true">
+      <div class="sticky top-8 flex h-[28rem] w-[22rem] items-center justify-center bg-charcoal">
+        <img data-preview-img alt="" class="hidden max-h-full max-w-full object-contain" width="1" height="1" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  (() => {
+    const img = document.querySelector('[data-preview-img]');
+    if (!img || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    const show = (a) => {
+      img.src = a.dataset.previewSrc;
+      img.width = Number(a.dataset.previewW);
+      img.height = Number(a.dataset.previewH);
+      img.classList.remove('hidden');
+    };
+    document.querySelectorAll('[data-preview-src]').forEach((a) => {
+      a.addEventListener('mouseenter', () => show(a));
+      a.addEventListener('focus', () => show(a));
+    });
+  })();
+</script>

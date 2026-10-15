@@ -1,0 +1,15 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import ArchivalVault from '@/components/ArchivalVault.astro';
+import { disciplines, disciplineLabel, getPlates, type Discipline } from '@/lib/plates';
+
+export function getStaticPaths() {
+  return disciplines.map((cat) => ({ params: { cat } }));
+}
+const cat = Astro.params.cat as Discipline;
+const plates = await getPlates(cat);
+---
+
+<Layout title={`${disciplineLabel[cat]} | Archival Vault`}>
+  <ArchivalVault plates={plates} active={cat} />
+</Layout>

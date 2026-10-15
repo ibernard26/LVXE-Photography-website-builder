@@ -1,0 +1,90 @@
+---
+/**
+ * Curatorial Split (default exhibition view).
+ * lg+: 35% panel that is position:sticky (top-0, h-dvh) inside the normal page
+ * flow, never a nested scroll container; 65% plate stream scrolls with the page.
+ * Below lg (or on short viewports) the panel is a normal block above a single column.
+ */
+import Plate from '@/components/Plate.astro';
+import PortfolioControls from '@/components/PortfolioControls.astro';
+import { disciplineLabel, plateNo, type Discipline, type PlateEntry } from '@/lib/plates';
+import { isLandscape, ratioFromDimensions } from '@/lib/ratio';
+import { site } from '@/data/site';
+
+interface Props {
+  plates: PlateEntry[];
+  active?: Discipline;
+  /** Heading level for the slogan: h1 on standalone pages. */
+  headingId?: string;
+}
+const { plates, active, headingId = 'split-title' } = Astro.props;
+
+/** Rhythm for portrait plates: width + horizontal offset cycle. Landscape always spans the stream. */
+const rhythm = [
+  'lg:w-full',
+  'lg:w-[72%] lg:ml-auto',
+  'lg:w-[58%] lg:ml-[14%]',
+  'lg:w-[84%]',
+  'lg:w-[64%] lg:ml-auto lg:mr-[6%]',
+];
+let portraitIndex = 0;
+const items = plates.map((p) => {
+  const { width, height } = p.data.image;
+  const landscape = isLandscape(width, height);
+  const cls = landscape ? 'lg:w-full' : rhythm[portraitIndex++ % rhythm.length];
+  return { p, landscape, cls, ratio: ratioFromDimensions(width, height) };
+});
+---
+
+<div class="lg:grid lg:grid-cols-[35fr_65fr]">
+  <aside class="split-panel border-b border-hairline px-gutter py-12 lg:border-r lg:border-b-0" aria-labelledby={headingId}>
+    <div class="flex h-full flex-col justify-between gap-12">
+      <div>
+        <a href="/" class="font-display text-[1.375rem] leading-none tracking-[0.18em] text-bone">
+          {site.name}<span class="sr-only">, home</span>
+        </a>
+        <h1 id={headingId} class="text-display mt-10 max-w-[11ch]">{site.slogan}</h1>
+        <p class="text-body mt-6 max-w-[34ch]">{site.proposition}</p>
+      </div>
+
+      <PortfolioControls view="exhibition" active={active} />
+
+      <div class="space-y-3">
+        <p class="text-meta text-bone">Commissions</p>
+        <ul class="space-y-2">
+          <li><a href="/inquire" class="text-meta link-quiet">Inquire</a></li>
+          <li><a href="/inquire?type=commercial" class="text-meta link-quiet">Commercial inquiry</a></li>
+          <li><a href="/commercial" class="text-meta link-quiet">Commercial work</a></li>
+          <li><a href="/about" class="text-meta link-quiet">About</a></li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+  <section aria-label={active ? `${disciplineLabel[active]} plates` : 'Plates'} class="px-gutter py-12 lg:py-24">
+    {items.length === 0 ? (
+      <p class="text-body">No plates in this discipline yet.</p>
+    ) : (
+      <ol class="space-y-24 lg:space-y-40">
+        {items.map(({ p, cls, ratio }, i) => (
+          <li class:list={['w-full', cls]}>
+            <Plate
+              id={`plate-${plateNo(p.data.plateNo)}`}
+              image={p.data.image}
+              alt={p.data.alt}
+              priority={i === 0}
+              sizes="(min-width: 1024px) 60vw, 100vw"
+            />
+            <p class="text-meta mt-3 flex flex-wrap gap-x-4">
+              <span>{plateNo(p.data.plateNo)}</span>
+              <span class="text-bone">{p.data.title}</span>
+              <span>{p.data.year}</span>
+              <span>{ratio}</span>
+              <span>{disciplineLabel[p.data.discipline]}</span>
+            </p>
+          </li>
+        ))}
+      </ol>
+    )}
+  </section>
+</div>
