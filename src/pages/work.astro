@@ -3,6 +3,8 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHead from '@/components/PageHead.astro';
 import SeriesIndex from '@/components/SeriesIndex.astro';
 import GalleryWall from '@/components/GalleryWall.astro';
+import Film from '@/components/Film.astro';
+import { filmFrame, filmNumber, films } from '@/data/films';
 ---
 
 <BaseLayout title="Work" label="Issue 01 / Work">
@@ -10,8 +12,8 @@ import GalleryWall from '@/components/GalleryWall.astro';
     number="No. 02"
     section="Work"
     title="Work"
-    counter="series & plates."
-    lede="Bodies of work are catalogued as series. Every photograph hangs below as a plate, whole and at the ratio it was made."
+    counter="series, plates & film."
+    lede="Bodies of work are catalogued as series. Every photograph hangs as a plate and every moving piece screens as a film, whole and at the ratio it was made."
   />
 
   <SeriesIndex heading="Catalogue" withConcepts linked={false} />
@@ -19,4 +21,39 @@ import GalleryWall from '@/components/GalleryWall.astro';
   <div id="plates" class="mt-28 scroll-mt-8 sm:mt-40">
     <GalleryWall heading="The wall" intro="Select a plate to enter its room." />
   </div>
+
+  <!-- Films: moving pieces, each screened at its native ratio. -->
+  <section id="films" aria-labelledby="films-title" class="mx-auto mt-28 max-w-screen-2xl scroll-mt-8 px-gutter sm:mt-40">
+    <div class="grid grid-cols-12 items-end gap-x-4 gap-y-6 border-b border-border pb-6 lg:gap-x-8">
+      <h2 id="films-title" class="reveal-lines col-span-12 sm:col-span-8">
+        <span class="line-mask"><span class="text-display">Film</span></span>
+      </h2>
+      <p class="text-meta col-span-12 sm:col-span-4 sm:text-right">
+        {String(films.length).padStart(2, '0')} {films.length === 1 ? 'piece' : 'pieces'} · silent, looping
+      </p>
+    </div>
+
+    <div class="mt-16 grid grid-cols-12 gap-x-4 gap-y-16 lg:gap-x-8">
+      {
+        films.map((film) => (
+          <div class="col-span-12 grid grid-cols-12 items-end gap-x-4 gap-y-8 lg:gap-x-8">
+            <div class="col-span-8 sm:col-span-5 lg:col-span-4">
+              <Film
+                film={film}
+                transitionName={`film-${film.id}`}
+                label={`Film ${filmNumber(film)}`}
+                note={`${filmFrame(film).ratio} · ${filmFrame(film).runtime}`}
+              />
+            </div>
+            <div class="col-span-12 sm:col-span-6 sm:col-start-7 lg:col-span-5 lg:col-start-7">
+              <p class="text-meta">{film.tone} · {filmFrame(film).orientation} · loop</p>
+              <h3 class="text-heading mt-4">{film.title ?? 'Untitled'}</h3>
+              <p class="text-body mt-4 max-w-measure">{film.description}</p>
+              <a href={`/film/${film.id}`} class="text-meta link-quiet mt-8 inline-block text-bone">Enter the film room</a>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </section>
 </BaseLayout>

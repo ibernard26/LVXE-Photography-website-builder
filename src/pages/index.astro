@@ -11,6 +11,7 @@ import SeriesIndex from '@/components/SeriesIndex.astro';
 import GalleryWall from '@/components/GalleryWall.astro';
 import Plate from '@/components/Plate.astro';
 import { plates, plateNumber } from '@/data/plates';
+import { films } from '@/data/films';
 import { commercial } from '@/data/packages';
 import { issue, site } from '@/data/site';
 
@@ -46,7 +47,7 @@ const [l1, l2, l3] = site.slogan.lines;
   </section>
 
   <div class="mt-28 sm:mt-40">
-    <CinemaFrame plate={plates.meshPair} line="Shot from below; the sky as backdrop." />
+    <CinemaFrame film={films[0]} line="A moving portrait." />
   </div>
 
   <div class="mt-28 sm:mt-40">

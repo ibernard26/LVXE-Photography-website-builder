@@ -52,3 +52,5 @@ function reveal() {
 
 document.addEventListener('astro:page-load', reveal);
 document.addEventListener('astro:after-swap', () => document.documentElement.classList.add('js'));
+
+export {};

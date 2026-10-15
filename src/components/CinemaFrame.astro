@@ -1,36 +1,44 @@
 ---
 /**
- * Cinema frame — one plate hung on a full-bleed dark band, like a still on
- * a screen. The frame keeps its native ratio and is sized by height (max
- * 86vh) so a portrait never balloons past the viewport. Letterbox hairlines
- * above and below; a vertical label rides the left edge. Scroll settles the
- * frame from 94% to full scale (CSS scroll-driven, where supported).
+ * Cinema frame — one plate or film hung on a full-bleed dark band, like a
+ * still or a reel on a screen. The frame keeps its native ratio and is sized
+ * by height (max 86vh) so a vertical piece never balloons past the
+ * viewport. Letterbox hairlines above and below; a vertical label rides the
+ * left edge. Scroll settles the frame from 94% to full scale (CSS
+ * scroll-driven, where supported).
  */
 import Plate from '@/components/Plate.astro';
+import Film from '@/components/Film.astro';
 import { frameOf, plateNumber, type Plate as PlateT } from '@/data/plates';
+import { filmFrame, filmNumber, type Film as FilmT } from '@/data/films';
 
-interface Props {
-  plate: PlateT;
-  line?: string;
-}
-const { plate, line } = Astro.props;
-const { orientation, ratio } = frameOf(plate);
-const r = plate.image.width / plate.image.height;
+type Props = { line?: string } & ({ plate: PlateT; film?: never } | { film: FilmT; plate?: never });
+
+const { plate, film, line } = Astro.props;
+
+const r = plate ? plate.image.width / plate.image.height : film!.width / film!.height;
+const code = plate ? `Pl. ${plateNumber(plate)}` : `Film ${filmNumber(film!)}`;
+const tone = plate ? plate.tone : film!.tone;
+const spec = plate
+  ? `${frameOf(plate).orientation} ${frameOf(plate).ratio}`
+  : `${filmFrame(film!).orientation} ${filmFrame(film!).ratio} — ${filmFrame(film!).runtime} loop`;
 ---
 
-<section aria-label={`Plate ${plateNumber(plate)}`} class="relative border-y border-border bg-obsidian py-12 sm:py-20">
+<section aria-label={code} class="relative border-y border-border bg-obsidian py-12 sm:py-20">
   <div class="mx-auto grid max-w-screen-2xl grid-cols-12 items-end gap-x-4 px-gutter lg:gap-x-8">
     <p class="v-label text-meta col-span-1 hidden self-end lg:block">
-      Pl. {plateNumber(plate)} — {plate.tone} — {orientation} {ratio}
+      {code} — {tone} — {spec}
     </p>
     <div class="col-span-12 flex justify-center lg:col-span-10">
       <div class="scroll-settle w-full" style={`max-width: calc(86vh * ${r.toFixed(4)})`}>
-        <Plate plate={plate} sizes="(min-width: 1024px) 60vw, 100vw" />
+        {plate && <Plate plate={plate} sizes="(min-width: 1024px) 60vw, 100vw" />}
+        {film && <Film film={film} transitionName={`film-${film.id}`} />}
       </div>
     </div>
     <div class="col-span-12 mt-6 flex items-baseline justify-between gap-6 lg:col-span-1 lg:mt-0 lg:block lg:text-right">
-      <p class="text-meta lg:hidden">Pl. {plateNumber(plate)} — {plate.tone}</p>
+      <p class="text-meta lg:hidden">{code} — {tone}</p>
       {line && <p class="text-heading text-[1.125rem] lg:text-[1rem]">{line}</p>}
+      {film && <a href={`/film/${film.id}`} class="text-meta link-quiet mt-4 inline-block lg:mt-6">Enter the film room</a>}
     </div>
   </div>
 </section>
