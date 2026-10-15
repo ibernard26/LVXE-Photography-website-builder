@@ -154,6 +154,12 @@
     height: auto;
   }
 
+  /* Zero roundness, everywhere: frames, rules, buttons and inputs are all
+     square-cornered, including anything a browser rounds by default. */
+  :where(*, *::before, *::after) {
+    border-radius: 0;
+  }
+
   ::selection {
     background-color: var(--color-burgundy);
     color: #F2EFE9;
@@ -259,6 +265,28 @@
     }
   }
 
+  /* [Index / Ledger] and discipline filters: the active option is Bone with
+     the burgundy booking rule beneath it; the rest stay Soft Gray. State is
+     carried by aria-pressed, so it is never conveyed by colour alone. */
+  .toggle-opt {
+    color: var(--color-soft-gray);
+    transition: color var(--dur-fast) var(--ease-editorial);
+  }
+  .toggle-opt:hover,
+  .toggle-opt[aria-pressed="true"] {
+    color: var(--color-bone);
+  }
+  .toggle-label {
+    text-decoration-line: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.45em;
+    text-decoration-color: transparent;
+    transition: text-decoration-color var(--dur-fast) var(--ease-editorial);
+  }
+  [aria-pressed="true"] > .toggle-label {
+    text-decoration-color: var(--color-burgundy);
+  }
+
   .skip-link {
     position: absolute;
     left: var(--spacing-gutter);
@@ -271,6 +299,26 @@
   .skip-link:focus {
     top: 0.75rem;
   }
+}
+
+/* ==========================================================================
+   Exhibition views — state on <html data-view / data-filter> (scripts/views).
+   Without JS neither attribute is honoured: both views render in sequence
+   and the controls that need a script are hidden.
+   ========================================================================== */
+
+html:not(.js) [data-js-only] {
+  display: none !important;
+}
+html.js[data-view="index"] [data-mode="ledger"],
+html.js[data-view="ledger"] [data-mode="index"] {
+  display: none;
+}
+html.js[data-filter="editorial"] [data-item]:not([data-tags~="editorial"]),
+html.js[data-filter="portraits"] [data-item]:not([data-tags~="portraits"]),
+html.js[data-filter="architecture"] [data-item]:not([data-tags~="architecture"]),
+html.js[data-filter="commercial"] [data-item]:not([data-tags~="commercial"]) {
+  display: none;
 }
 
 /* ==========================================================================

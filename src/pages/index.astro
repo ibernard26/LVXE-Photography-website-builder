@@ -1,101 +1,285 @@
 ---
 /**
- * Home — Issue 01. Rhythm: dark strip → staggered intro → cinema band →
- * series catalogue → light gallery wall (feature + diptych) → commercial
- * scope → booking. Each photograph appears once on the page: the hero holds
- * plates 01, 03 and 04; the wall holds 02, 05 and 06.
+ * Home — Issue 01. The Curatorial Split with the Archival Vault.
+ *
+ * Left (35%, sticky on desktop): wordmark, issue line, the proposition,
+ * discipline filters, Inquire and the colophon link.
+ * Right (65%): one of two views, switched from the header.
+ *   Index  — the monographic stream: plates at changing scale and offset,
+ *            each whole, at its native ratio, with mono metadata.
+ *   Ledger — the archive as a dense table; hovering a row floats a
+ *            native-ratio preview, and every row opens its room.
+ *
+ * The right column scrolls with the page while the panel holds still, so
+ * there is no nested scroll container and no scroll-jacking. Filters and
+ * views are attribute-driven (src/scripts/views.ts), and both apply to both
+ * views. Every work appears once per view.
  */
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import HeroStrip from '@/components/HeroStrip.astro';
-import CinemaFrame from '@/components/CinemaFrame.astro';
-import SeriesIndex from '@/components/SeriesIndex.astro';
-import GalleryWall from '@/components/GalleryWall.astro';
-import { plates } from '@/data/plates';
-import { films } from '@/data/films';
-import { commercial } from '@/data/commissions';
+import type { ImageMetadata } from 'astro';
+import { getImage } from 'astro:assets';
+import Layout from '@/layouts/Layout.astro';
+import Plate from '@/components/Plate.astro';
+import Film from '@/components/Film.astro';
+import { disciplines, frameOf, plateList, plateNumber, plates, type Plate as PlateT } from '@/data/plates';
+import { films, filmFrame, filmNumber, type Film as FilmT } from '@/data/films';
+import { series } from '@/data/series';
 import { issue, site } from '@/data/site';
 
+const pad = (n: number) => String(n).padStart(2, '0');
+const slug = (s: string) => s.toLowerCase();
+const tagsOf = (p: PlateT) => p.disciplines.map(slug).join(' ');
+const seriesOf = (p: { series?: string }) => series.find((s) => s.slug === p.series)?.title;
 const [l1, l2, l3] = site.slogan.lines;
+const film = films[0];
+
+/* ---- Index stream: the sequence, with each slot's placement. ----------- */
+type Slot =
+  | { kind: 'plate'; plate: PlateT; place: string; sizes: string; priority?: boolean }
+  | { kind: 'pair'; a: PlateT; b: PlateT }
+  | { kind: 'film'; film: FilmT; place: string };
+
+const stream: Slot[] = [
+  // Pl. 01 — the lead monolith.
+  { kind: 'plate', plate: plates.fingersCloseup, place: 'col-span-12 lg:col-span-9', sizes: '(min-width: 1536px) 720px, (min-width: 1024px) 46vw, 100vw', priority: true },
+  // Pl. 02 — the archway, pushed right.
+  { kind: 'plate', plate: plates.cathedral, place: 'col-span-10 col-start-3 lg:col-span-7 lg:col-start-6', sizes: '(min-width: 1536px) 560px, (min-width: 1024px) 36vw, 84vw' },
+  // Pl. 03 / Pl. 04 — the portrait diptych.
+  { kind: 'pair', a: plates.earringPortrait, b: plates.handsPortrait },
+  // Fl. 01 — the moving portrait, held left.
+  { kind: 'film', film, place: 'col-span-9 lg:col-span-5 lg:col-start-2' },
+  // Pl. 05 — the monochrome study.
+  { kind: 'plate', plate: plates.recordStore, place: 'col-span-11 col-start-2 lg:col-span-8 lg:col-start-5', sizes: '(min-width: 1536px) 640px, (min-width: 1024px) 41vw, 92vw' },
+  // Pl. 06 — the pair, closing low left.
+  { kind: 'plate', plate: plates.meshPair, place: 'col-span-9 lg:col-span-6', sizes: '(min-width: 1536px) 480px, (min-width: 1024px) 31vw, 75vw' },
+];
+
+const plateNote = (p: PlateT) => `${frameOf(p).ratio} · ${seriesOf(p) ?? p.disciplines.join(' / ')}`;
+
+/* ---- Filters: counts are build-time facts. ----------------------------- */
+const totalWorks = plateList.length + films.length;
+const filters = [
+  { label: 'All', value: '', count: totalWorks },
+  ...disciplines.map((d) => ({ label: d, value: slug(d), count: plateList.filter((p) => p.disciplines.includes(d)).length })),
+];
+
+/* ---- Ledger rows, with a small native-ratio preview for each. ---------- */
+const previewOf = async (src: ImageMetadata) => {
+  const img = await getImage({ src, width: Math.min(480, src.width), format: 'webp', quality: 75 });
+  return { src: img.src, w: img.attributes.width as number, h: img.attributes.height as number };
+};
+
+const ledger = await Promise.all([
+  ...plateList.map(async (p) => ({
+    no: `Pl. ${plateNumber(p)}`,
+    series: seriesOf(p),
+    title: p.title ?? 'Untitled',
+    context: p.caption ?? p.alt,
+    year: p.year,
+    ratio: frameOf(p).ratio,
+    medium: `Digital · ${p.tone}`,
+    tags: tagsOf(p),
+    href: `/work/${p.id}`,
+    preview: await previewOf(p.image),
+  })),
+  ...films.map(async (f) => ({
+    no: `Fl. ${filmNumber(f)}`,
+    series: seriesOf(f),
+    title: f.title ?? 'Untitled',
+    context: f.description,
+    year: undefined as string | undefined,
+    ratio: filmFrame(f).ratio,
+    medium: `Digital film · ${f.tone}`,
+    tags: '',
+    href: `/film/${f.id}`,
+    preview: await previewOf(f.poster),
+  })),
+]);
 ---
 
-<BaseLayout label="Issue 01 / Index">
-  <HeroStrip />
+<Layout views>
+  <div
+    class="mx-auto max-w-screen-2xl px-gutter lg:grid lg:grid-cols-[minmax(0,35fr)_minmax(0,65fr)] lg:gap-x-12 xl:gap-x-16"
+    data-discipline-root
+  >
+    <!-- ================= Curatorial panel ================= -->
+    <aside
+      aria-label="Curatorial panel"
+      class="flex flex-col gap-y-12 py-12 lg:sticky lg:top-16 lg:h-[calc(100dvh-4rem)] lg:justify-between lg:overflow-y-auto lg:border-r lg:border-border lg:py-12 lg:pr-10"
+    >
+      <div>
+        <a href="/" class="hit-target hidden lg:inline-flex" aria-label={`${site.name}, home`}>
+          <span class="font-sans text-[2rem] font-[800] leading-none tracking-[-0.055em] text-bone">
+            {site.name}<span class="text-burgundy">.</span>
+          </span>
+        </a>
+        <p class="text-meta lg:mt-6">Issue {issue.number} · {issue.year}<br />{site.region}</p>
 
-  <!-- Staggered introduction: grotesk and italic lines on offset columns. -->
-  <section aria-labelledby="intro-title" class="mx-auto mt-28 max-w-screen-2xl px-gutter sm:mt-40">
-    <div class="grid grid-cols-12 gap-x-4 gap-y-12 lg:gap-x-8">
-      <p class="text-meta col-span-12 lg:col-span-2">No. {issue.number}<br />Introduction</p>
-
-      <h2 id="intro-title" class="reveal-lines col-span-12 lg:col-span-10" data-draft={site.slogan.draft || undefined}>
-        <span class="line-mask"><span class="text-display" style="--i:0">{l1}</span></span>{' '}
-        <span class="line-mask pl-[18%] sm:pl-[24%]"><span class="text-display-serif" style="--i:1">{l2}</span></span>{' '}
-        <span class="line-mask pl-[42%] sm:pl-[52%]">
-          <span class="text-display" style="--i:2">{l3}<span class="text-burgundy">.</span></span>
-        </span>
-      </h2>
-
-      <div class="col-span-12 grid gap-y-8 sm:col-span-8 sm:col-start-5 lg:col-span-4 lg:col-start-7">
-        <p class="text-body reveal-fade text-[1.0625rem] text-bone" data-draft={site.proposition.draft || undefined}>
+        <h1 class="reveal-lines mt-10 text-display text-[clamp(2.75rem,4.6vw,4.75rem)]" data-draft={site.slogan.draft || undefined}>
+          <span class="line-mask"><span style="--i:0">{l1}</span></span>{' '}
+          <span class="line-mask"><span class="font-light italic" style="--i:1">{l2}</span></span>{' '}
+          <span class="line-mask"><span style="--i:2">{l3}<span class="text-burgundy">.</span></span></span>
+        </h1>
+        <p class="text-body mt-8 max-w-[34ch] text-bone" data-draft={site.proposition.draft || undefined}>
           {site.proposition.text}
         </p>
-        <ul class="reveal-fade flex flex-wrap gap-x-10 gap-y-4" style="--i:1">
-          <li><a href="/work" class="text-meta link-quiet text-bone">View the work</a></li>
-          <li><a href="/book" class="text-meta link-book">Book a session</a></li>
-        </ul>
       </div>
-    </div>
-  </section>
 
-  <div class="mt-28 sm:mt-40">
-    <CinemaFrame film={films[0]} line="A moving portrait." />
-  </div>
-
-  <div class="mt-28 sm:mt-40">
-    <SeriesIndex />
-  </div>
-
-  <div class="mt-28 sm:mt-40">
-    <GalleryWall
-      heading="Plates"
-      intro="Every frame is shown whole, at the ratio it was made. Select a plate to enter its room."
-      blocks={[
-        { kind: 'feature', plate: plates.earringPortrait, aside: plates.meshPair },
-        {
-          kind: 'diptych',
-          plate: plates.recordStore,
-          side: 'right',
-          eyebrow: 'Diptych — Monochrome',
-          heading: 'In Monochrome.',
-          text: plates.recordStore.alt,
-        },
-      ]}
-    />
-  </div>
-
-  <!-- Commercial pathway: clearly separated from the editorial sequence. -->
-  <section aria-labelledby="commercial-title" class="mx-auto mt-28 max-w-screen-2xl px-gutter sm:mt-40">
-    <div class="grid grid-cols-12 gap-x-4 gap-y-10 border-t border-border pt-10 lg:gap-x-8">
-      <p class="text-meta col-span-12 lg:col-span-2">For brands<br />&amp; companies</p>
-      <h2 id="commercial-title" class="reveal-lines col-span-12 lg:col-span-10">
-        <span class="line-mask"><span class="text-display" style="--i:0">Commercial</span></span>{' '}
-        <span class="line-mask"><span class="text-display-serif" style="--i:1">Commissions.</span></span>
-      </h2>
-      <div class="col-span-12 lg:col-span-6 lg:col-start-7">
-        <ul class="border-t border-border">
-          {commercial.map((c, i) => (
-            <li class="reveal-fade flex items-baseline justify-between gap-6 border-b border-border py-4" style={`--i:${i}`}>
-              <span class="text-heading text-[1.25rem]">{c}</span>
-              <span class="text-meta">0{i + 1}</span>
-            </li>
-          ))}
+      <nav aria-label="Disciplines" data-js-only>
+        <p class="text-meta text-bone">Disciplines</p>
+        <ul class="mt-4 flex flex-wrap gap-x-6 gap-y-1 lg:block lg:border-t lg:border-border">
+          {
+            filters.map((f) => (
+              <li class="lg:border-b lg:border-border">
+                <button
+                  type="button"
+                  class="toggle-opt text-meta flex cursor-pointer items-baseline gap-2 bg-transparent py-1 text-left lg:w-full lg:justify-between lg:py-2.5"
+                  data-filter-set={f.value}
+                  aria-pressed={f.value === '' ? 'true' : 'false'}
+                >
+                  <span class="toggle-label">{f.label}</span>
+                  <span aria-hidden="true">{pad(f.count)}</span>
+                  <span class="sr-only">, {f.count} works</span>
+                </button>
+              </li>
+            ))
+          }
         </ul>
-        <p class="text-body mt-8 max-w-measure">
-          Campaigns, workplace portraiture and events are quoted per project. Send the brief, dates and usage to
-          start the conversation.
+        <p class="text-meta mt-4" role="status" data-filter-status>{pad(totalWorks)} of {pad(totalWorks)} works</p>
+      </nav>
+
+      <div class="flex flex-wrap items-baseline gap-x-10 gap-y-4">
+        <a href="/book" class="text-meta link-book">Inquire</a>
+        <a href="/commissions" class="text-meta link-quiet">Commissions</a>
+        <a href="#colophon" class="text-meta link-quiet">Colophon</a>
+      </div>
+    </aside>
+
+    <!-- ================= Right column ================= -->
+    <div class="min-w-0 scroll-mt-16 pb-28 lg:py-12" data-views-start>
+      <!-- View A — the monographic stream -->
+      <section aria-labelledby="stream-title" data-mode="index">
+        <h2 id="stream-title" class="sr-only">Index — plates in sequence</h2>
+        <div class="grid grid-cols-12 gap-x-4 gap-y-24 sm:gap-x-6 sm:gap-y-36">
+          {
+            stream.map((slot) => {
+              if (slot.kind === 'plate')
+                return (
+                  <div class={slot.place} data-item data-tags={tagsOf(slot.plate)}>
+                    <Plate
+                      plate={slot.plate}
+                      href={`/work/${slot.plate.id}`}
+                      transitionName={`plate-${slot.plate.id}`}
+                      label={`Pl. ${plateNumber(slot.plate)}`}
+                      note={plateNote(slot.plate)}
+                      sizes={slot.sizes}
+                      priority={slot.priority}
+                      reveal={!slot.priority}
+                    />
+                  </div>
+                );
+              if (slot.kind === 'pair')
+                return [slot.a, slot.b].map((p, i) => (
+                  <div class:list={['col-span-6', i === 1 && 'mt-20 sm:mt-40']} data-item data-tags={tagsOf(p)}>
+                    <Plate
+                      plate={p}
+                      i={i}
+                      href={`/work/${p.id}`}
+                      transitionName={`plate-${p.id}`}
+                      label={`Pl. ${plateNumber(p)}`}
+                      note={plateNote(p)}
+                      sizes="(min-width: 1536px) 440px, (min-width: 1024px) 29vw, 48vw"
+                    />
+                  </div>
+                ));
+              return (
+                <div class={slot.place} data-item data-tags="">
+                  <Film
+                    film={slot.film}
+                    transitionName={`film-${slot.film.id}`}
+                    label={`Fl. ${filmNumber(slot.film)}`}
+                    note={`${filmFrame(slot.film).ratio} · ${seriesOf(slot.film) ?? 'Moving portrait'}`}
+                  />
+                </div>
+              );
+            })
+          }
+        </div>
+      </section>
+
+      <!-- View B — the archival vault -->
+      <section aria-labelledby="ledger-title" data-mode="ledger" class="mt-28 lg:mt-0">
+        <div class="flex items-baseline justify-between gap-6 border-b border-bone pb-4">
+          <h2 id="ledger-title" class="text-meta text-bone">Ledger — Archive, Issue {issue.number}</h2>
+          <p class="text-meta">{pad(totalWorks)} entries</p>
+        </div>
+
+        <table class="w-full border-collapse text-left">
+          <caption class="sr-only">
+            Archive ledger. Each row opens that work's room. Years not yet recorded are shown as a dash.
+          </caption>
+          <thead>
+            <tr class="border-b border-border">
+              <th scope="col" class="text-meta py-3 pr-4 font-normal">Plate / Series</th>
+              <th scope="col" class="text-meta py-3 pr-4 font-normal">Title &amp; Context</th>
+              <th scope="col" class="text-meta hidden py-3 pr-4 font-normal md:table-cell">Year</th>
+              <th scope="col" class="text-meta py-3 pr-4 font-normal">Ratio</th>
+              <th scope="col" class="text-meta hidden py-3 pr-4 font-normal md:table-cell">Medium</th>
+              <th scope="col" class="text-meta py-3 text-right font-normal">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              ledger.map((row) => (
+                <tr
+                  class="group relative border-b border-border align-top transition-colors duration-300 ease-editorial hover:bg-charcoal focus-within:bg-charcoal"
+                  data-item
+                  data-tags={row.tags}
+                  data-preview={row.preview.src}
+                  data-preview-w={row.preview.w}
+                  data-preview-h={row.preview.h}
+                >
+                  <td class="text-meta py-5 pr-4 whitespace-nowrap text-bone">
+                    {row.no}
+                    <span class="mt-1 block text-soft-gray">{row.series ?? '—'}</span>
+                  </td>
+                  <td class="py-5 pr-4">
+                    <span class="text-heading block text-[1.25rem] transition-transform duration-500 ease-editorial group-hover:translate-x-2">
+                      {row.title}
+                    </span>
+                    <span class="text-body mt-2 line-clamp-2 max-w-[56ch] text-[0.875rem] leading-[1.5]">{row.context}</span>
+                  </td>
+                  <td class="text-meta hidden py-5 pr-4 md:table-cell">
+                    {row.year ?? <><span aria-hidden="true">—</span><span class="sr-only">Not recorded</span></>}
+                  </td>
+                  <td class="text-meta py-5 pr-4 whitespace-nowrap">{row.ratio}</td>
+                  <td class="text-meta hidden py-5 pr-4 md:table-cell">{row.medium}</td>
+                  <td class="py-5 text-right">
+                    <a href={row.href} class="text-meta link-quiet text-bone after:absolute after:inset-0 after:content-['']">
+                      Open<span class="sr-only"> {row.no}, {row.title}</span>
+                    </a>
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+
+        <div data-ledger-preview hidden aria-hidden="true" class="pointer-events-none fixed top-0 left-0 z-50 w-44 xl:w-52">
+          <img alt="" class="block h-auto w-full bg-charcoal" decoding="async" />
+        </div>
+      </section>
+
+      <!-- Shown when a discipline has no published work yet. -->
+      <div data-empty hidden class="border-t border-border pt-10">
+        <p class="text-heading max-w-[24ch]">No published plates in this discipline yet.</p>
+        <p class="text-body mt-6 max-w-measure">
+          Commercial and brand work is commissioned per project. The scopes and the brief form are one step away.
         </p>
-        <a href="/book?type=commercial" class="text-meta link-book mt-8 inline-block">Send a commercial brief</a>
-        <a href="/commissions" class="text-meta link-quiet mt-8 ml-10 inline-block">Both scopes</a>
+        <div class="mt-8 flex flex-wrap gap-x-10 gap-y-4">
+          <a href="/commissions" class="text-meta link-quiet text-bone">Production scopes</a>
+          <a href="/book?type=commercial" class="text-meta link-book">Send a commercial brief</a>
+        </div>
       </div>
     </div>
-  </section>
-</BaseLayout>
+  </div>
+</Layout>

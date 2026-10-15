@@ -1,0 +1,105 @@
+---
+/**
+ * Exhibition shell — the homepage frame for the Curatorial Split.
+ *
+ * A minimal sticky header (solid Obsidian, hairline rule, no blur) carries
+ * the wordmark on small screens, the [Index / Ledger] view control, Book
+ * and the menu. The page underneath decides what each view shows by
+ * marking its regions `data-mode="index"` or `data-mode="ledger"`.
+ *
+ * View state lives on <html data-view> and in the URL (`?view=ledger`), so
+ * the ledger can be linked to directly and survives back/forward. It is
+ * written by an inline script before first paint, which also re-runs after
+ * every ClientRouter swap. Without JavaScript both views render in sequence
+ * and the control is hidden.
+ */
+import SiteHead from '@/components/SiteHead.astro';
+import SiteFooter from '@/components/SiteFooter.astro';
+import FullscreenNav from '@/components/FullscreenNav.astro';
+import { site } from '@/data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Show the [Index / Ledger] control (pages that provide both views). */
+  views?: boolean;
+}
+
+const { title, description, views = false } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SiteHead title={title} description={description} />
+  </head>
+  <body class="grain">
+    {
+      views && (
+        <script is:inline>
+          (function () {
+            var q = new URLSearchParams(location.search);
+            var root = document.documentElement;
+            root.dataset.view = q.get('view') === 'ledger' ? 'ledger' : 'index';
+            var d = (q.get('d') || '').toLowerCase();
+            if (/^(editorial|portraits|architecture|commercial)$/.test(d)) root.dataset.filter = d;
+          })();
+        </script>
+      )
+    }
+
+    <a href="#main" class="skip-link text-meta">Skip to content</a>
+
+    <header class="sticky top-0 z-40 border-b border-border bg-obsidian">
+      <div class="mx-auto flex h-16 max-w-screen-2xl items-center justify-between gap-6 px-gutter">
+        <a href="/" class="hit-target lg:invisible" aria-label={`${site.name}, home`}>
+          <span class="font-sans text-[1.0625rem] font-[750] leading-none tracking-[-0.04em] text-bone">
+            {site.name}<span class="text-burgundy">.</span>
+          </span>
+        </a>
+
+        {
+          views && (
+            <div role="group" aria-label="View" class="text-meta flex items-center gap-2" data-js-only>
+              <span aria-hidden="true">[</span>
+              <button type="button" class="toggle-opt text-meta cursor-pointer bg-transparent p-0" data-view-set="index" aria-pressed="true"><span class="toggle-label">Index</span></button>
+              <span aria-hidden="true">/</span>
+              <button type="button" class="toggle-opt text-meta cursor-pointer bg-transparent p-0" data-view-set="ledger" aria-pressed="false"><span class="toggle-label">Ledger</span></button>
+              <span aria-hidden="true">]</span>
+            </div>
+          )
+        }
+
+        <div class="flex items-center justify-end gap-6 sm:gap-8">
+          <a href="/book" class="text-meta link-book hidden sm:inline">Book</a>
+          <button
+            type="button"
+            class="text-meta group flex cursor-pointer items-center gap-3 bg-transparent p-0 text-bone"
+            aria-controls="site-menu"
+            aria-expanded="false"
+            data-menu-open
+          >
+            <span>Menu</span>
+            <span aria-hidden="true" class="flex w-6 flex-col gap-[5px]">
+              <span class="block h-px w-full origin-right bg-bone transition-transform duration-300 ease-editorial group-hover:scale-x-75"></span>
+              <span class="block h-px w-full bg-bone"></span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <SiteFooter />
+    <FullscreenNav />
+
+    <script>
+      import '@/scripts/motion';
+      import '@/scripts/film';
+      import '@/scripts/views';
+    </script>
+  </body>
+</html>
