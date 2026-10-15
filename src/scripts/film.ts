@@ -66,6 +66,9 @@ document.addEventListener('visibilitychange', () => {
   });
 });
 document.addEventListener('astro:page-load', setup);
-document.addEventListener('astro:before-swap', () => observer?.disconnect());
+document.addEventListener('astro:before-preparation', () => {
+  observer?.disconnect();
+  document.querySelectorAll<HTMLVideoElement>('video[data-film]').forEach((v) => v.pause());
+});
 
 export {};
