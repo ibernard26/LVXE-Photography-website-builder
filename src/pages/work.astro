@@ -6,6 +6,7 @@ import GalleryWall from '@/components/GalleryWall.astro';
 import { plates, type Plate } from '@/data/plates';
 import Film from '@/components/Film.astro';
 import { filmFrame, filmNumber, films } from '@/data/films';
+import { link } from '@/lib/link';
 ---
 
 <BaseLayout title="Work" label="Issue 01 / Work">
@@ -65,7 +66,7 @@ import { filmFrame, filmNumber, films } from '@/data/films';
               <p class="text-meta">{film.tone} · {filmFrame(film).orientation} · loop</p>
               <h3 class="text-heading mt-4">{film.title ?? 'Untitled'}</h3>
               <p class="text-body mt-4 max-w-measure">{film.description}</p>
-              <a href={`/film/${film.id}`} class="text-meta link-quiet mt-8 inline-block text-bone">Enter the film room</a>
+              <a href={link(`/film/${film.id}`)} class="text-meta link-quiet mt-8 inline-block text-bone">Enter the film room</a>
             </div>
           </div>
         ))

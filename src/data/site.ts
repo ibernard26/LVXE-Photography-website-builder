@@ -1,3 +1,5 @@
+import { link } from '@/lib/link';
+
 /**
  * Editable site content.
  *
@@ -53,8 +55,8 @@ export type NavItem = { label: string; href: string; note: string; accent?: bool
  * burgundy accent.
  */
 export const navigation: NavItem[] = [
-  { label: 'Index', href: '/', note: '' },
-  { label: 'Work', href: '/work', note: 'Series & Plates' },
-  { label: 'Commissions', href: '/commissions', note: 'Editorial & Commercial Scopes' },
-  { label: 'Book', href: '/book', note: 'Inquiry & Brief', accent: true },
+  { label: 'Index', href: link('/'), note: '' },
+  { label: 'Work', href: link('/work'), note: 'Series & Plates' },
+  { label: 'Commissions', href: link('/commissions'), note: 'Editorial & Commercial Scopes' },
+  { label: 'Book', href: link('/book'), note: 'Inquiry & Brief', accent: true },
 ];

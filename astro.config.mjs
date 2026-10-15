@@ -12,7 +12,12 @@ const fontsource = (family, style) =>
 
 // https://docs.astro.build/en/reference/configuration-reference/
 export default defineConfig({
-  site: 'https://lvxe.studio',
+  // Address and sub-path come from GitHub Pages at build time (see
+  // .github/workflows/deploy.yml): the free address serves the site under
+  // /LVXE-Photography-website-builder/, a custom domain serves it at the root.
+  // Locally both fall back to the root of the GitHub address.
+  site: process.env.SITE_URL || 'https://ibernard26.github.io',
+  base: process.env.BASE_PATH || '/',
 
   // Fonts: self-hosted from the installed @fontsource-variable packages via the
   // `local` provider, so builds never depend on a CDN. Only the Latin subset

@@ -12,6 +12,7 @@ import { site } from '@/data/site';
 
 const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 const pad = (n: number) => String(n).padStart(2, '0');
+import { link } from '@/lib/link';
 ---
 
 <BaseLayout
@@ -65,7 +66,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
         </table>
 
         <p class="text-body mt-8">Also available, rate on request: {onRequest.join(', ').toLowerCase()}.</p>
-        <a href="/book?type=editorial" class="text-meta link-book mt-8 inline-block">Inquire about an editorial commission</a>
+        <a href={link('/book?type=editorial')} class="text-meta link-book mt-8 inline-block">Inquire about an editorial commission</a>
       </div>
     </div>
   </section>
@@ -96,7 +97,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
           Send the brief, dates, deliverables and usage. Campaign, workplace and event work is scoped and quoted for each
           project.
         </p>
-        <a href="/book?type=commercial" class="text-meta link-book mt-8 inline-block">Send a commercial brief</a>
+        <a href={link('/book?type=commercial')} class="text-meta link-book mt-8 inline-block">Send a commercial brief</a>
       </div>
     </div>
   </section>

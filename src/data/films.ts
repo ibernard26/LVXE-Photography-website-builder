@@ -1,4 +1,5 @@
 import type { ImageMetadata } from 'astro';
+import { link } from '@/lib/link';
 import chromeGlassesPoster from '@/assets/film/chrome-glasses-poster.jpg';
 
 /**
@@ -42,7 +43,7 @@ export const films: Film[] = [
     height: 1920,
     duration: 7.8,
     loop: true,
-    sources: { large: '/film/chrome-glasses-1920', small: '/film/chrome-glasses-1280' },
+    sources: { large: link('/film/chrome-glasses-1920'), small: link('/film/chrome-glasses-1280') },
     poster: chromeGlassesPoster,
   },
 ];

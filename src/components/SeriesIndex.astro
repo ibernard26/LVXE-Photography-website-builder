@@ -15,6 +15,7 @@ interface Props {
 
 const { heading = 'Series', withConcepts = false, linked = true } = Astro.props;
 const pad = (n: number) => String(n).padStart(2, '0');
+import { link } from '@/lib/link';
 ---
 
 <section aria-labelledby="series-index" class="mx-auto max-w-screen-2xl px-gutter">
@@ -30,7 +31,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
         return (
           <li id={linked ? undefined : s.slug} class="dim-item scroll-mt-8 border-b border-border">
             <Row
-              href={linked ? `/work#${s.slug}` : undefined}
+              href={linked ? link(`/work#${s.slug}`) : undefined}
               class:list={['series-row group grid grid-cols-12 items-baseline gap-x-4 py-7 sm:py-9 lg:gap-x-8', withConcepts && 'show-concept']}
             >
               <span class="text-meta col-span-2 sm:col-span-1">S—{pad(i + 1)}</span>

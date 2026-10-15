@@ -5,6 +5,7 @@
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHead from '@/components/PageHead.astro';
+import { link } from '@/lib/link';
 ---
 
 <BaseLayout title="Not found" label="Issue 01 / Not found" hideBooking description="This page is not part of the LVXE archive.">
@@ -16,8 +17,8 @@ import PageHead from '@/components/PageHead.astro';
     lede="This address is not part of the archive. The index and the ledger list every published work."
   />
   <div class="mx-auto flex max-w-screen-2xl flex-wrap gap-x-10 gap-y-4 px-gutter">
-    <a href="/" class="text-meta link-quiet text-bone">Index</a>
-    <a href="/?view=ledger" class="text-meta link-quiet text-bone">Ledger</a>
-    <a href="/book" class="text-meta link-book">Book</a>
+    <a href={link('/')} class="text-meta link-quiet text-bone">Index</a>
+    <a href={link('/?view=ledger')} class="text-meta link-quiet text-bone">Ledger</a>
+    <a href={link('/book')} class="text-meta link-book">Book</a>
   </div>
 </BaseLayout>

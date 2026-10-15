@@ -36,6 +36,7 @@ const total = String(plateList.length).padStart(2, '0');
 const { orientation, ratio } = frameOf(plate);
 const r = plate.image.width / plate.image.height;
 const seriesTitle = plate.series ? series.find((s) => s.slug === plate.series)?.title : undefined;
+import { link } from '@/lib/link';
 ---
 
 <BaseLayout
@@ -45,7 +46,7 @@ const seriesTitle = plate.series ? series.find((s) => s.slug === plate.series)?.
 >
   <article aria-labelledby="plate-title" class="mx-auto max-w-screen-2xl px-gutter">
     <div class="flex flex-wrap items-baseline justify-between gap-4 border-b border-border pt-6 pb-4">
-      <a href="/work#plates" class="text-meta link-quiet">Back to the wall</a>
+      <a href={link('/work#plates')} class="text-meta link-quiet">Back to the wall</a>
       <p class="text-meta">Plate {no} of {total}</p>
     </div>
 
@@ -97,7 +98,7 @@ const seriesTitle = plate.series ? series.find((s) => s.slug === plate.series)?.
           { p: next, dir: 'Next' },
         ].map(({ p, dir }) => (
           <a
-            href={`/work/${p.id}`}
+            href={link(`/work/${p.id}`)}
             class:list={['group flex items-end gap-4 sm:gap-6', dir === 'Next' && 'flex-row-reverse text-right']}
           >
             <div class="w-20 shrink-0 sm:w-28" transition:name={`plate-${p.id}`}>

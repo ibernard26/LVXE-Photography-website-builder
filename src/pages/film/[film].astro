@@ -23,6 +23,7 @@ const total = String(films.length).padStart(2, '0');
 const { orientation, ratio, runtime } = filmFrame(film);
 const r = film.width / film.height;
 const seriesTitle = film.series ? series.find((s) => s.slug === film.series)?.title : undefined;
+import { link } from '@/lib/link';
 ---
 
 <BaseLayout
@@ -32,7 +33,7 @@ const seriesTitle = film.series ? series.find((s) => s.slug === film.series)?.ti
 >
   <article aria-labelledby="film-title" class="mx-auto max-w-screen-2xl px-gutter">
     <div class="flex flex-wrap items-baseline justify-between gap-4 border-b border-border pt-6 pb-4">
-      <a href="/work#films" class="text-meta link-quiet">Back to the work</a>
+      <a href={link('/work#films')} class="text-meta link-quiet">Back to the work</a>
       <p class="text-meta">Film {no} of {total}</p>
     </div>
 

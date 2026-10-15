@@ -24,6 +24,7 @@ import { disciplines, frameOf, plateList, plateNumber, plates, type Plate as Pla
 import { films, filmFrame, filmNumber, type Film as FilmT } from '@/data/films';
 import { series } from '@/data/series';
 import { issue, site } from '@/data/site';
+import { link } from '@/lib/link';
 
 const pad = (n: number) => String(n).padStart(2, '0');
 const slug = (s: string) => s.toLowerCase();
@@ -78,7 +79,7 @@ const ledger = await Promise.all([
     ratio: frameOf(p).ratio,
     medium: `Digital · ${p.tone}`,
     tags: tagsOf(p),
-    href: `/work/${p.id}`,
+    href: link(`/work/${p.id}`),
     preview: await previewOf(p.image),
   })),
   ...films.map(async (f) => ({
@@ -90,7 +91,7 @@ const ledger = await Promise.all([
     ratio: filmFrame(f).ratio,
     medium: `Digital film · ${f.tone}`,
     tags: '',
-    href: `/film/${f.id}`,
+    href: link(`/film/${f.id}`),
     preview: await previewOf(f.poster),
   })),
 ]);
@@ -107,7 +108,7 @@ const ledger = await Promise.all([
       class="flex flex-col gap-y-8 py-8 sm:gap-y-12 sm:py-12 lg:sticky lg:top-16 lg:h-[calc(100dvh-4rem)] lg:justify-between lg:overflow-y-auto lg:border-r lg:border-border lg:py-12 lg:pr-10"
     >
       <div>
-        <a href="/" class="hit-target hidden lg:inline-flex" aria-label={`${site.name}, home`}>
+        <a href={link('/')} class="hit-target hidden lg:inline-flex" aria-label={`${site.name}, home`}>
           <span class="font-sans text-[2rem] font-[800] leading-none tracking-[-0.055em] text-bone">
             {site.name}<span class="text-burgundy">.</span>
           </span>
@@ -148,8 +149,8 @@ const ledger = await Promise.all([
       </nav>
 
       <div class="flex flex-wrap items-baseline gap-x-10 gap-y-4">
-        <a href="/book" class="text-meta link-book">Inquire</a>
-        <a href="/commissions" class="text-meta link-quiet">Commissions</a>
+        <a href={link('/book')} class="text-meta link-book">Inquire</a>
+        <a href={link('/commissions')} class="text-meta link-quiet">Commissions</a>
         <a href="#colophon" class="text-meta link-quiet">Colophon</a>
       </div>
     </aside>
@@ -167,7 +168,7 @@ const ledger = await Promise.all([
                   <div class={slot.place} data-item data-tags={tagsOf(slot.plate)}>
                     <Plate
                       plate={slot.plate}
-                      href={`/work/${slot.plate.id}`}
+                      href={link(`/work/${slot.plate.id}`)}
                       transitionName={`plate-${slot.plate.id}`}
                       label={`Pl. ${plateNumber(slot.plate)}`}
                       note={plateNote(slot.plate)}
@@ -183,7 +184,7 @@ const ledger = await Promise.all([
                     <Plate
                       plate={p}
                       i={i}
-                      href={`/work/${p.id}`}
+                      href={link(`/work/${p.id}`)}
                       transitionName={`plate-${p.id}`}
                       label={`Pl. ${plateNumber(p)}`}
                       note={plateNote(p)}
@@ -278,8 +279,8 @@ const ledger = await Promise.all([
           Commercial and brand work is commissioned per project. The scopes and the brief form are one step away.
         </p>
         <div class="mt-8 flex flex-wrap gap-x-10 gap-y-4">
-          <a href="/commissions" class="text-meta link-quiet text-bone">Production scopes</a>
-          <a href="/book?type=commercial" class="text-meta link-book">Send a commercial brief</a>
+          <a href={link('/commissions')} class="text-meta link-quiet text-bone">Production scopes</a>
+          <a href={link('/book?type=commercial')} class="text-meta link-book">Send a commercial brief</a>
         </div>
       </div>
     </div>
