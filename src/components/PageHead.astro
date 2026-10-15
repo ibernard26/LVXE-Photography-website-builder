@@ -1,0 +1,15 @@
+---
+/** Shared opening for interior pages: eyebrow, italic display title, optional lede. */
+interface Props {
+  eyebrow: string;
+  title: string;
+  lede?: string;
+}
+const { eyebrow, title, lede } = Astro.props;
+---
+
+<header class="mx-auto max-w-screen-2xl px-gutter pt-16 pb-16 sm:pt-24 sm:pb-24 lg:pt-32">
+  <p class="text-meta">{eyebrow}</p>
+  <h1 class="text-display mt-8 max-w-[14ch] italic">{title}</h1>
+  {lede && <p class="text-body mt-8 max-w-[44ch]">{lede}</p>}
+</header>

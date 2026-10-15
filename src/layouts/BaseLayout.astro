@@ -2,6 +2,7 @@
 import { Font } from 'astro:assets';
 import SiteHeader from '@/components/SiteHeader.astro';
 import SiteFooter from '@/components/SiteFooter.astro';
+import BookingBand from '@/components/BookingBand.astro';
 import { site } from '@/data/site';
 import '@/styles/global.css';
 
@@ -10,9 +11,11 @@ interface Props {
   description?: string;
   /** `light-gallery` switches the page to the white-cube exhibition palette. */
   theme?: 'dark' | 'light-gallery';
+  /** Hide the closing booking band (used on /book itself). */
+  hideBooking?: boolean;
 }
 
-const { title, description = site.description, theme = 'dark' } = Astro.props;
+const { title, description = site.description, theme = 'dark', hideBooking = false } = Astro.props;
 const pageTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.artist}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
@@ -35,8 +38,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:url" content={canonical} />
 
     <!-- Self-hosted fonts with size-adjusted fallbacks. Every face visible
-         above the fold is preloaded (Latin subset only); italic is not. -->
-    <Font cssVariable="--font-newsreader" preload={[{ style: 'normal' }]} />
+         above the fold is preloaded (Latin subset only), including the
+         Newsreader italic used for the hero headline. -->
+    <Font cssVariable="--font-newsreader" preload />
     <Font cssVariable="--font-geist" preload />
     <Font cssVariable="--font-geist-mono" preload />
   </head>
@@ -46,6 +50,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <main id="main">
       <slot />
     </main>
+    {hideBooking ? <div class="mt-32 sm:mt-48" /> : <BookingBand />}
     <SiteFooter />
   </body>
 </html>

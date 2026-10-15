@@ -1,0 +1,49 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHead from '@/components/PageHead.astro';
+import SeriesIndex from '@/components/SeriesIndex.astro';
+import Plate from '@/components/Plate.astro';
+import { plates } from '@/data/plates';
+
+// Selected frames are not yet assigned to a series; they hang as an
+// unattributed selection until Isaiah confirms which series each belongs to.
+const selected = [
+  plates.recordStore,
+  plates.meshPair,
+  plates.earringPortrait,
+  plates.cathedral,
+  plates.handsPortrait,
+];
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<BaseLayout title="Work">
+  <PageHead
+    eyebrow="Work"
+    title="Series, not a feed."
+    lede="Each body of work is shown as a series with its own concept. Selected frames follow the index."
+  />
+
+  <SeriesIndex heading="Index" withConcepts linked={false} />
+
+  <section aria-labelledby="selected" class="mx-auto mt-32 max-w-screen-2xl px-gutter sm:mt-48">
+    <div class="flex items-baseline justify-between gap-6 border-b border-border pb-4">
+      <h2 id="selected" class="text-meta text-bone">Selected frames</h2>
+      <p class="text-meta">{selected.length} plates</p>
+    </div>
+
+    <!-- Two offset columns; each plate keeps its native frame. -->
+    <div class="mt-12 grid grid-cols-1 gap-y-20 sm:grid-cols-2 sm:gap-x-8 lg:gap-x-16">
+      {
+        selected.map((plate, i) => (
+          <Plate
+            plate={plate}
+            index={pad(i + 1)}
+            sizes="(min-width: 1536px) 700px, (min-width: 640px) 46vw, 100vw"
+            class:list={[i % 2 === 1 && 'sm:mt-40', i % 4 === 2 && 'sm:w-4/5', i % 4 === 3 && 'sm:ml-auto sm:w-4/5']}
+          />
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

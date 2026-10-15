@@ -2,7 +2,8 @@
 /**
  * Minimal LVXE header. Static (not sticky, no blur), zero JavaScript.
  * On narrow screens the navigation drops to its own row beneath the wordmark
- * instead of hiding behind a menu toggle — four words don't need a drawer.
+ * instead of hiding behind a menu toggle — three words don't need a drawer.
+ * Book carries the site's one burgundy accent; the current page gets a bone underline.
  */
 import { navigation, site } from '@/data/site';
 
@@ -15,7 +16,7 @@ const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`)
     class="mx-auto flex max-w-screen-2xl flex-wrap items-baseline justify-between gap-x-10 gap-y-4 px-gutter pt-6 pb-5 sm:pt-8 sm:pb-6"
   >
     <a href="/" class="group flex items-baseline gap-3" aria-label={`${site.name} — home`}>
-      <span class="font-display text-[1.375rem] leading-none tracking-[0.18em] text-bone">
+      <span class="font-display text-[1.375rem] leading-none tracking-[0.3em] text-bone">
         {site.name}
       </span>
       <span class="text-meta hidden md:inline">{site.artist}</span>
@@ -33,7 +34,11 @@ const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`)
                   aria-current={current ? 'page' : undefined}
                   class:list={[
                     'text-meta inline-block border-b pb-1 transition-colors duration-200 ease-editorial hover:text-bone',
-                    current ? 'border-burgundy text-bone' : 'border-transparent',
+                    item.accent
+                      ? 'border-b-2 border-burgundy text-bone'
+                      : current
+                        ? 'border-bone text-bone'
+                        : 'border-transparent',
                   ]}
                 >
                   {item.label}

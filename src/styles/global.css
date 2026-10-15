@@ -171,6 +171,15 @@
     text-decoration-color: var(--color-bone);
   }
 
+  /* The booking accent: the only place burgundy appears as a line. */
+  .link-book {
+    text-decoration-line: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.45em;
+    text-decoration-color: var(--color-burgundy);
+    color: var(--color-bone);
+  }
+
   .skip-link {
     position: absolute;
     left: var(--spacing-gutter);

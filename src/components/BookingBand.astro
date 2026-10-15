@@ -1,0 +1,19 @@
+---
+/**
+ * Full-width booking band that closes every page except /book
+ * (Vision Board: Monolith's booking bar, Veil's red reserved for booking).
+ */
+import { site } from '@/data/site';
+---
+
+<aside aria-label="Booking" class="mt-32 border-t border-border bg-charcoal sm:mt-48">
+  <div
+    class="mx-auto flex max-w-screen-2xl flex-wrap items-baseline justify-between gap-x-10 gap-y-4 px-gutter py-10 sm:py-14"
+  >
+    <p class="text-heading italic">Book a session.</p>
+    <div class="flex flex-wrap items-baseline gap-x-10 gap-y-3">
+      <span class="text-meta">{site.region}</span>
+      <a href="/book" class="text-meta link-book">Start an inquiry</a>
+    </div>
+  </div>
+</aside>

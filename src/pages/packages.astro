@@ -1,0 +1,72 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHead from '@/components/PageHead.astro';
+import { commercial, onRequest, sessionPackages } from '@/data/packages';
+import { site } from '@/data/site';
+
+const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+---
+
+<BaseLayout
+  title="Packages"
+  description={`Portrait and editorial session packages with LVXE across ${site.region}.`}
+>
+  <PageHead
+    eyebrow="Packages"
+    title="Rates in plain view."
+    lede={`Portrait and editorial sessions for models and creatives across ${site.region}.`}
+  />
+
+  <section aria-labelledby="sessions" class="mx-auto max-w-screen-2xl px-gutter">
+    <div class="grid gap-y-10 lg:grid-cols-12 lg:gap-x-8">
+      <h2 id="sessions" class="text-meta text-bone lg:col-span-3">Sessions</h2>
+
+      <div class="lg:col-span-9">
+        <table class="w-full border-collapse">
+          <caption class="sr-only">Session packages and prices</caption>
+          <thead>
+            <tr class="border-b border-border">
+              <th scope="col" class="text-meta pb-4 text-left font-normal">Package</th>
+              <th scope="col" class="text-meta pb-4 text-right font-normal">Rate</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              sessionPackages.map((p) => (
+                <tr class="border-b border-border">
+                  <th scope="row" class="py-6 pr-6 text-left font-normal sm:py-8">
+                    <span class="text-heading block italic">{p.name}</span>
+                    <span class="text-meta mt-2 block">{p.detail}</span>
+                  </th>
+                  <td class="text-heading py-6 text-right align-top tabular-nums sm:py-8">
+                    {p.price === null ? 'On request' : usd.format(p.price)}
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+
+        <p class="text-body mt-8">
+          Also available, rate on request: {onRequest.join(', ').toLowerCase()}.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="commercial" class="mx-auto mt-32 max-w-screen-2xl px-gutter sm:mt-40">
+    <div class="grid gap-y-10 border-t border-border pt-10 lg:grid-cols-12 lg:gap-x-8">
+      <h2 id="commercial" class="text-meta text-bone lg:col-span-3">Commercial</h2>
+      <div class="lg:col-span-9">
+        <ul class="grid gap-y-4 sm:grid-cols-2 sm:gap-x-8">
+          {commercial.map((c) => <li class="text-heading italic">{c}</li>)}
+        </ul>
+        <p class="text-body mt-10 max-w-measure">
+          Brand, corporate and event work is quoted per project. Send the brief, dates and usage
+          through the booking form.
+        </p>
+        <a href="/book" class="text-meta link-book mt-8 inline-block">Request a quote</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

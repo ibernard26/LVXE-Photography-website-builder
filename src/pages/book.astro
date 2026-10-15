@@ -1,0 +1,100 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHead from '@/components/PageHead.astro';
+import { commercial, onRequest, sessionPackages } from '@/data/packages';
+import { site } from '@/data/site';
+
+const endpoint = site.bookingEndpoint;
+const field = 'mt-3 w-full border-0 border-b border-soft-gray bg-transparent py-2 text-bone text-[1rem] focus:border-bone focus:outline-none';
+const label = 'text-meta block';
+---
+
+<BaseLayout title="Book" hideBooking description={`Book a session with LVXE across ${site.region}.`}>
+  <PageHead
+    eyebrow="Book"
+    title="Start an inquiry."
+    lede="Share the session you have in mind, your dates, and the best way to reach you."
+  />
+
+  <section class="mx-auto max-w-screen-2xl px-gutter">
+    <form
+      id="inquiry"
+      method="post"
+      action={endpoint || undefined}
+      data-connected={endpoint ? 'true' : 'false'}
+      class="grid gap-x-8 gap-y-12 border-t border-border pt-12 lg:grid-cols-12"
+    >
+      <div class="lg:col-span-5">
+        <label for="name" class={label}>Name</label>
+        <input id="name" name="name" type="text" autocomplete="name" required class={field} />
+      </div>
+      <div class="lg:col-span-5 lg:col-start-7">
+        <label for="email" class={label}>Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" required class={field} />
+      </div>
+
+      <div class="lg:col-span-5">
+        <label for="package" class={label}>Package</label>
+        <select id="package" name="package" required class={`${field} appearance-none`}>
+          <option value="" class="bg-obsidian">Choose one</option>
+          {sessionPackages.map((p) => <option class="bg-obsidian">{p.name}</option>)}
+          {onRequest.map((p) => <option class="bg-obsidian">{p}</option>)}
+          {commercial.map((p) => <option class="bg-obsidian">{p}</option>)}
+        </select>
+      </div>
+      <div class="lg:col-span-5 lg:col-start-7">
+        <label for="instagram" class={label}>Instagram</label>
+        <input id="instagram" name="instagram" type="text" placeholder="@handle" class={field} />
+      </div>
+
+      <fieldset class="lg:col-span-5">
+        <legend class={label}>Preferred dates</legend>
+        <div class="grid grid-cols-2 gap-x-6">
+          <div>
+            <label for="date-from" class="sr-only">From</label>
+            <input id="date-from" name="date_from" type="date" class={field} />
+          </div>
+          <div>
+            <label for="date-to" class="sr-only">To</label>
+            <input id="date-to" name="date_to" type="date" class={field} />
+          </div>
+        </div>
+      </fieldset>
+      <div class="lg:col-span-5 lg:col-start-7">
+        <label for="references" class={label}>References</label>
+        <input
+          id="references"
+          name="references"
+          type="text"
+          placeholder="Links to moodboards or images"
+          class={field}
+        />
+      </div>
+
+      <div class="lg:col-span-11">
+        <label for="message" class={label}>Concept</label>
+        <textarea id="message" name="message" rows="4" class={`${field} resize-y`}></textarea>
+      </div>
+
+      <div class="flex flex-wrap items-baseline gap-x-10 gap-y-4 lg:col-span-11">
+        <button type="submit" class="text-meta link-book cursor-pointer bg-transparent p-0">
+          Send inquiry
+        </button>
+        <p id="inquiry-status" role="status" class="text-meta"></p>
+      </div>
+    </form>
+  </section>
+</BaseLayout>
+
+<script>
+  // Until a booking endpoint is configured in src/data/site.ts the form cannot
+  // deliver anything, so say so plainly instead of pretending it was sent.
+  const form = document.getElementById('inquiry') as HTMLFormElement | null;
+  const status = document.getElementById('inquiry-status');
+  if (form && status && form.dataset.connected !== 'true') {
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      status.textContent = 'Online inquiries are not connected yet. Nothing was sent.';
+    });
+  }
+</script>

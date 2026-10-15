@@ -1,0 +1,54 @@
+---
+/**
+ * Numbered series index (Vision Board, Direction A "Monolith").
+ * The numbers are catalogue order, so they are real structure, not decoration.
+ */
+import { series } from '@/data/series';
+
+interface Props {
+  /** Heading level text; the index is reused on the homepage and /work. */
+  heading?: string;
+  /** Show concept lines under each title. */
+  withConcepts?: boolean;
+  /** Link rows to /work anchors (homepage) or render plain rows (/work). */
+  linked?: boolean;
+}
+
+const { heading = 'Series', withConcepts = false, linked = true } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<section aria-labelledby="series-index" class="mx-auto max-w-screen-2xl px-gutter">
+  <div class="flex items-baseline justify-between gap-6 border-b border-border pb-4">
+    <h2 id="series-index" class="text-meta text-bone">{heading}</h2>
+    <p class="text-meta">{series.length} series</p>
+  </div>
+
+  <ol>
+    {
+      series.map((s, i) => {
+        const Row = linked ? 'a' : 'div';
+        return (
+          <li id={linked ? undefined : s.slug} class="scroll-mt-8 border-b border-border">
+            <Row
+              href={linked ? `/work#${s.slug}` : undefined}
+              class:list={[
+                'grid grid-cols-[2.5rem_minmax(0,1fr)] items-baseline gap-x-4 gap-y-2 py-6 sm:grid-cols-[4rem_minmax(0,1fr)_auto] sm:py-8',
+                linked && 'group transition-colors duration-200 ease-editorial',
+              ]}
+            >
+              <span class="text-meta">{pad(i + 1)}</span>
+              <span class="min-w-0">
+                <span class="text-heading block italic transition-colors duration-200 ease-editorial group-hover:text-soft-gray">
+                  {s.title}
+                </span>
+                {withConcepts && s.concept && <span class="text-body mt-2 block max-w-measure">{s.concept}</span>}
+              </span>
+              <span class="text-meta col-start-2 sm:col-start-auto">{s.status}</span>
+            </Row>
+          </li>
+        );
+      })
+    }
+  </ol>
+</section>
