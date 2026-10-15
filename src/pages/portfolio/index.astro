@@ -1,29 +1,13 @@
 ---
-import { getCollection } from 'astro:content';
 import Layout from '@/layouts/Layout.astro';
-import Plate from '@/components/Plate.astro';
+import CuratorialSplit from '@/components/CuratorialSplit.astro';
+import ViewQueryRedirect from '@/components/ViewQueryRedirect.astro';
+import { getStream } from '@/lib/plates';
 
-const projects = (await getCollection('projects', ({ data }) => !data.draft))
-  .sort((a, b) => b.data.year - a.data.year);
+const plates = await getStream();
 ---
 
-<Layout title="Portfolio" description="Selected fashion, portrait and creative work by LVXE.">
-  <section class="mx-auto max-w-screen-2xl px-gutter pt-16 sm:pt-24">
-    <h1 class="text-display">Portfolio</h1>
-    <!-- Index grid: the one place thumbnails use a fixed 4:5 frame (sanctioned exception). -->
-    <ul class="mt-16 grid gap-x-8 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
-      {
-        projects.map((p) => (
-          <li>
-            <a href={`/portfolio/${p.id}`} class="group block">
-              <Plate image={p.data.cover} alt={p.data.coverAlt} variant="thumb" thumbAspect="4/5"
-                sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw" />
-              <p class="text-meta mt-4">{p.data.category} / {p.data.year}{p.data.sample && ' / sample'}</p>
-              <p class="text-heading mt-1 group-hover:underline">{p.data.title}</p>
-            </a>
-          </li>
-        ))
-      }
-    </ul>
-  </section>
+<Layout title="Portfolio" description="The LVXE exhibition: fashion, portraits and creative work by Isaiah Bernard." splitChrome>
+  <ViewQueryRedirect />
+  <CuratorialSplit plates={plates} />
 </Layout>

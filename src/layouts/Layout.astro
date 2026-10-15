@@ -3,7 +3,7 @@ import { Font, getImage } from 'astro:assets';
 import SiteHeader from '@/components/SiteHeader.astro';
 import SiteFooter from '@/components/SiteFooter.astro';
 import { site } from '@/data/site';
-import { heroDiptych } from '@/data/hero';
+import ogSource from '@/assets/images/portfolio/red-motion-portrait.jpg';
 import '@/styles/global.css';
 
 interface Props {
@@ -13,13 +13,15 @@ interface Props {
   theme?: 'dark' | 'light-gallery';
   /** Set true on pages that should not be indexed (e.g. 404). */
   noindex?: boolean;
+  /** Hide the site header at lg+ because the page supplies its own masthead (Curatorial Split). */
+  splitChrome?: boolean;
 }
 
-const { title, description = site.description, theme = 'dark', noindex = false } = Astro.props;
+const { title, description = site.description, theme = 'dark', noindex = false, splitChrome = false } = Astro.props;
 const pageTitle = title ? `${title} | ${site.name}` : `${site.name} | ${site.artist}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 
-const og = await getImage({ src: heroDiptych[0].image, width: Math.min(1200, heroDiptych[0].image.width), format: 'jpg', quality: 80 });
+const og = await getImage({ src: ogSource, width: Math.min(1200, ogSource.width), format: 'jpg', quality: 80 });
 const ogUrl = new URL(og.src, Astro.site);
 
 const jsonLd = {
@@ -53,7 +55,7 @@ const jsonLd = {
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogUrl} />
-    <meta property="og:image:alt" content={heroDiptych[0].alt} />
+    <meta property="og:image:alt" content="Portrait dissolved by horizontal red motion blur, one eye held sharp." />
     <meta name="twitter:card" content="summary_large_image" />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
@@ -63,7 +65,7 @@ const jsonLd = {
   </head>
   <body>
     <a href="#main" class="skip-link text-meta">Skip to content</a>
-    <SiteHeader />
+    <div class:list={[splitChrome && 'lg:hidden']}><SiteHeader /></div>
     <main id="main" tabindex="-1">
       <slot />
     </main>

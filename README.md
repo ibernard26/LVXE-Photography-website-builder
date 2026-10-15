@@ -118,3 +118,12 @@ endpoint the page shows a "not connected" notice with a mailto link and disables
 - [ ] Domain purchased and `SITE_URL` set in the build environment.
 - [ ] Hosting configured for Node 22.12+ (`.nvmrc`), build `npm run build`, output `dist/`.
 - [ ] At least one landscape photograph added to test non-portrait proportions.
+
+## Portfolio: Curatorial Split and Archival Vault
+
+- `/` and `/portfolio`: **Curatorial Split** exhibition (35% sticky panel at lg+ on screens at least 44rem tall, 65% plate stream).
+- `/portfolio/vault`: **Archival Vault** table with hover/focus preview (desktop pointer only).
+- Filters: `/portfolio/category/<fashion|portraits|creative|commercial>` and `/portfolio/vault/category/<…>`. All routes are prerendered, so views and filters work without JavaScript; `?view=vault` is forwarded by a small script.
+- Plates live in `src/content/plates/*.md` (plate no., title, year, discipline, image, alt, ratio). `getPlates()` in `src/lib/plates.ts` fails the build if a declared ratio doesn't match the real image within 1.5%. The Ratio column is derived from actual pixels.
+- Landscape plates (3:2, 16:9) automatically span the full stream width; none exist yet.
+- `/inquire?type=commercial` preselects the commercial client type and category.

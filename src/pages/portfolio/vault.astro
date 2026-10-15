@@ -1,0 +1,11 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import ArchivalVault from '@/components/ArchivalVault.astro';
+import { getPlates } from '@/lib/plates';
+
+const plates = await getPlates();
+---
+
+<Layout title="Archival Vault | Portfolio" description="Index of every LVXE plate by number, title, year, ratio and discipline.">
+  <ArchivalVault plates={plates} />
+</Layout>

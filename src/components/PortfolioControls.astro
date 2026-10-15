@@ -1,0 +1,49 @@
+---
+/**
+ * View toggle + discipline filters. Plain links to prerendered routes, so both
+ * work without JavaScript. State is exposed with aria-current="page".
+ */
+import { disciplines, disciplineLabel, type Discipline } from '@/lib/plates';
+
+interface Props { view: 'exhibition' | 'vault'; active?: Discipline; class?: string }
+const { view, active, class: className } = Astro.props;
+
+const base = view === 'vault' ? '/portfolio/vault' : '/portfolio';
+const filterHref = (d?: Discipline) => (d ? `${base}/category/${d}` : base);
+const viewHref = (v: 'exhibition' | 'vault') => {
+  const root = v === 'vault' ? '/portfolio/vault' : '/portfolio';
+  return active ? `${root}/category/${active}` : root;
+};
+const linkCls = 'text-meta inline-block min-h-6 border-b pb-1 transition-colors duration-200 hover:text-bone';
+---
+
+<div class:list={['space-y-6', className]}>
+  <nav aria-label="Portfolio view">
+    <ul class="flex gap-x-6">
+      {(['exhibition', 'vault'] as const).map((v) => (
+        <li>
+          <a href={viewHref(v)} aria-current={view === v ? 'page' : undefined}
+            class:list={[linkCls, view === v ? 'border-burgundy text-bone' : 'border-transparent']}>
+            {v === 'exhibition' ? 'Exhibition' : 'Vault'}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+  <nav aria-label="Filter by discipline">
+    <ul class="flex flex-wrap gap-x-5 gap-y-2">
+      <li>
+        <a href={filterHref()} aria-current={!active ? 'page' : undefined}
+          class:list={[linkCls, !active ? 'border-burgundy text-bone' : 'border-transparent']}>All</a>
+      </li>
+      {disciplines.map((d) => (
+        <li>
+          <a href={filterHref(d)} aria-current={active === d ? 'page' : undefined}
+            class:list={[linkCls, active === d ? 'border-burgundy text-bone' : 'border-transparent']}>
+            {disciplineLabel[d]}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</div>

@@ -19,11 +19,12 @@ interface Props {
   variant?: 'full' | 'thumb';
   thumbAspect?: '4/5' | '3/2' | '2/3' | '16/9';
   class?: string;
+  id?: string;
 }
 
 const {
   image, alt, sizes, caption, index, priority = false,
-  variant = 'full', thumbAspect = '4/5', class: className,
+  variant = 'full', thumbAspect = '4/5', class: className, id,
 } = Astro.props;
 
 const candidateWidths = [480, 720, 960, 1280, 1600, 2000, 2400];
@@ -37,7 +38,8 @@ const imgClass = variant === 'thumb'
   : 'w-full h-auto bg-charcoal';
 ---
 
-<figure class:list={['plate', className]}>
+<figure id={id} class:list={['plate', className]}>
+  <div class="bg-charcoal">
   <Picture
     src={image}
     alt={alt}
@@ -51,6 +53,7 @@ const imgClass = variant === 'thumb'
     decoding="async"
     class={imgClass}
   />
+  </div>
   {
     (index || caption) && (
       <figcaption class="text-meta mt-3 flex gap-4">

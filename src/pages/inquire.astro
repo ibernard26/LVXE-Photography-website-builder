@@ -7,7 +7,13 @@ const { email } = site.contact;
 const endpoint = import.meta.env.PUBLIC_FORMSPREE_ENDPOINT as string | undefined;
 const ready = typeof endpoint === 'string' && /^https:\/\/formspree\.io\/f\/[A-Za-z0-9]+$/.test(endpoint);
 
-const clientTypes = ['Individual', 'Creative / talent', 'Brand', 'Agency', 'Corporate', 'Other'];
+const clientTypes = [
+  { value: 'individual', label: 'Individual / private' },
+  { value: 'creative', label: 'Creative / talent' },
+  { value: 'commercial', label: 'Commercial: brand or agency' },
+  { value: 'corporate', label: 'Corporate / organisation' },
+  { value: 'other', label: 'Other' },
+];
 const categories = [
   { value: 'fashion', label: 'Fashion' },
   { value: 'portraits', label: 'Portraits' },
@@ -48,7 +54,7 @@ const today = new Date().toISOString().slice(0, 10);
         <label class="text-meta">Client type *
           <select class="field" name="client_type" required>
             <option value="">Select…</option>
-            {clientTypes.map((c) => <option>{c}</option>)}
+            {clientTypes.map((c) => <option value={c.value}>{c.label}</option>)}
           </select>
         </label>
         <label class="text-meta">Category *
@@ -96,6 +102,18 @@ const today = new Date().toISOString().slice(0, 10);
   </section>
 
   <script is:inline>
+    // ?type=commercial (or any client type value) preselects client type; commercial also sets the category.
+    (() => {
+      const type = new URLSearchParams(location.search).get('type');
+      const ct = document.querySelector('select[name="client_type"]');
+      if (type && ct && [...ct.options].some((o) => o.value === type)) {
+        ct.value = type;
+        if (type === 'commercial') {
+          const cat = document.querySelector('select[name="category"]');
+          if (cat) cat.value = 'commercial';
+        }
+      }
+    })();
     // Keep "Latest" >= "Earliest".
     (() => {
       const f = document.querySelector('input[name="date_from"]');
