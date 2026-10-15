@@ -3,6 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHead from '@/components/PageHead.astro';
 import SeriesIndex from '@/components/SeriesIndex.astro';
 import GalleryWall from '@/components/GalleryWall.astro';
+import { plates, type Plate } from '@/data/plates';
 import Film from '@/components/Film.astro';
 import { filmFrame, filmNumber, films } from '@/data/films';
 ---
@@ -12,14 +13,29 @@ import { filmFrame, filmNumber, films } from '@/data/films';
     number="No. 02"
     section="Work"
     title="Work"
-    counter="series, plates & film."
+    counter="Series, Plates & Film."
     lede="Bodies of work are catalogued as series. Every photograph hangs as a plate and every moving piece screens as a film, whole and at the ratio it was made."
   />
 
   <SeriesIndex heading="Catalogue" withConcepts linked={false} />
 
   <div id="plates" class="mt-28 scroll-mt-8 sm:mt-40">
-    <GalleryWall heading="The wall" intro="Select a plate to enter its room." />
+    <GalleryWall
+      heading="The wall"
+      intro="Select a plate to enter its room."
+      blocks={[
+        { kind: 'feature', plate: plates.fingersCloseup, aside: plates.earringPortrait },
+        {
+          kind: 'diptych',
+          plate: plates.handsPortrait,
+          eyebrow: 'Diptych — Monochrome',
+          heading: (plates.handsPortrait as Plate).title ?? 'Untitled',
+          text: plates.handsPortrait.alt,
+        },
+        { kind: 'spread', a: plates.cathedral, b: plates.meshPair },
+        { kind: 'single', plate: plates.recordStore, align: 'right' },
+      ]}
+    />
   </div>
 
   <!-- Films: moving pieces, each screened at its native ratio. -->

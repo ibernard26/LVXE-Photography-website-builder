@@ -6,7 +6,7 @@ Paste this whole document into the reviewing AI together with the preview link
 **Preview:** https://claude.ai/artifact/X13sfFYXTmhCx8FXX4hCpu
 (It must be shared publicly from its Share menu before an outside reviewer can open it.)
 
-**Pages:** Home · Work · plate pages (e.g. Plate 01) · Film 01 · Packages · Book.
+**Pages:** Home · Work · plate pages (e.g. Plate 01) · Film 01 · Commissions · Book.
 The full-screen menu opens from "Menu" at the top right.
 
 ---
@@ -61,7 +61,7 @@ Gray #A7A4A0 · Burgundy #54252D.
 - **Authentic work only:** no AI-generated or stock imagery, and no invented
   projects, clients, awards, publications, quotes or credits.
 - **Commercial separation:** the homepage leads with artistic work, not
-  prices. Rates appear only on Packages. Commercial and corporate clients have
+  prices. Rates appear only on Commissions. Commercial and corporate clients have
   their own clearly separated path, which must still be easy to find.
 - **Accessibility and performance:**
   - keyboard-usable menu (Esc closes it, focus is managed)

@@ -22,10 +22,11 @@ const instagramHandle = instagram.replace(/^@/, '');
       <p class="text-meta text-bone">Contents</p>
       <ul class="mt-4 space-y-2">
         {
-          navigation.map((item) => (
+          navigation.map((item, i) => (
             <li>
               <a href={item.href} class="text-meta transition-colors duration-300 ease-editorial hover:text-bone">
-                {item.label}
+                <span class="text-bone">{String(i + 1).padStart(2, '0')}</span> {item.label}
+                {item.note && <span> ({item.note})</span>}
               </a>
             </li>
           ))

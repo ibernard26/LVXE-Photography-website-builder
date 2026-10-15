@@ -46,12 +46,13 @@ export const issue = { number: '01', year: '2026' };
 export type NavItem = { label: string; href: string; note: string; accent?: boolean };
 
 /**
- * Primary navigation, shown in the full-screen menu. Packages is the separate
- * commercial pathway (README §2.3); Book carries the burgundy accent.
+ * Primary navigation, shown in the full-screen menu and the footer.
+ * Commissions is the separate scope page (README §2.3); Book carries the
+ * burgundy accent.
  */
 export const navigation: NavItem[] = [
-  { label: 'Index', href: '/', note: 'The issue' },
-  { label: 'Work', href: '/work', note: 'Series and plates' },
-  { label: 'Packages', href: '/packages', note: 'Sessions and rates' },
-  { label: 'Book', href: '/book', note: 'Portrait and commercial', accent: true },
+  { label: 'Index', href: '/', note: '' },
+  { label: 'Work', href: '/work', note: 'Series & Plates' },
+  { label: 'Commissions', href: '/commissions', note: 'Editorial & Commercial Scopes' },
+  { label: 'Book', href: '/book', note: 'Inquiry & Brief', accent: true },
 ];

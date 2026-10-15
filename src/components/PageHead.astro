@@ -21,6 +21,7 @@ const { number, section, title, counter, lede } = Astro.props;
     </p>
     <h1 class="reveal-lines col-span-12 lg:col-span-10">
       <span class="line-mask"><span class="text-display text-[clamp(3.5rem,13vw,12rem)]" style="--i:0">{title}</span></span>
+      {counter && ' '}
       {
         counter && (
           <span class="line-mask pl-[20%] sm:pl-[34%]">

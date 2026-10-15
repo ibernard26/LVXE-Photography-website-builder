@@ -1,13 +1,19 @@
 ---
 /**
- * Booking — two clear doors (portrait session or commercial brief) sharing
- * one form. Progressive enhancement: without JS both sections show and
- * only shared fields are required; with JS the chosen path's section is
- * shown, the other is disabled, and `?type=commercial` preselects.
+ * Booking — two explicit pathways (Editorial & Creative Commissions, or
+ * Commercial Campaigns & Corporate Identity) sharing one form. Every control
+ * is borderless except a single bottom rule. Progressive enhancement:
+ * without JS both sections show and only shared fields are required; with
+ * JS the chosen path's section is shown, the other disabled, and
+ * `?type=editorial|commercial` preselects.
+ *
+ * Field rules use Gray at 60% rather than the #1F1F24 hairline: the hairline
+ * is ~1.2:1 against Obsidian and would fail WCAG 1.4.11 (3:1 for input
+ * boundaries). Focus brightens the rule to Bone.
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHead from '@/components/PageHead.astro';
-import { commercial, onRequest, sessionPackages } from '@/data/packages';
+import { commercial, onRequest, scopes, sittings } from '@/data/commissions';
 import { site } from '@/data/site';
 
 const endpoint = site.bookingEndpoint;
@@ -17,13 +23,13 @@ const label = 'text-meta block';
 const usage = ['Web', 'Social', 'Print', 'Campaign / out of home', 'Internal'];
 ---
 
-<BaseLayout title="Book" label="Issue 01 / Book" hideBooking description={`Book a portrait session or send a commercial brief to LVXE, ${site.region}.`}>
+<BaseLayout title="Book" label="Issue 01 / Book" hideBooking description={`Inquire about an editorial commission or send a commercial brief to LVXE, ${site.region}.`}>
   <PageHead
     number="No. 04"
     section="Book"
     title="Book"
-    counter="a session."
-    lede="Choose a portrait session or send a commercial brief. Both arrive in the same place."
+    counter="Inquiry & Brief."
+    lede="Choose the scope of your project. Both pathways arrive in the same place."
   />
 
   <section class="mx-auto max-w-screen-2xl px-gutter">
@@ -34,26 +40,23 @@ const usage = ['Web', 'Social', 'Print', 'Campaign / out of home', 'Internal'];
       data-connected={endpoint ? 'true' : 'false'}
       class="grid grid-cols-12 gap-x-4 gap-y-14 border-t border-border pt-12 lg:gap-x-8"
     >
-      <!-- Path choice -->
+      <!-- Pathway choice: borderless options, a burgundy rule marks the selection. -->
       <fieldset class="col-span-12">
-        <legend class="text-meta mb-6">01 — Type of work</legend>
-        <div class="grid gap-px bg-border sm:grid-cols-2">
-          <label class="path-option group relative cursor-pointer bg-obsidian p-6 sm:p-8">
-            <input type="radio" name="type" value="portrait" class="peer sr-only" checked />
-            <span class="text-meta block">Models, creatives, private clients</span>
-            <span class="mt-4 block font-sans text-[clamp(1.75rem,3.5vw,2.75rem)] font-[500] leading-none tracking-[-0.04em]">
-              Portrait session
-            </span>
-            <span class="rule-grow mt-6 w-full" aria-hidden="true"></span>
-          </label>
-          <label class="path-option group relative cursor-pointer bg-obsidian p-6 sm:p-8">
-            <input type="radio" name="type" value="commercial" class="peer sr-only" />
-            <span class="text-meta block">Brands, companies, events</span>
-            <span class="mt-4 block font-sans text-[clamp(1.75rem,3.5vw,2.75rem)] font-[500] leading-none tracking-[-0.04em]">
-              Commercial brief
-            </span>
-            <span class="rule-grow mt-6 w-full" aria-hidden="true"></span>
-          </label>
+        <legend class="text-meta mb-8">01 — Scope</legend>
+        <div class="grid gap-y-10 sm:grid-cols-2 sm:gap-x-8">
+          {
+            [scopes.editorial, scopes.commercial].map((scope, i) => (
+              <label class="path-option group cursor-pointer">
+                <input type="radio" name="type" value={scope.id} class="peer sr-only" checked={i === 0} />
+                <span class="text-meta block">{scope.for}</span>
+                <span class="path-label mt-4 block font-serif text-[clamp(1.75rem,3.2vw,2.75rem)] leading-[1.05] tracking-[-0.02em] text-soft-gray transition-colors duration-300">
+                  {scope.label}
+                </span>
+                <span class="mt-6 block h-px w-full bg-soft-gray/40" aria-hidden="true"></span>
+                <span class="rule-grow -mt-px w-full" aria-hidden="true"></span>
+              </label>
+            ))
+          }
         </div>
       </fieldset>
 
@@ -71,13 +74,13 @@ const usage = ['Web', 'Social', 'Print', 'Campaign / out of home', 'Internal'];
       </fieldset>
 
       <!-- Portrait path -->
-      <fieldset data-path="portrait" class="col-span-12 grid grid-cols-12 gap-x-4 gap-y-10 lg:gap-x-8">
-        <legend class="text-meta mb-6">03 — Portrait session</legend>
+      <fieldset data-path="editorial" class="col-span-12 grid grid-cols-12 gap-x-4 gap-y-10 lg:gap-x-8">
+        <legend class="text-meta mb-6">03 — Editorial &amp; creative</legend>
         <div class="col-span-12 md:col-span-6">
-          <label for="package" class={label}>Package</label>
-          <select id="package" name="package" class={`${field} appearance-none`}>
+          <label for="sitting" class={label}>Sitting</label>
+          <select id="sitting" name="sitting" class={`${field} appearance-none`}>
             <option value="" class="bg-obsidian">Choose one</option>
-            {sessionPackages.map((p) => <option class="bg-obsidian">{p.name}</option>)}
+            {sittings.map((p) => <option class="bg-obsidian">{p.name}</option>)}
             {onRequest.map((p) => <option class="bg-obsidian">{p}</option>)}
           </select>
         </div>
@@ -93,7 +96,7 @@ const usage = ['Web', 'Social', 'Print', 'Campaign / out of home', 'Internal'];
 
       <!-- Commercial path -->
       <fieldset data-path="commercial" class="col-span-12 grid grid-cols-12 gap-x-4 gap-y-10 lg:gap-x-8">
-        <legend class="text-meta mb-6">03 — Commercial brief</legend>
+        <legend class="text-meta mb-6">03 — Commercial &amp; corporate</legend>
         <div class="col-span-12 md:col-span-6">
           <label for="company" class={label}>Company</label>
           <input id="company" name="company" type="text" autocomplete="organization" class={field} />
@@ -111,12 +114,12 @@ const usage = ['Web', 'Social', 'Print', 'Campaign / out of home', 'Internal'];
         </div>
         <fieldset class="col-span-12 md:col-span-6">
           <legend class={label}>Usage</legend>
-          <div class="mt-4 flex flex-wrap gap-2">
+          <div class="mt-4 flex flex-wrap gap-x-6 gap-y-3">
             {
               usage.map((u, i) => (
                 <label class="cursor-pointer">
                   <input type="checkbox" name="usage" value={u} id={`usage-${i}`} class="peer sr-only" />
-                  <span class="text-meta inline-block border border-soft-gray/50 px-3 py-2 transition-colors duration-300 peer-checked:border-bone peer-checked:bg-bone peer-checked:text-obsidian peer-focus-visible:outline peer-focus-visible:outline-1 peer-focus-visible:outline-offset-2">
+                  <span class="text-meta inline-block border-b border-soft-gray/60 pb-1 transition-colors duration-300 peer-checked:border-burgundy peer-checked:text-bone peer-focus-visible:outline peer-focus-visible:outline-1 peer-focus-visible:outline-offset-4">
                     {u}
                   </span>
                 </label>
@@ -146,7 +149,7 @@ const usage = ['Web', 'Social', 'Print', 'Campaign / out of home', 'Internal'];
       <div class="col-span-12 flex flex-wrap items-center gap-x-10 gap-y-4 border-t border-border pt-10">
         <button
           type="submit"
-          class="group cursor-pointer bg-bone px-8 py-5 font-sans text-[1.125rem] font-[500] tracking-[-0.02em] text-obsidian transition-colors duration-300 hover:bg-soft-gray"
+          class="cursor-pointer border-b-2 border-burgundy bg-transparent px-0 pb-2 font-serif text-[clamp(1.75rem,3vw,2.5rem)] leading-none tracking-[-0.02em] text-bone transition-[padding] duration-300 ease-editorial hover:pr-6"
         >
           <span data-submit-label>Send inquiry</span>
         </button>
@@ -157,15 +160,16 @@ const usage = ['Web', 'Social', 'Print', 'Campaign / out of home', 'Internal'];
 </BaseLayout>
 
 <style>
-  .path-option:has(:checked) {
-    background-color: var(--color-charcoal);
+  .path-option:has(:checked) .path-label,
+  .path-option:hover .path-label {
+    color: var(--color-bone);
   }
   .path-option:has(:checked) .rule-grow {
     transform: scaleX(1);
   }
   .path-option:has(:focus-visible) {
     outline: 1px solid var(--color-bone);
-    outline-offset: -1px;
+    outline-offset: 8px;
   }
 </style>
 
@@ -187,11 +191,13 @@ const usage = ['Web', 'Social', 'Print', 'Campaign / out of home', 'Internal'];
       label.textContent = type === 'commercial' ? 'Send brief' : 'Send inquiry';
     };
 
-    const preset = new URLSearchParams(location.search).get('type');
-    if (preset === 'commercial' || preset === 'portrait') {
+    // `portrait` is kept as an alias for links made before the rename.
+    const raw = new URLSearchParams(location.search).get('type');
+    const preset = raw === 'portrait' ? 'editorial' : raw;
+    if (preset === 'commercial' || preset === 'editorial') {
       radios.forEach((r) => (r.checked = r.value === preset));
     }
-    apply(form.querySelector<HTMLInputElement>('input[name="type"]:checked')?.value ?? 'portrait');
+    apply(form.querySelector<HTMLInputElement>('input[name="type"]:checked')?.value ?? 'editorial');
     radios.forEach((r) => r.addEventListener('change', () => apply(r.value)));
 
     // Until an endpoint is configured in src/data/site.ts the form cannot

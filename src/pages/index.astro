@@ -1,18 +1,18 @@
 ---
 /**
  * Home — Issue 01. Rhythm: dark strip → staggered intro → cinema band →
- * series catalogue → light gallery wall → monochrome pair → commercial
- * spread → booking. No two adjacent sections share a grid.
+ * series catalogue → light gallery wall (feature + diptych) → commercial
+ * scope → booking. Each photograph appears once on the page: the hero holds
+ * plates 01, 03 and 04; the wall holds 02, 05 and 06.
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import HeroStrip from '@/components/HeroStrip.astro';
 import CinemaFrame from '@/components/CinemaFrame.astro';
 import SeriesIndex from '@/components/SeriesIndex.astro';
 import GalleryWall from '@/components/GalleryWall.astro';
-import Plate from '@/components/Plate.astro';
-import { plates, plateNumber } from '@/data/plates';
+import { plates } from '@/data/plates';
 import { films } from '@/data/films';
-import { commercial } from '@/data/packages';
+import { commercial } from '@/data/commissions';
 import { issue, site } from '@/data/site';
 
 const [l1, l2, l3] = site.slogan.lines;
@@ -27,8 +27,8 @@ const [l1, l2, l3] = site.slogan.lines;
       <p class="text-meta col-span-12 lg:col-span-2">No. {issue.number}<br />Introduction</p>
 
       <h2 id="intro-title" class="reveal-lines col-span-12 lg:col-span-10" data-draft={site.slogan.draft || undefined}>
-        <span class="line-mask"><span class="text-display" style="--i:0">{l1}</span></span>
-        <span class="line-mask pl-[18%] sm:pl-[24%]"><span class="text-display-serif" style="--i:1">{l2}</span></span>
+        <span class="line-mask"><span class="text-display" style="--i:0">{l1}</span></span>{' '}
+        <span class="line-mask pl-[18%] sm:pl-[24%]"><span class="text-display-serif" style="--i:1">{l2}</span></span>{' '}
         <span class="line-mask pl-[42%] sm:pl-[52%]">
           <span class="text-display" style="--i:2">{l3}<span class="text-burgundy">.</span></span>
         </span>
@@ -58,35 +58,27 @@ const [l1, l2, l3] = site.slogan.lines;
     <GalleryWall
       heading="Plates"
       intro="Every frame is shown whole, at the ratio it was made. Select a plate to enter its room."
+      blocks={[
+        { kind: 'feature', plate: plates.earringPortrait, aside: plates.meshPair },
+        {
+          kind: 'diptych',
+          plate: plates.recordStore,
+          side: 'right',
+          eyebrow: 'Diptych — Monochrome',
+          heading: 'In Monochrome.',
+          text: plates.recordStore.alt,
+        },
+      ]}
     />
   </div>
-
-  <!-- Paired composition: two monochrome plates in conversation. -->
-  <section aria-labelledby="pair-title" class="mx-auto mt-28 max-w-screen-2xl px-gutter sm:mt-40">
-    <div class="grid grid-cols-12 gap-x-4 gap-y-10 lg:gap-x-8">
-      <div class="col-span-12 lg:col-span-3">
-        <p class="text-meta">Pair — Monochrome</p>
-        <h2 id="pair-title" class="reveal-lines mt-6">
-          <span class="line-mask"><span class="text-heading" style="--i:0">Two frames,</span></span>
-          <span class="line-mask"><span class="text-heading" style="--i:1">in monochrome.</span></span>
-        </h2>
-      </div>
-      <div class="col-span-7 lg:col-span-4 lg:col-start-5">
-        <Plate plate={plates.recordStore} href={`/work/${plates.recordStore.id}`} label={`Pl. ${plateNumber(plates.recordStore)}`} sizes="(min-width: 1024px) 30vw, 58vw" />
-      </div>
-      <div class="col-span-5 mt-24 lg:col-span-3 lg:col-start-10 lg:mt-48">
-        <Plate plate={plates.handsPortrait} href={`/work/${plates.handsPortrait.id}`} label={`Pl. ${plateNumber(plates.handsPortrait)}`} i={1} sizes="(min-width: 1024px) 22vw, 42vw" />
-      </div>
-    </div>
-  </section>
 
   <!-- Commercial pathway: clearly separated from the editorial sequence. -->
   <section aria-labelledby="commercial-title" class="mx-auto mt-28 max-w-screen-2xl px-gutter sm:mt-40">
     <div class="grid grid-cols-12 gap-x-4 gap-y-10 border-t border-border pt-10 lg:gap-x-8">
       <p class="text-meta col-span-12 lg:col-span-2">For brands<br />&amp; companies</p>
       <h2 id="commercial-title" class="reveal-lines col-span-12 lg:col-span-10">
-        <span class="line-mask"><span class="text-display" style="--i:0">Commercial</span></span>
-        <span class="line-mask"><span class="text-display-serif" style="--i:1">commissions.</span></span>
+        <span class="line-mask"><span class="text-display" style="--i:0">Commercial</span></span>{' '}
+        <span class="line-mask"><span class="text-display-serif" style="--i:1">Commissions.</span></span>
       </h2>
       <div class="col-span-12 lg:col-span-6 lg:col-start-7">
         <ul class="border-t border-border">
@@ -102,6 +94,7 @@ const [l1, l2, l3] = site.slogan.lines;
           start the conversation.
         </p>
         <a href="/book?type=commercial" class="text-meta link-book mt-8 inline-block">Send a commercial brief</a>
+        <a href="/commissions" class="text-meta link-quiet mt-8 ml-10 inline-block">Both scopes</a>
       </div>
     </div>
   </section>
