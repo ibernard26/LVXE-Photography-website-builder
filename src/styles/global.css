@@ -1,146 +1,121 @@
 @import "tailwindcss";
+@config "../../tailwind.config.mjs";
 
 /* ==========================================================================
-   LVXE — Design tokens
-   Source of truth: README §3. Palette is "proposed", awaiting final sign-off.
-
-   Declared inside `@theme static` so Tailwind (a) always emits them on :root
-   exactly as named in the spec, and (b) generates matching utilities
-   (bg-obsidian, text-bone, border-border…) that reference the variables —
-   which is what lets [data-theme="light-gallery"] re-skin a page at runtime.
-
-   `--color-*: initial` etc. wipe Tailwind's default palette, fonts, radii and
-   shadows so off-brand utilities (bg-indigo-500, rounded-full, shadow-xl,
-   backdrop-blur) cannot be generated at all.
+   LVXE design tokens (README §3, approved by the owner).
+   Colours, fonts and aspect ratios live in tailwind.config.mjs; the raw values
+   live here as --lvxe-* so [data-theme="light-gallery"] / .theme-light can swap them.
    ========================================================================== */
 
-@theme static {
-  --color-*: initial;
-  --font-*: initial;
+@theme {
+  /* Remove off-brand defaults: no rounded pills, shadows or glass blur. */
   --radius-*: initial;
   --shadow-*: initial;
   --inset-shadow-*: initial;
   --drop-shadow-*: initial;
   --text-shadow-*: initial;
   --blur-*: initial;
+  --backdrop-blur-*: initial;
 
-  /* Primary dark theme (default) */
-  --color-obsidian: #0B0B0D;  /* Background canvas */
-  --color-charcoal: #1B1B1F;  /* Surface elevation, borders, cards */
-  --color-bone: #F2EFE9;      /* Primary typography, headlines */
-  --color-soft-gray: #A7A4A0; /* Captions, metadata, secondary copy */
-  --color-burgundy: #54252D;  /* Sparse accent: active indicators, keylines */
-  --color-border: #1F1F24;    /* Sub-pixel hairline dividers */
-  --color-transparent: transparent;
-  --color-current: currentColor;
-
-  /* --font-newsreader / --font-geist / --font-geist-mono are injected by
-     Astro's Fonts API (<Font /> in BaseLayout) with metric-matched fallbacks. */
-  --font-display: var(--font-newsreader), 'Newsreader', Georgia, serif;
-  --font-sans: var(--font-geist), 'Geist Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace;
-}
-
-:root {
-  color-scheme: dark;
-}
-
-/* Light exhibition mode — opt-in per page via <html data-theme="light-gallery"> */
-[data-theme="light-gallery"] {
-  --color-obsidian: #FDFCFA;  /* High-key gallery background */
-  --color-charcoal: #EDEAE4;  /* Light surface / dividers */
-  --color-bone: #141416;      /* High-contrast ink text */
-  --color-soft-gray: #686561; /* Gallery notes, metadata */
-  --color-burgundy: #54252D;
-  --color-border: #E5E2DC;
-
-  color-scheme: light;
-}
-
-@theme {
-  /* Editorial measure and page gutter */
   --container-measure: 34rem;
   --spacing-gutter: clamp(1.25rem, 4vw, 3rem);
-
-  /* Restrained, short transitions only — no motion library */
   --ease-editorial: cubic-bezier(0.2, 0, 0, 1);
 }
 
-/* ==========================================================================
-   Type scale — max 4 distinct levels per viewport (README §3)
-   ========================================================================== */
+:root {
+  --lvxe-obsidian: #0B0B0D;
+  --lvxe-charcoal: #1B1B1F;
+  --lvxe-bone: #F2EFE9;
+  --lvxe-soft-gray: #A7A4A0;
+  --lvxe-burgundy: #54252D;
+  --lvxe-hairline: #1F1F24;
+  /* Font stacks, sourced from tailwind.config.mjs so there is one source of truth. */
+  --font-display: theme(fontFamily.display);
+  --font-sans: theme(fontFamily.sans);
+  --font-mono: theme(fontFamily.mono);
+  color-scheme: dark;
+}
 
+/* Light exhibition mode: <html data-theme="light-gallery"> or any .theme-light wrapper */
+[data-theme="light-gallery"],
+.theme-light {
+  --lvxe-obsidian: #FDFCFA; /* gallery background */
+  --lvxe-charcoal: #EDEAE4; /* surface */
+  --lvxe-bone: #141416;     /* ink */
+  --lvxe-soft-gray: #686561;
+  --lvxe-burgundy: #54252D;
+  --lvxe-hairline: #E5E2DC;
+  color-scheme: light;
+}
+
+/* Type scale: max 4 levels per viewport */
 @utility text-display {
   font-family: var(--font-display);
   font-size: clamp(2.25rem, 6vw, 4.5rem);
   font-weight: 400;
   line-height: 1.05;
   letter-spacing: -0.02em;
-  color: var(--color-bone);
+  color: var(--lvxe-bone);
 }
-
 @utility text-heading {
   font-family: var(--font-display);
   font-size: clamp(1.5rem, 3vw, 2.25rem);
   font-weight: 400;
   line-height: 1.15;
-  color: var(--color-bone);
+  color: var(--lvxe-bone);
 }
-
 @utility text-body {
   font-family: var(--font-sans);
   font-size: 0.9375rem;
   line-height: 1.6;
-  color: var(--color-soft-gray);
+  color: var(--lvxe-soft-gray);
 }
-
 @utility text-meta {
   font-family: var(--font-mono);
   font-size: 0.75rem;
   line-height: 1.4;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-soft-gray);
+  color: var(--lvxe-soft-gray);
 }
-
-/* ==========================================================================
-   Base
-   ========================================================================== */
 
 @layer base {
   html {
-    background-color: var(--color-obsidian);
-    color: var(--color-bone);
+    background-color: var(--lvxe-obsidian);
+    color: var(--lvxe-bone);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
     -webkit-text-size-adjust: 100%;
   }
-
   body {
     min-height: 100dvh;
-    background-color: var(--color-obsidian);
+    background-color: var(--lvxe-obsidian);
   }
-
-  /* Image integrity: proportional scaling only. Never crop, never stretch. */
+  /* Image integrity: proportional scaling only, never crop or stretch. */
   img,
   picture {
     display: block;
     max-width: 100%;
     height: auto;
   }
-
   ::selection {
-    background-color: var(--color-burgundy);
+    background-color: var(--lvxe-burgundy);
     color: #F2EFE9;
   }
-
   :focus-visible {
-    outline: 1px solid var(--color-bone);
+    outline: 1px solid var(--lvxe-bone);
     outline-offset: 4px;
   }
+  summary {
+    list-style: none;
+    cursor: pointer;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
 
+  /* Reduced motion: neutralise every transition/animation site-wide. */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -148,27 +123,23 @@
       transition-duration: 0.01ms !important;
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
     }
   }
 }
 
-/* ==========================================================================
-   Components
-   ========================================================================== */
-
 @layer components {
-  /* Understated text link: hairline underline that firms up on hover. */
+  /* Visible hairline underline that firms up on hover. */
   .link-quiet {
     text-decoration-line: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 0.35em;
-    text-decoration-color: var(--color-charcoal);
-    transition: text-decoration-color 200ms var(--ease-editorial),
-      color 200ms var(--ease-editorial);
+    text-decoration-color: color-mix(in srgb, var(--lvxe-soft-gray) 55%, transparent);
+    transition: text-decoration-color 200ms var(--ease-editorial), color 200ms var(--ease-editorial);
   }
   .link-quiet:hover {
-    color: var(--color-bone);
-    text-decoration-color: var(--color-bone);
+    color: var(--lvxe-bone);
+    text-decoration-color: var(--lvxe-bone);
   }
 
   .skip-link {
@@ -177,10 +148,28 @@
     top: -100%;
     z-index: 50;
     padding: 0.5rem 0.75rem;
-    background-color: var(--color-bone);
-    color: var(--color-obsidian);
+    background-color: var(--lvxe-bone);
+    color: var(--lvxe-obsidian);
   }
   .skip-link:focus {
     top: 0.75rem;
+  }
+
+  .field {
+    display: block;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    background-color: var(--lvxe-charcoal);
+    color: var(--lvxe-bone);
+    border: 1px solid var(--lvxe-hairline);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+  }
+  .field:focus-visible {
+    outline-offset: 2px;
+  }
+  .field:user-invalid {
+    border-color: var(--lvxe-burgundy);
   }
 }

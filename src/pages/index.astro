@@ -1,8 +1,55 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import Layout from '@/layouts/Layout.astro';
 import EditorialHero from '@/components/EditorialHero.astro';
+import ProjectDiptych from '@/components/ProjectDiptych.astro';
+import { site } from '@/data/site';
+
+const projects = (await getCollection('projects', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.year - a.data.year)
+  .slice(0, 2);
 ---
 
-<BaseLayout>
+<Layout>
   <EditorialHero />
-</BaseLayout>
+
+  <!-- Brand statement -->
+  <section aria-labelledby="statement-title" class="mx-auto mt-32 max-w-screen-2xl px-gutter sm:mt-48">
+    <h2 id="statement-title" class="text-meta">The practice</h2>
+    <p class="text-heading mt-6 max-w-[28ch]">{site.brandStatement}</p>
+  </section>
+
+  <!-- Selected projects -->
+  <section aria-labelledby="selected-title" class="mx-auto mt-32 max-w-screen-2xl px-gutter sm:mt-48">
+    <h2 id="selected-title" class="text-meta border-b border-hairline pb-4">Selected work</h2>
+    <div class="mt-16 space-y-32">
+      {projects.map((p, i) => <ProjectDiptych project={p} flip={i % 2 === 1} />)}
+    </div>
+    <p class="mt-16"><a href="/portfolio" class="text-meta link-quiet text-bone">Full portfolio</a></p>
+  </section>
+
+  <!-- Philosophy -->
+  <section aria-labelledby="philosophy-title" class="mx-auto mt-32 max-w-screen-2xl px-gutter sm:mt-48">
+    <div class="grid lg:grid-cols-12 lg:gap-x-8">
+      <h2 id="philosophy-title" class="text-meta lg:col-span-3">Philosophy</h2>
+      <blockquote class="text-heading mt-6 lg:col-span-7 lg:col-start-5 lg:mt-0">{site.philosophy}</blockquote>
+    </div>
+  </section>
+
+  <!-- Commercial preview strip: a separate pathway, no pricing -->
+  <section aria-labelledby="commercial-title" class="mt-32 border-y border-hairline bg-charcoal sm:mt-48">
+    <div class="mx-auto flex max-w-screen-2xl flex-wrap items-baseline justify-between gap-6 px-gutter py-12">
+      <div>
+        <h2 id="commercial-title" class="text-meta text-bone">Commercial</h2>
+        <p class="text-body mt-3 max-w-[48ch]">{site.commercialPreview}</p>
+      </div>
+      <a href="/commercial" class="text-meta link-quiet text-bone">Commercial work</a>
+    </div>
+  </section>
+
+  <!-- Inquiry -->
+  <section aria-labelledby="inquire-title" class="mx-auto mt-32 max-w-screen-2xl px-gutter sm:mt-48">
+    <h2 id="inquire-title" class="text-display max-w-[14ch]">Begin a conversation.</h2>
+    <p class="mt-10"><a href="/inquire" class="text-meta link-quiet text-bone">Inquire</a></p>
+  </section>
+</Layout>

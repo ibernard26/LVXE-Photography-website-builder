@@ -1,55 +1,61 @@
 ---
 /**
- * Plate — the single image primitive for the whole site.
- *
- * Integrity rules (README §2.2):
- *  - Only `widths` are passed to the optimiser, never a target height, so
- *    every derivative is a proportional resize of the original frame.
- *  - The rendered <img> carries the intrinsic width/height attributes and is
- *    sized with `width: 100%; height: auto` — the browser reserves the exact
- *    native-ratio box before the file arrives (zero CLS). No object-fit.
+ * Plate: the single image primitive.
+ *  - variant "full" (default): proportional resize only, intrinsic width/height,
+ *    width:100%/height:auto, NO object-fit. Charcoal background while loading.
+ *  - variant "thumb": the one sanctioned exception (grid/index thumbnails only),
+ *    a fixed frame from tailwind.config.mjs aspectRatio with object-fit: cover.
  */
 import { Picture } from 'astro:assets';
-import type { Plate } from '@/data/plates';
+import type { ImageMetadata } from 'astro';
 
 interface Props {
-  plate: Plate;
-  /** Responsive `sizes` attribute describing the plate's rendered width. */
+  image: ImageMetadata;
+  alt: string;
   sizes: string;
-  /** Visible plate number, e.g. "01". */
+  caption?: string;
   index?: string;
-  /** Set on the single LCP image only. */
   priority?: boolean;
+  variant?: 'full' | 'thumb';
+  thumbAspect?: '4/5' | '3/2' | '2/3' | '16/9';
   class?: string;
 }
 
-const { plate, sizes, index, priority = false, class: className } = Astro.props;
+const {
+  image, alt, sizes, caption, index, priority = false,
+  variant = 'full', thumbAspect = '4/5', class: className,
+} = Astro.props;
 
-const nativeWidth = plate.image.width;
 const candidateWidths = [480, 720, 960, 1280, 1600, 2000, 2400];
-// Never upscale: cap derivatives at the master's own width.
-const widths = [...candidateWidths.filter((w) => w < nativeWidth), nativeWidth];
+const widths = [...candidateWidths.filter((w) => w < image.width), image.width]; // never upscale
+
+const thumbFrame = {
+  '4/5': 'aspect-4/5', '3/2': 'aspect-3/2', '2/3': 'aspect-2/3', '16/9': 'aspect-16/9',
+}[thumbAspect];
+const imgClass = variant === 'thumb'
+  ? `w-full h-auto ${thumbFrame} object-cover bg-charcoal`
+  : 'w-full h-auto bg-charcoal';
 ---
 
 <figure class:list={['plate', className]}>
   <Picture
-    src={plate.image}
-    alt={plate.alt}
+    src={image}
+    alt={alt}
     widths={widths}
     sizes={sizes}
-    formats={['webp']}
+    formats={['avif', 'webp']}
     fallbackFormat="jpg"
-    quality={82}
+    quality={80}
     loading={priority ? 'eager' : 'lazy'}
     fetchpriority={priority ? 'high' : 'auto'}
-    decoding={priority ? 'sync' : 'async'}
-    class="w-full h-auto bg-charcoal"
+    decoding="async"
+    class={imgClass}
   />
   {
-    (index || plate.caption) && (
+    (index || caption) && (
       <figcaption class="text-meta mt-3 flex gap-4">
         {index && <span aria-hidden="true">{index}</span>}
-        {plate.caption && <span>{plate.caption}</span>}
+        {caption && <span>{caption}</span>}
       </figcaption>
     )
   }

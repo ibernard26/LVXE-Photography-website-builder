@@ -1,33 +1,25 @@
 ---
 /**
- * Homepage editorial hero.
+ * Homepage editorial hero: an asymmetrical two-image diptych.
+ * The plates differ in scale and vertical offset, never in shape. Each keeps
+ * its native frame (explicit width/height from the import, no object-fit).
  *
- * Layout: an asymmetric 12-column composition (6 columns on mobile). The
- * plates differ in scale and offset, not in shape — each keeps its native
- * frame via <Plate>. Nothing here sets a height, aspect-ratio or object-fit
- * on an image.
- *
- *   lg ┌──────────┬─┬──────────────────┐
- *      │ copy     │ │                  │
- *      ├──┬─────┬─┤ │  lead plate      │
- *      │  │ 02  │   │                  │
- *      │  │     │   └──────────────────┘
- *      │  └─────┘           ┌──────┐
- *      │                    │ 03   │
+ *   lg  ┌ copy ──────────┐ ┌──────── lead (7 cols) ───────┐
+ *       │                │ │                              │
+ *       └────────────────┘ │                              │
+ *        ┌ counter (4) ┐   │                              │
+ *        │             │   └──────────────────────────────┘
  */
 import Plate from '@/components/Plate.astro';
-import { heroPlates } from '@/data/plates';
+import { heroDiptych } from '@/data/hero';
 import { site } from '@/data/site';
 
-const [lead, second, third] = heroPlates;
+const [lead, counter] = heroDiptych;
 ---
 
 <section aria-labelledby="hero-title" class="mx-auto max-w-screen-2xl px-gutter">
   <div class="grid grid-cols-6 gap-x-4 lg:grid-cols-12 lg:gap-x-8">
-    <!-- Proposition -->
-    <div
-      class="col-span-6 pt-16 pb-14 sm:pt-24 lg:col-span-5 lg:row-start-1 lg:pt-32 lg:pb-0 xl:col-span-4"
-    >
+    <div class="col-span-6 pt-16 pb-14 sm:pt-24 lg:col-span-5 lg:row-start-1 lg:pt-32 lg:pb-0">
       <ul class="text-meta flex flex-wrap gap-x-3 gap-y-1" aria-label="Disciplines">
         {
           site.disciplines.map((d, i) => (
@@ -38,48 +30,31 @@ const [lead, second, third] = heroPlates;
           ))
         }
       </ul>
-
-      <h1 id="hero-title" class="text-display mt-8 max-w-[12ch]" data-draft={site.slogan.draft || undefined}>
-        {site.slogan.text}
-      </h1>
-
-      <p class="text-body mt-8 max-w-[34ch]" data-draft={site.proposition.draft || undefined}>
-        {site.proposition.text}
-      </p>
-
+      <h1 id="hero-title" class="text-display mt-8 max-w-[12ch]">{site.slogan}</h1>
+      <p class="text-body mt-8 max-w-[34ch]">{site.proposition}</p>
       <ul class="mt-12 flex flex-wrap gap-x-10 gap-y-4">
-        <li>
-          <a href="/work" class="text-meta link-quiet text-bone">View the work</a>
-        </li>
-        <li>
-          <a href="/commissions" class="text-meta link-quiet">Commissions</a>
-        </li>
+        <li><a href="/portfolio" class="text-meta link-quiet text-bone">View the portfolio</a></li>
+        <li><a href="/inquire" class="text-meta link-quiet">Inquire</a></li>
       </ul>
     </div>
 
-    <!-- Lead plate — the LCP element -->
+    <!-- Lead plate: the LCP image -->
     <Plate
-      plate={lead}
+      image={lead.image}
+      alt={lead.alt}
       index="01"
       priority
       sizes="(min-width: 1536px) 860px, (min-width: 1024px) 56vw, 100vw"
-      class="col-span-6 lg:col-span-7 lg:col-start-6 lg:row-span-2 lg:row-start-1 lg:pt-16 xl:col-span-7 xl:col-start-6"
+      class="col-span-6 lg:col-span-7 lg:col-start-6 lg:row-span-2 lg:row-start-1 lg:pt-16"
     />
 
-    <!-- Second plate — smaller, inset beneath the copy -->
+    <!-- Counterpoint plate: smaller, dropped below the copy, off-axis -->
     <Plate
-      plate={second}
+      image={counter.image}
+      alt={counter.alt}
       index="02"
-      sizes="(min-width: 1536px) 340px, (min-width: 1024px) 22vw, 66vw"
-      class="col-span-4 mt-16 lg:col-span-3 lg:col-start-2 lg:row-start-2 lg:mt-40 lg:self-start"
-    />
-
-    <!-- Third plate — trails the lead, pushed off its axis -->
-    <Plate
-      plate={third}
-      index="03"
-      sizes="(min-width: 1536px) 340px, (min-width: 1024px) 22vw, 66vw"
-      class="col-span-4 col-start-3 mt-16 lg:col-span-3 lg:col-start-9 lg:row-start-3 lg:mt-24"
+      sizes="(min-width: 1536px) 460px, (min-width: 1024px) 30vw, 66vw"
+      class="col-span-4 col-start-3 mt-16 lg:col-span-4 lg:col-start-2 lg:row-start-2 lg:mt-24 lg:self-start"
     />
   </div>
 </section>

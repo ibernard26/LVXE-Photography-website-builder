@@ -1,0 +1,12 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { site } from '@/data/site';
+---
+
+<Layout title="About" description={`About ${site.artist} and the LVXE practice.`}>
+  <section class="mx-auto max-w-screen-2xl px-gutter pt-16 sm:pt-24">
+    <h1 class="text-display">About</h1>
+    <!-- STUB: biography to be supplied by Isaiah. Do not invent exhibitions, clients or awards. -->
+    <p class="text-body mt-8 max-w-measure">{site.description}</p>
+  </section>
+</Layout>

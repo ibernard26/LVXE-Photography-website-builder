@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig, fontProviders } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
+import process from 'node:process';
 
 /**
  * Path to a Latin variable woff2 shipped by an @fontsource-variable package.
@@ -12,7 +13,7 @@ const fontsource = (family, style) =>
 
 // https://docs.astro.build/en/reference/configuration-reference/
 export default defineConfig({
-  site: 'https://lvxe.studio', // Placeholder — replace with the production domain before launch.
+  site: process.env.SITE_URL ?? 'https://example.com', // TODO: set production domain (SITE_URL env) before launch.
 
   // Fonts: self-hosted from the installed @fontsource-variable packages via the
   // `local` provider, so builds never depend on a CDN. Only the Latin subset

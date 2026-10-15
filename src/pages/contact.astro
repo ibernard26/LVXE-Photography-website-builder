@@ -1,0 +1,19 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { site } from '@/data/site';
+const { email, instagramHandle, instagramUrl } = site.contact;
+---
+
+<Layout title="Contact" description="Contact LVXE by email or Instagram, or send a project inquiry.">
+  <section class="mx-auto max-w-screen-2xl px-gutter pt-16 sm:pt-24">
+    <h1 class="text-display">Contact</h1>
+    <dl class="mt-12 grid max-w-2xl gap-y-8 sm:grid-cols-[10rem_1fr]">
+      <dt class="text-meta">Email</dt>
+      <dd><a href={`mailto:${email}`} class="text-heading link-quiet">{email}</a></dd>
+      <dt class="text-meta">Instagram</dt>
+      <dd><a href={instagramUrl} class="text-heading link-quiet" rel="me noopener noreferrer">@{instagramHandle}</a></dd>
+    </dl>
+    <p class="text-body mt-16 max-w-measure">For bookings and commissions, the inquiry form is the fastest route.</p>
+    <p class="mt-6"><a href="/inquire" class="text-meta link-quiet text-bone">Send an inquiry</a></p>
+  </section>
+</Layout>
