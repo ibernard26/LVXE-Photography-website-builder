@@ -1,7 +1,8 @@
 # LVXE — Release Candidate 1 (hardening pass)
 
 Branch `claude/laughing-ptolemy-vww0ug`. Status: **approved by the owner on Oct 15 for launch on
-GitHub Pages at lvxe.studio** (composition approved; all sitters confirmed by the owner as
+GitHub Pages** at the free address https://ibernard26.github.io/LVXE-Photography-website-builder/
+(custom domain lvxe.duckdns.org to follow) (composition approved; all sitters confirmed by the owner as
 having agreed to publication).
 
 ## 1. Baseline
@@ -129,6 +130,7 @@ be considered.
    and a manual VoiceOver / TalkBack pass, are still required.
 5. Owner data: contact email and Instagram, titles, years, series, discipline
    tags (draft), slogan and proposition (draft), production domain
-   (`site: https://lvxe.studio/`).
+   (site address and base path come from GitHub Pages at build time; attach
+   lvxe.duckdns.org in Settings → Pages when its DNS points at GitHub).
 6. Optionally, approve the 4:5 red portrait from PR #2.
 7. Choose the merge path to `main` (this branch vs the PR #1 → #2 stack).

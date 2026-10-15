@@ -5,6 +5,7 @@
  */
 import { site } from '@/data/site';
 import { scopes } from '@/data/commissions';
+import { link } from '@/lib/link';
 ---
 
 <aside aria-labelledby="booking-band" class="mt-32 bg-charcoal sm:mt-48">
@@ -18,13 +19,13 @@ import { scopes } from '@/data/commissions';
     </div>
     <ul class="grid content-end gap-y-px self-end lg:col-span-5">
       <li>
-        <a href="/book?type=editorial" class="group flex items-baseline justify-between gap-6 border-t border-soft-gray/30 py-5">
+        <a href={link('/book?type=editorial')} class="group flex items-baseline justify-between gap-6 border-t border-soft-gray/30 py-5">
           <span class="text-heading text-[clamp(1.25rem,2.2vw,1.75rem)]">{scopes.editorial.label}</span>
           <span class="text-meta link-book">Inquire</span>
         </a>
       </li>
       <li>
-        <a href="/book?type=commercial" class="group flex items-baseline justify-between gap-6 border-y border-soft-gray/30 py-5">
+        <a href={link('/book?type=commercial')} class="group flex items-baseline justify-between gap-6 border-y border-soft-gray/30 py-5">
           <span class="text-heading text-[clamp(1.25rem,2.2vw,1.75rem)]">{scopes.commercial.label}</span>
           <span class="text-meta link-book">Brief</span>
         </a>

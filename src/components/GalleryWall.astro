@@ -32,6 +32,7 @@ const count = new Set(
 ).size;
 const label = (p: PlateT) => `Pl. ${plateNumber(p)}`;
 const note = (p: PlateT) => `${p.tone} · ${frameOf(p).ratio}`;
+import { link } from '@/lib/link';
 ---
 
 <section aria-labelledby="gallery-wall" class="wall py-24 sm:py-36">
@@ -53,11 +54,11 @@ const note = (p: PlateT) => `${p.tone} · ${frameOf(p).ratio}`;
             return (
               <div class="grid grid-cols-12 items-end gap-x-4 gap-y-16 lg:gap-x-8">
                 <div class="dim-item col-span-12 sm:col-span-7 lg:col-span-6">
-                  <Plate plate={b.plate} href={`/work/${b.plate.id}`} transitionName={`plate-${b.plate.id}`} label={label(b.plate)} note={note(b.plate)} sizes="(min-width: 1024px) 48vw, (min-width: 640px) 56vw, 100vw" />
+                  <Plate plate={b.plate} href={link(`/work/${b.plate.id}`)} transitionName={`plate-${b.plate.id}`} label={label(b.plate)} note={note(b.plate)} sizes="(min-width: 1024px) 48vw, (min-width: 640px) 56vw, 100vw" />
                 </div>
                 {b.aside && (
                   <div class="dim-item col-span-7 col-start-6 sm:col-span-4 sm:col-start-9 lg:col-span-3 lg:col-start-9">
-                    <Plate plate={b.aside} i={1} href={`/work/${b.aside.id}`} transitionName={`plate-${b.aside.id}`} label={label(b.aside)} note={note(b.aside)} sizes="(min-width: 1024px) 24vw, (min-width: 640px) 32vw, 58vw" />
+                    <Plate plate={b.aside} i={1} href={link(`/work/${b.aside.id}`)} transitionName={`plate-${b.aside.id}`} label={label(b.aside)} note={note(b.aside)} sizes="(min-width: 1024px) 24vw, (min-width: 640px) 32vw, 58vw" />
                   </div>
                 )}
               </div>
@@ -67,7 +68,7 @@ const note = (p: PlateT) => `${p.tone} · ${frameOf(p).ratio}`;
             return (
               <div class="grid grid-cols-12 items-center gap-x-4 gap-y-12 lg:gap-x-8">
                 <div class:list={['dim-item col-span-10 sm:col-span-5 lg:col-span-4', right && 'col-start-3 sm:order-2 sm:col-start-8 lg:col-start-9']}>
-                  <Plate plate={b.plate} href={`/work/${b.plate.id}`} transitionName={`plate-${b.plate.id}`} label={label(b.plate)} note={note(b.plate)} sizes="(min-width: 1024px) 32vw, (min-width: 640px) 40vw, 84vw" />
+                  <Plate plate={b.plate} href={link(`/work/${b.plate.id}`)} transitionName={`plate-${b.plate.id}`} label={label(b.plate)} note={note(b.plate)} sizes="(min-width: 1024px) 32vw, (min-width: 640px) 40vw, 84vw" />
                 </div>
                 <div class:list={['col-span-12 sm:col-span-6 lg:col-span-5', right ? 'sm:order-1 sm:col-start-1 lg:col-start-2' : 'sm:col-start-7 lg:col-start-7']}>
                   <p class="text-meta">{b.eyebrow}</p>
@@ -84,7 +85,7 @@ const note = (p: PlateT) => `${p.tone} · ${frameOf(p).ratio}`;
               <div class="grid grid-cols-2 gap-x-4 sm:gap-x-6">
                 {[b.a, b.b].map((p, i) => (
                   <div class="dim-item">
-                    <Plate plate={p} i={i} href={`/work/${p.id}`} transitionName={`plate-${p.id}`} label={label(p)} note={note(p)} sizes="(min-width: 1536px) 760px, 50vw" />
+                    <Plate plate={p} i={i} href={link(`/work/${p.id}`)} transitionName={`plate-${p.id}`} label={label(p)} note={note(p)} sizes="(min-width: 1536px) 760px, 50vw" />
                   </div>
                 ))}
               </div>
@@ -92,7 +93,7 @@ const note = (p: PlateT) => `${p.tone} · ${frameOf(p).ratio}`;
           return (
             <div class="grid grid-cols-12 gap-x-4 lg:gap-x-8">
               <div class:list={['dim-item col-span-9 sm:col-span-5 lg:col-span-4', b.align === 'right' ? 'col-start-4 sm:col-start-8 lg:col-start-8' : 'sm:col-start-2']}>
-                <Plate plate={b.plate} href={`/work/${b.plate.id}`} transitionName={`plate-${b.plate.id}`} label={label(b.plate)} note={note(b.plate)} sizes="(min-width: 1024px) 32vw, (min-width: 640px) 40vw, 75vw" />
+                <Plate plate={b.plate} href={link(`/work/${b.plate.id}`)} transitionName={`plate-${b.plate.id}`} label={label(b.plate)} note={note(b.plate)} sizes="(min-width: 1024px) 32vw, (min-width: 640px) 40vw, 75vw" />
               </div>
             </div>
           );

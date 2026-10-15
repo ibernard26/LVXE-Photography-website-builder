@@ -7,10 +7,14 @@
  * the toggle. Reduced motion: instant.
  */
 import { issue, navigation, site } from '@/data/site';
+import { link } from '@/lib/link';
 import { series } from '@/data/series';
 
-const path = Astro.url.pathname.replace(/\/$/, '') || '/';
-const isCurrent = (href: string) => (href === '/' ? path === '/' : path === href || path.startsWith(`${href}/`));
+// Paths and hrefs both carry the base path; compare without trailing slashes.
+const trim = (p: string) => p.replace(/\/$/, '');
+const path = trim(Astro.url.pathname);
+const home = trim(link('/'));
+const isCurrent = (href: string) => (trim(href) === home ? path === home : path === trim(href) || path.startsWith(`${trim(href)}/`));
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 

@@ -18,6 +18,7 @@ import { frameOf, heroPlates, plateNumber } from '@/data/plates';
 import { issue, site } from '@/data/site';
 
 const letters = site.name.split('');
+import { link } from '@/lib/link';
 ---
 
 <section aria-labelledby="hero-wordmark" class="relative">
@@ -50,7 +51,7 @@ const letters = site.name.split('');
             plate={plate}
             i={i}
             priority={i === 0}
-            href={`/work/${plate.id}`}
+            href={link(`/work/${plate.id}`)}
             sizes={i === 0 ? '(min-width: 768px) 34vw, 100vw' : '(min-width: 768px) 34vw, 50vw'}
             class={i === 0 ? 'col-span-2 md:col-span-1' : ''}
           />

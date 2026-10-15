@@ -22,6 +22,7 @@ const tone = plate ? plate.tone : film!.tone;
 const spec = plate
   ? `${frameOf(plate).orientation} ${frameOf(plate).ratio}`
   : `${filmFrame(film!).orientation} ${filmFrame(film!).ratio} — ${filmFrame(film!).runtime} loop`;
+import { link } from '@/lib/link';
 ---
 
 <section aria-label={code} class="relative border-y border-border bg-obsidian py-12 sm:py-20">
@@ -38,7 +39,7 @@ const spec = plate
     <div class="col-span-12 mt-6 flex items-baseline justify-between gap-6 lg:col-span-1 lg:mt-0 lg:block lg:text-right">
       <p class="text-meta lg:hidden">{code} — {tone}</p>
       {line && <p class="text-heading text-[1.125rem] lg:text-[1rem]">{line}</p>}
-      {film && <a href={`/film/${film.id}`} class="text-meta link-quiet mt-4 inline-block lg:mt-6">Enter the film room</a>}
+      {film && <a href={link(`/film/${film.id}`)} class="text-meta link-quiet mt-4 inline-block lg:mt-6">Enter the film room</a>}
     </div>
   </div>
 </section>
