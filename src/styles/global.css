@@ -238,6 +238,27 @@
     }
   }
 
+  /* Target size (WCAG 2.2 AA 2.5.8): small mono links and buttons keep their
+     11px type but get a 24px hit area, 44px on touch screens. The extra
+     height is padding-free (min-height + centering) so rules and underlines
+     stay where they are. */
+  :where(a, button).text-meta,
+  :where(a, button).link-quiet,
+  :where(a, button).link-book,
+  .hit-target {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+  }
+  @media (pointer: coarse) {
+    :where(a, button).text-meta,
+    :where(a, button).link-quiet,
+    :where(a, button).link-book,
+    .hit-target {
+      min-height: 44px;
+    }
+  }
+
   .skip-link {
     position: absolute;
     left: var(--spacing-gutter);
