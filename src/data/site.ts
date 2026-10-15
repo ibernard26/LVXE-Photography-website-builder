@@ -34,10 +34,12 @@ export const site = {
   },
 
   /**
-   * Where the booking form posts (e.g. a Formspree or Netlify Forms URL).
+   * Where the booking form posts (a Formspree, Basin or Netlify Forms URL that
+   * accepts a POST and answers JSON when sent `Accept: application/json`).
+   * Set PUBLIC_BOOKING_ENDPOINT in the host's environment, never in code.
    * While empty, the form stays visible but tells visitors it is not yet connected.
    */
-  bookingEndpoint: '',
+  bookingEndpoint: (import.meta.env.PUBLIC_BOOKING_ENDPOINT ?? '') as string,
 } as const;
 
 /** Masthead issue line — a publication device, not a claim. */

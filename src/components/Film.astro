@@ -8,7 +8,9 @@
  *   It plays only while on screen (src/scripts/film.ts).
  * - A visible Pause/Play control on every film (WCAG 2.2.2). With reduced
  *   motion it never autoplays and starts on the poster.
- * - The poster is optimised through Astro's image pipeline.
+ * - The poster is optimised through Astro's image pipeline. Off the lead
+ *   position it is attached only as the film nears the viewport, so it never
+ *   competes with the page's largest image (noscript keeps it without JS).
  */
 import { getImage } from 'astro:assets';
 import type { Film } from '@/data/films';
@@ -36,7 +38,8 @@ const poster = await getImage({ src: film.poster, width: Math.min(1080, film.pos
         style={`aspect-ratio: ${film.width} / ${film.height}`}
         width={film.width}
         height={film.height}
-        poster={poster.src}
+        poster={priority ? poster.src : undefined}
+        data-poster={priority ? undefined : poster.src}
         muted
         loop={film.loop}
         playsinline
@@ -49,6 +52,11 @@ const poster = await getImage({ src: film.poster, width: Math.min(1080, film.pos
         <source src={`${film.sources.large}.mp4`} type="video/mp4" />
         <source src={`${film.sources.large}.webm`} type="video/webm" />
       </video>
+      {!priority && (
+        <noscript>
+          <img src={poster.src} alt="" width={film.width} height={film.height} class="absolute inset-0 block h-full w-full" />
+        </noscript>
+      )}
     </div>
     <button
       type="button"

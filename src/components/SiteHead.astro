@@ -35,9 +35,12 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 <!-- Enables motion start states. Without JS, everything renders at rest. -->
 <script is:inline>document.documentElement.classList.add('js');</script>
 
-<!-- Self-hosted fonts with size-adjusted fallbacks; above-the-fold faces preloaded. -->
-<Font cssVariable="--font-newsreader" preload />
+<!-- Self-hosted fonts with size-adjusted fallbacks. Only the roman display
+     serif and the body sans are preloaded: preloading every face competed
+     with the lead photograph for bandwidth on mobile. The italic and mono
+     faces swap in from metric-matched fallbacks without layout shift. -->
+<Font cssVariable="--font-newsreader" preload={[{ style: 'normal' }]} />
 <Font cssVariable="--font-geist" preload />
-<Font cssVariable="--font-geist-mono" preload />
+<Font cssVariable="--font-geist-mono" />
 
 <ClientRouter fallback="none" />

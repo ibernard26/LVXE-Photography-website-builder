@@ -287,6 +287,13 @@
     text-decoration-color: var(--color-burgundy);
   }
 
+  /* Ledger rows are one link each; when that link has keyboard focus the
+     whole row carries the focus outline, not just the small "Open" label. */
+  .ledger-row:has(a:focus-visible) {
+    outline: 1px solid var(--color-bone);
+    outline-offset: -1px;
+  }
+
   .skip-link {
     position: absolute;
     left: var(--spacing-gutter);

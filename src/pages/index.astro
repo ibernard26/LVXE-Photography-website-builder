@@ -104,7 +104,7 @@ const ledger = await Promise.all([
     <!-- ================= Curatorial panel ================= -->
     <aside
       aria-label="Curatorial panel"
-      class="flex flex-col gap-y-12 py-12 lg:sticky lg:top-16 lg:h-[calc(100dvh-4rem)] lg:justify-between lg:overflow-y-auto lg:border-r lg:border-border lg:py-12 lg:pr-10"
+      class="flex flex-col gap-y-8 py-8 sm:gap-y-12 sm:py-12 lg:sticky lg:top-16 lg:h-[calc(100dvh-4rem)] lg:justify-between lg:overflow-y-auto lg:border-r lg:border-border lg:py-12 lg:pr-10"
     >
       <div>
         <a href="/" class="hit-target hidden lg:inline-flex" aria-label={`${site.name}, home`}>
@@ -114,19 +114,19 @@ const ledger = await Promise.all([
         </a>
         <p class="text-meta lg:mt-6">Issue {issue.number} · {issue.year}<br />{site.region}</p>
 
-        <h1 class="reveal-lines mt-10 text-display text-[clamp(2.75rem,4.6vw,4.75rem)]" data-draft={site.slogan.draft || undefined}>
+        <h1 class="reveal-lines mt-6 sm:mt-10 text-display text-[clamp(2.75rem,4.6vw,4.75rem)]" data-draft={site.slogan.draft || undefined}>
           <span class="line-mask"><span style="--i:0">{l1}</span></span>{' '}
           <span class="line-mask"><span class="font-light italic" style="--i:1">{l2}</span></span>{' '}
           <span class="line-mask"><span style="--i:2">{l3}<span class="text-burgundy">.</span></span></span>
         </h1>
-        <p class="text-body mt-8 max-w-[34ch] text-bone" data-draft={site.proposition.draft || undefined}>
+        <p class="text-body mt-5 max-w-[34ch] text-bone sm:mt-8" data-draft={site.proposition.draft || undefined}>
           {site.proposition.text}
         </p>
       </div>
 
       <nav aria-label="Disciplines" data-js-only>
         <p class="text-meta text-bone">Disciplines</p>
-        <ul class="mt-4 flex flex-wrap gap-x-6 gap-y-1 lg:block lg:border-t lg:border-border">
+        <ul class="mt-2 flex flex-wrap gap-x-6 gap-y-0 lg:block lg:border-t lg:border-border">
           {
             filters.map((f) => (
               <li class="lg:border-b lg:border-border">
@@ -138,13 +138,13 @@ const ledger = await Promise.all([
                 >
                   <span class="toggle-label">{f.label}</span>
                   <span aria-hidden="true">{pad(f.count)}</span>
-                  <span class="sr-only">, {f.count} works</span>
+                  <span class="sr-only"> — {f.count} {f.count === 1 ? 'work' : 'works'}</span>
                 </button>
               </li>
             ))
           }
         </ul>
-        <p class="text-meta mt-4" role="status" data-filter-status>{pad(totalWorks)} of {pad(totalWorks)} works</p>
+        <p class="text-meta mt-2 lg:mt-4" role="status" data-filter-status>{pad(totalWorks)} of {pad(totalWorks)} works</p>
       </nav>
 
       <div class="flex flex-wrap items-baseline gap-x-10 gap-y-4">
@@ -231,7 +231,7 @@ const ledger = await Promise.all([
             {
               ledger.map((row) => (
                 <tr
-                  class="group relative border-b border-border align-top transition-colors duration-300 ease-editorial hover:bg-charcoal focus-within:bg-charcoal"
+                  class="ledger-row group relative border-b border-border align-top transition-colors duration-300 ease-editorial hover:bg-charcoal focus-within:bg-charcoal"
                   data-item
                   data-tags={row.tags}
                   data-preview={row.preview.src}
@@ -240,7 +240,9 @@ const ledger = await Promise.all([
                 >
                   <td class="text-meta py-5 pr-4 whitespace-nowrap text-bone">
                     {row.no}
-                    <span class="mt-1 block text-soft-gray">{row.series ?? '—'}</span>
+                    <span class="mt-1 block text-soft-gray">
+                      {row.series ?? <><span aria-hidden="true">—</span><span class="sr-only">No series</span></>}
+                    </span>
                   </td>
                   <td class="py-5 pr-4">
                     <span class="text-heading block text-[1.25rem] transition-transform duration-500 ease-editorial group-hover:translate-x-2">

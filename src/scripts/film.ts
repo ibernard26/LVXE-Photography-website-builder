@@ -9,6 +9,7 @@
  */
 
 let observer: IntersectionObserver | null = null;
+let posters: IntersectionObserver | null = null;
 
 const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -27,8 +28,24 @@ function play(video: HTMLVideoElement) {
 
 function setup() {
   observer?.disconnect();
+  posters?.disconnect();
   const videos = Array.from(document.querySelectorAll<HTMLVideoElement>('video[data-film]'));
   if (!videos.length) return;
+
+  // Deferred posters: attach the still a screen ahead of the film.
+  posters = new IntersectionObserver(
+    (entries) => {
+      for (const { target, isIntersecting } of entries) {
+        const v = target as HTMLVideoElement;
+        if (!isIntersecting || !v.dataset.poster) continue;
+        v.poster = v.dataset.poster;
+        delete v.dataset.poster;
+        posters?.unobserve(v);
+      }
+    },
+    { rootMargin: '100% 0px' },
+  );
+  videos.filter((v) => v.dataset.poster).forEach((v) => posters!.observe(v));
 
   observer = new IntersectionObserver(
     (entries) => {

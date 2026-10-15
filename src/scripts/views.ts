@@ -76,6 +76,16 @@ function setup() {
     syncUrl();
   };
 
+  // Whole-row activation. The row link's ::after already covers the row
+  // where table rows can be positioned; this covers engines where they can't.
+  const ledgerBody = scope.querySelector<HTMLElement>('[data-mode="ledger"] tbody');
+  const onRow = (e: MouseEvent) => {
+    if ((e.target as Element).closest('a') || e.defaultPrevented) return;
+    const link = (e.target as Element).closest('tr')?.querySelector<HTMLAnchorElement>('a[href]');
+    link?.click();
+  };
+  ledgerBody?.addEventListener('click', onRow);
+
   viewButtons.forEach((b) => b.addEventListener('click', onView));
   filterButtons.forEach((b) => b.addEventListener('click', onFilter));
   const stopPreview = setupPreview(scope);
@@ -84,6 +94,7 @@ function setup() {
   cleanup = () => {
     viewButtons.forEach((b) => b.removeEventListener('click', onView));
     filterButtons.forEach((b) => b.removeEventListener('click', onFilter));
+    ledgerBody?.removeEventListener('click', onRow);
     stopPreview();
   };
 }
