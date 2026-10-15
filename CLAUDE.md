@@ -16,6 +16,12 @@ LVXE's tokens or guardrails, LVXE wins.
 - Replace the LVXE tokens (Obsidian, Charcoal, Bone, Gray, Burgundy) or add
   icon/emoji decoration, glass blur, gradients or pill badges.
 
+## Component generators (21st.dev Magic MCP, `.mcp.json`)
+
+Magic returns generic UI components. Treat its output as raw material: strip
+anything off-brand (rounded cards, gradients, glass, icons, stock imagery)
+and restyle with LVXE tokens before it touches the site.
+
 ## Where things live
 
 - Photographs: `src/assets/work/`, listed in `src/data/plates.ts`
