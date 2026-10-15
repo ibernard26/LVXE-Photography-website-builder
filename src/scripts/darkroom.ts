@@ -36,14 +36,14 @@ void main() {
   // Veil: dark away from the light, clear inside it. Before the opening
   // completes the whole strip sits in darkness.
   float pool = smoothstep(0.06, 0.55, r);
-  // Kept light at rest (8% in the pool, 40% at the far edge) so the
-  // photographs stay the subject; the effect is a lamp, not a filter.
-  float veil = mix(0.92, 0.08 + 0.32 * pool, uOpen);
+  // Kept light at rest (3% in the pool, ~18% at the far edge, ~30% in the
+  // extreme corners) so the photographs stay the subject: a lamp, not a filter.
+  float veil = mix(0.92, 0.03 + 0.15 * pool, uOpen);
 
   // Vignette toward the strip's edges.
   vec2 uv = frag / uRes;
   float vig = smoothstep(0.35, 0.95, length(uv - 0.5) * 1.25);
-  veil = clamp(veil + vig * 0.25, 0.0, 0.95);
+  veil = clamp(veil + vig * 0.12, 0.0, 0.95);
 
   // Film grain, re-seeded ~24 times a second like projected film.
   float t = floor(uTime * 24.0);

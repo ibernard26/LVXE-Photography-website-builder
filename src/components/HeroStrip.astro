@@ -67,7 +67,7 @@ const letters = site.name.split('');
       {
         heroPlates.map((plate) => (
           <p class="text-meta px-4 py-3 text-bone/80 mix-blend-difference">
-            {plateNumber(plate)} ▸ {plate.tone} · {frameOf(plate).ratio} · Issue {issue.number}
+            Pl. {plateNumber(plate)} / {plate.tone} · {frameOf(plate).ratio} · Issue {issue.number}
           </p>
         ))
       }
@@ -80,7 +80,7 @@ const letters = site.name.split('');
     background: radial-gradient(
       circle at var(--mx, 50%) var(--my, 45%),
       rgb(11 11 13 / 0.06) 0,
-      rgb(11 11 13 / 0.38) 60%
+      rgb(11 11 13 / 0.2) 60%
     );
   }
   :global(.has-gl) .hero-veil {
