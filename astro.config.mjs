@@ -12,7 +12,7 @@ const fontsource = (family, style) =>
 
 // https://docs.astro.build/en/reference/configuration-reference/
 export default defineConfig({
-  site: 'https://lvxe.studio', // Placeholder — replace with the production domain before launch.
+  site: 'https://lvxe.studio',
 
   // Fonts: self-hosted from the installed @fontsource-variable packages via the
   // `local` provider, so builds never depend on a CDN. Only the Latin subset

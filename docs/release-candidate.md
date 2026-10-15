@@ -1,7 +1,8 @@
 # LVXE — Release Candidate 1 (hardening pass)
 
-Branch `claude/laughing-ptolemy-vww0ug`. Status: **submitted for final approval, not deployed.**
-Production is blocked on the owner actions in §6, not on code.
+Branch `claude/laughing-ptolemy-vww0ug`. Status: **approved by the owner on Oct 15 for launch on
+GitHub Pages at lvxe.studio** (composition approved; all sitters confirmed by the owner as
+having agreed to publication).
 
 ## 1. Baseline
 
@@ -51,8 +52,8 @@ Same-frame check: downscaled pixel difference < 2/255 for every pair.
 The owner's larger exports replaced the earlier masters on approval
 (Oct 15); earring-portrait was already the same file.
 
-**Likeness / publication permission: not confirmed for any sitter.** Every
-plate and the film show identifiable people. Release blocker.
+**Likeness / publication permission: confirmed by the owner (Oct 15) for
+every sitter in the six plates and the film.** Keep the signed releases on file.
 
 **Barbican architectural image (flagged separately).** Not present on any
 branch. It appears only as an Unsplash URL in the Oct 15 brief
@@ -118,9 +119,10 @@ be considered.
 
 ## 6. Outstanding before production
 
-1. **Model / likeness releases** for every sitter. Blocker.
-2. **Booking provider**: set `PUBLIC_BOOKING_ENDPOINT` and run one real
-   end-to-end submission (only a simulated provider was tested). Blocker.
+1. ~~Model / likeness releases~~ — confirmed by the owner, Oct 15.
+2. **Booking provider**: set the `PUBLIC_BOOKING_ENDPOINT` Actions variable
+   and run one real submission. Until then the live form says plainly that
+   inquiries are not connected.
 3. **Field Core Web Vitals**: no production traffic yet; lab only. Measure
    with CrUX / RUM after launch. INP not measurable in lab.
 4. **Browsers / AT**: tested in Chromium only. Safari (iOS/macOS) and Firefox,
