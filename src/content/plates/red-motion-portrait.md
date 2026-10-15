@@ -1,6 +1,7 @@
 ---
 # SAMPLE: working title / year / discipline are placeholders until Isaiah confirms them.
 plateNo: 1
+sequence: 1
 title: "Red Motion"
 year: 2026
 discipline: creative

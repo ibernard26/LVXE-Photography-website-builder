@@ -1,5 +1,5 @@
 /** Native camera ratios accepted for plates. */
-export const ratios = ['2:3', '3:2', '4:5', '5:4', '3:4', '4:3', '1:1', '16:9', '9:16'] as const;
+export const ratios = ['2:3', '3:2', '4:5', '5:4', '3:4', '4:3', '6:7', '7:6', '1:1', '16:9', '9:16'] as const;
 export type Ratio = (typeof ratios)[number];
 
 /** Relative tolerance when matching a declared ratio to real pixels (1.5%). */

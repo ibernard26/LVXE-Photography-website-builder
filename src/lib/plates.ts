@@ -42,4 +42,10 @@ export async function getPlates(discipline?: Discipline): Promise<PlateEntry[]> 
   return discipline ? cache.filter((p) => p.data.discipline === discipline) : cache;
 }
 
+/** Plates in exhibition order (sequence, falling back to plateNo). */
+export async function getStream(discipline?: Discipline): Promise<PlateEntry[]> {
+  const key = (p: PlateEntry) => p.data.sequence ?? p.data.plateNo;
+  return [...(await getPlates(discipline))].sort((a, b) => key(a) - key(b));
+}
+
 export const plateNo = (n: number) => String(n).padStart(2, '0');

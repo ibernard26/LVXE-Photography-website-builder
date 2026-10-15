@@ -1,6 +1,7 @@
 ---
 # SAMPLE: working title / year / discipline are placeholders until Isaiah confirms them.
 plateNo: 5
+sequence: 9
 title: "Cathedral"
 year: 2026
 discipline: fashion

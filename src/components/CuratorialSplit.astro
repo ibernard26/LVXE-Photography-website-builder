@@ -19,9 +19,9 @@ interface Props {
 }
 const { plates, active, headingId = 'split-title' } = Astro.props;
 
-/** Rhythm for portrait plates: width + horizontal offset cycle. Landscape always spans the stream. */
+/** Rhythm for portrait plates: width + offset cycle (never full width, so tall frames stay viewable). Landscape (w > h, incl. 7:6) always spans the stream. */
 const rhythm = [
-  'lg:w-full',
+  'lg:w-[80%]',
   'lg:w-[72%] lg:ml-auto',
   'lg:w-[58%] lg:ml-[14%]',
   'lg:w-[84%]',

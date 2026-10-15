@@ -48,6 +48,8 @@ const plates = defineCollection({
     z
       .object({
         plateNo: z.number().int().positive(),
+        /** Position in the exhibition stream (rhythm). Defaults to plateNo. The vault always sorts by plateNo. */
+        sequence: z.number().int().positive().optional(),
         title: z.string().min(1),
         year: z.number().int().min(2000).max(2100),
         discipline: z.enum(disciplines),

@@ -2,10 +2,10 @@
 import Layout from '@/layouts/Layout.astro';
 import CuratorialSplit from '@/components/CuratorialSplit.astro';
 import ViewQueryRedirect from '@/components/ViewQueryRedirect.astro';
-import { getPlates } from '@/lib/plates';
+import { getStream } from '@/lib/plates';
 import { site } from '@/data/site';
 
-const plates = await getPlates();
+const plates = await getStream();
 ---
 
 <Layout splitChrome>

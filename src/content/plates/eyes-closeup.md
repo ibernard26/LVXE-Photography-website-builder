@@ -1,6 +1,7 @@
 ---
 # SAMPLE: working title / year / discipline are placeholders until Isaiah confirms them.
 plateNo: 3
+sequence: 5
 title: "Between Fingers"
 year: 2026
 discipline: portraits

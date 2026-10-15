@@ -2,13 +2,13 @@
 import Layout from '@/layouts/Layout.astro';
 import CuratorialSplit from '@/components/CuratorialSplit.astro';
 import ViewQueryRedirect from '@/components/ViewQueryRedirect.astro';
-import { disciplines, disciplineLabel, getPlates, type Discipline } from '@/lib/plates';
+import { disciplines, disciplineLabel, getStream, type Discipline } from '@/lib/plates';
 
 export function getStaticPaths() {
   return disciplines.map((cat) => ({ params: { cat } }));
 }
 const cat = Astro.params.cat as Discipline;
-const plates = await getPlates(cat);
+const plates = await getStream(cat);
 ---
 
 <Layout title={`${disciplineLabel[cat]} | Portfolio`} splitChrome>

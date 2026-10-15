@@ -2,9 +2,9 @@
 import Layout from '@/layouts/Layout.astro';
 import CuratorialSplit from '@/components/CuratorialSplit.astro';
 import ViewQueryRedirect from '@/components/ViewQueryRedirect.astro';
-import { getPlates } from '@/lib/plates';
+import { getStream } from '@/lib/plates';
 
-const plates = await getPlates();
+const plates = await getStream();
 ---
 
 <Layout title="Portfolio" description="The LVXE exhibition: fashion, portraits and creative work by Isaiah Bernard." splitChrome>
