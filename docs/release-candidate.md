@@ -37,19 +37,19 @@ cannot be verified from the files themselves. Copyright notice in the footer:
 
 | Plate | Master in RC | Owner's larger export (PR #2 branch) | Largest need @2× (px) | Status |
 | --- | --- | --- | --- | --- |
-| 01 fingers-closeup | 1405×2108 | 2000×3000 (same frame) | 1440 | Adequate |
-| 02 cathedral | 1333×2000 | 1365×2048 | 1120 | Adequate |
+| 01 fingers-closeup | 2000×3000 (owner export) | in use | 1440 | Adequate |
+| 02 cathedral | 1365×2048 (owner export) | in use | 1120 | Adequate |
 | 03 earring-portrait | 1333×2000 | identical | 1044 | Adequate |
-| 04 hands-portrait | 1333×2000 | 1365×2048 | 1044 | Adequate |
-| 05 record-store | 1000×1500 | 1365×2048 (same frame, same grade) | 1280 | **Under-resolved on retina** |
-| 06 mesh-pair | 1000×1500 | 1365×2048 | 1044 (plate room) | Marginal |
+| 04 hands-portrait | 1365×2048 (owner export) | in use | 1044 | Adequate |
+| 05 record-store | 1365×2048 (owner export) | in use | 1280 | Adequate |
+| 06 mesh-pair | 1365×2048 (owner export) | in use | 1044 | Adequate |
 | Film 01 chrome-glasses | 1080×1920 H.264/VP9 | — | — | Adequate |
 
 Largest need = widest `sizes` slot (homepage stream at ≥1536px, or the plate
 room at a 900px-tall window) × 2. Taller windows ask for more.
 Same-frame check: downscaled pixel difference < 2/255 for every pair.
-Replacing the masters with the owner's larger exports is recommended and
-awaits approval (overwriting image files was not done in this pass).
+The owner's larger exports replaced the earlier masters on approval
+(Oct 15); earring-portrait was already the same file.
 
 **Likeness / publication permission: not confirmed for any sitter.** Every
 plate and the film show identifiable people. Release blocker.
@@ -128,5 +128,5 @@ be considered.
 5. Owner data: contact email and Instagram, titles, years, series, discipline
    tags (draft), slogan and proposition (draft), production domain
    (`site: https://lvxe.studio/`).
-6. Approve the larger masters (§3) and, optionally, the 4:5 red portrait.
+6. Optionally, approve the 4:5 red portrait from PR #2.
 7. Choose the merge path to `main` (this branch vs the PR #1 → #2 stack).
