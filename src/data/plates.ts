@@ -5,6 +5,7 @@ import handsPortrait from '@/assets/work/hands-portrait.jpg';
 import meshPair from '@/assets/work/mesh-pair.jpg';
 import recordStore from '@/assets/work/record-store.jpg';
 import cathedral from '@/assets/work/cathedral.jpg';
+import fingersCloseup from '@/assets/work/fingers-closeup.jpg';
 
 /**
  * A "plate" is a single authentic photograph from the LVXE archive.
@@ -28,6 +29,12 @@ export type Plate = {
 };
 
 export const plates = {
+  fingersCloseup: {
+    id: 'fingers-closeup',
+    image: fingersCloseup,
+    tone: 'Colour',
+    alt: "Extreme close-up in warm low light: a sitter's face framed by their own fingers, one eye looking up past a hand pressed to the brow, skin beaded with droplets.",
+  },
   earringPortrait: {
     id: 'earring-portrait',
     image: earringPortrait,
@@ -62,6 +69,7 @@ export const plates = {
 
 /** Catalogue order: this order defines plate numbers across the site. */
 export const plateList: Plate[] = [
+  plates.fingersCloseup,
   plates.earringPortrait,
   plates.handsPortrait,
   plates.cathedral,
@@ -89,4 +97,4 @@ export function frameOf(plate: Plate) {
 }
 
 /** The three frames of the homepage contact strip, left to right. */
-export const heroPlates: [Plate, Plate, Plate] = [plates.earringPortrait, plates.handsPortrait, plates.cathedral];
+export const heroPlates: [Plate, Plate, Plate] = [plates.fingersCloseup, plates.handsPortrait, plates.cathedral];
