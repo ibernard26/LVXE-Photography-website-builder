@@ -1,0 +1,60 @@
+---
+/**
+ * Homepage editorial hero: an asymmetrical two-image diptych.
+ * The plates differ in scale and vertical offset, never in shape. Each keeps
+ * its native frame (explicit width/height from the import, no object-fit).
+ *
+ *   lg  ┌ copy ──────────┐ ┌──────── lead (7 cols) ───────┐
+ *       │                │ │                              │
+ *       └────────────────┘ │                              │
+ *        ┌ counter (4) ┐   │                              │
+ *        │             │   └──────────────────────────────┘
+ */
+import Plate from '@/components/Plate.astro';
+import { heroDiptych } from '@/data/hero';
+import { site } from '@/data/site';
+
+const [lead, counter] = heroDiptych;
+---
+
+<section aria-labelledby="hero-title" class="mx-auto max-w-screen-2xl px-gutter">
+  <div class="grid grid-cols-6 gap-x-4 lg:grid-cols-12 lg:gap-x-8">
+    <div class="col-span-6 pt-16 pb-14 sm:pt-24 lg:col-span-5 lg:row-start-1 lg:pt-32 lg:pb-0">
+      <ul class="text-meta flex flex-wrap gap-x-3 gap-y-1" aria-label="Disciplines">
+        {
+          site.disciplines.map((d, i) => (
+            <li class="whitespace-nowrap">
+              {i > 0 && <span aria-hidden="true" class="mr-3">/</span>}
+              {d}
+            </li>
+          ))
+        }
+      </ul>
+      <h1 id="hero-title" class="text-display mt-8 max-w-[12ch]">{site.slogan}</h1>
+      <p class="text-body mt-8 max-w-[34ch]">{site.proposition}</p>
+      <ul class="mt-12 flex flex-wrap gap-x-10 gap-y-4">
+        <li><a href="/portfolio" class="text-meta link-quiet text-bone">View the portfolio</a></li>
+        <li><a href="/inquire" class="text-meta link-quiet">Inquire</a></li>
+      </ul>
+    </div>
+
+    <!-- Lead plate: the LCP image -->
+    <Plate
+      image={lead.image}
+      alt={lead.alt}
+      index="01"
+      priority
+      sizes="(min-width: 1536px) 860px, (min-width: 1024px) 56vw, 100vw"
+      class="col-span-6 lg:col-span-7 lg:col-start-6 lg:row-span-2 lg:row-start-1 lg:pt-16"
+    />
+
+    <!-- Counterpoint plate: smaller, dropped below the copy, off-axis -->
+    <Plate
+      image={counter.image}
+      alt={counter.alt}
+      index="02"
+      sizes="(min-width: 1536px) 460px, (min-width: 1024px) 30vw, 66vw"
+      class="col-span-4 col-start-3 mt-16 lg:col-span-4 lg:col-start-2 lg:row-start-2 lg:mt-24 lg:self-start"
+    />
+  </div>
+</section>

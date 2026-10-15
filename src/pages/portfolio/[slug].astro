@@ -1,0 +1,36 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Layout from '@/layouts/Layout.astro';
+import Plate from '@/components/Plate.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects', ({ data }) => !data.draft);
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+}
+
+interface Props { project: CollectionEntry<'projects'> }
+const { project } = Astro.props;
+const { Content } = await render(project);
+const { title, category, year, credits, images, sample } = project.data;
+---
+
+<Layout title={title}>
+  <article class="mx-auto max-w-screen-2xl px-gutter pt-16 sm:pt-24">
+    <p class="text-meta">{category} / {year}{sample && ' / sample'}</p>
+    <h1 class="text-display mt-4">{title}</h1>
+    <div class="text-body mt-8 max-w-measure"><Content /></div>
+    {credits.length > 0 && (
+      <dl class="mt-8 grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 text-meta">
+        {credits.map((c) => (<><dt>{c.role}</dt><dd class="text-bone">{c.name}</dd></>))}
+      </dl>
+    )}
+    <div class="mt-20 space-y-24">
+      {images.map((img, i) => (
+        <Plate image={img.src} alt={img.alt} caption={img.caption} index={String(i + 1).padStart(2, '0')}
+          priority={i === 0} sizes="(min-width: 1024px) 60vw, 100vw"
+          class:list={['mx-auto max-w-3xl', i % 2 ? 'lg:mr-0' : 'lg:ml-0']} />
+      ))}
+    </div>
+    <p class="mt-24"><a href="/portfolio" class="text-meta link-quiet">Back to portfolio</a></p>
+  </article>
+</Layout>

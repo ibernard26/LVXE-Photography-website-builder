@@ -1,0 +1,17 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { site } from '@/data/site';
+---
+
+<Layout title="Commercial" description="Brand campaigns, workplace portraiture and private commissions by LVXE.">
+  <section class="mx-auto max-w-screen-2xl px-gutter pt-16 sm:pt-24">
+    <h1 class="text-display">Commercial</h1>
+    <p class="text-body mt-8 max-w-measure">{site.commercialPreview}</p>
+    <!-- STUB: commercial portfolio and service descriptions to come. No pricing tiers by design. -->
+    <ul class="text-meta mt-12 space-y-2">
+      <li>Brand and campaign</li><li>Workplace portraiture and headshots</li>
+      <li>Private commissions</li><li>Event coverage</li>
+    </ul>
+    <p class="mt-12"><a href="/inquire" class="text-meta link-quiet text-bone">Start a commercial inquiry</a></p>
+  </section>
+</Layout>

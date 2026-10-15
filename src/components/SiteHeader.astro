@@ -1,0 +1,93 @@
+---
+/**
+ * Minimal LVXE header. Desktop: inline nav, zero JS.
+ * Mobile: a native <details> drawer (works without JS). A tiny inline script
+ * adds aria-expanded sync, Esc-to-close, focus return, and moves focus into
+ * the drawer on open.
+ */
+import { navigation, site } from '@/data/site';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`);
+const linkBase = 'text-meta inline-block border-b pb-1 transition-colors duration-200 ease-editorial hover:text-bone';
+---
+
+<header class="relative border-b border-hairline">
+  <div class="mx-auto flex max-w-screen-2xl items-baseline justify-between gap-x-10 px-gutter pt-6 pb-5 sm:pt-8 sm:pb-6">
+    <a href="/" class="flex items-baseline gap-3">
+      <span class="font-display text-[1.375rem] leading-none tracking-[0.18em] text-bone">{site.name}</span>
+      <span class="sr-only">, home</span>
+    </a>
+
+    <nav aria-label="Primary" class="hidden md:block">
+      <ul class="flex gap-x-8">
+        {
+          navigation.map((item) => {
+            const current = isCurrent(item.href);
+            return (
+              <li>
+                <a
+                  href={item.href}
+                  aria-current={current ? 'page' : undefined}
+                  class:list={[linkBase, current ? 'border-burgundy text-bone' : 'border-transparent']}
+                >
+                  {item.label}
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </nav>
+
+    <details class="md:hidden" data-nav-drawer>
+      <summary class="text-meta text-bone py-2" aria-controls="mobile-nav" aria-expanded="false">
+        <span data-label>Menu</span>
+      </summary>
+      <nav
+        id="mobile-nav"
+        aria-label="Primary"
+        class="absolute inset-x-0 top-[4.5rem] z-40 border-y border-hairline bg-obsidian px-gutter py-8"
+      >
+        <ul class="space-y-6">
+          {
+            navigation.map((item) => {
+              const current = isCurrent(item.href);
+              return (
+                <li>
+                  <a
+                    href={item.href}
+                    aria-current={current ? 'page' : undefined}
+                    class:list={[linkBase, 'text-[0.875rem]', current ? 'border-burgundy text-bone' : 'border-transparent']}
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              );
+            })
+          }
+        </ul>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<script is:inline>
+  (() => {
+    const d = document.querySelector('[data-nav-drawer]');
+    if (!d) return;
+    const s = d.querySelector('summary');
+    const label = s.querySelector('[data-label]');
+    d.addEventListener('toggle', () => {
+      s.setAttribute('aria-expanded', String(d.open));
+      label.textContent = d.open ? 'Close' : 'Menu';
+      if (d.open) d.querySelector('#mobile-nav a')?.focus();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && d.open) {
+        d.open = false;
+        s.focus();
+      }
+    });
+  })();
+</script>
