@@ -1,0 +1,56 @@
+---
+import SiteHeader from '@/components/SiteHeader.astro';
+import SiteFooter from '@/components/SiteFooter.astro';
+import FullscreenNav from '@/components/FullscreenNav.astro';
+import BookingBand from '@/components/BookingBand.astro';
+import { site } from '@/data/site';
+import SiteHead from '@/components/SiteHead.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Spine label in the right margin, e.g. "Work / Plate 03". */
+  label?: string;
+  /** Hide the closing booking band (used on /book itself). */
+  hideBooking?: boolean;
+}
+
+const { title, description, label = 'Issue 01', hideBooking = false } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SiteHead title={title} description={description} />
+  </head>
+  <body class="grain">
+    <a href="#main" class="skip-link text-meta">Skip to content</a>
+
+    <!-- Margin spines (wide screens): the practice on the left, place in the issue on the right. -->
+    <p
+      aria-hidden="true"
+      class="v-label text-meta pointer-events-none fixed bottom-8 left-[calc(var(--spacing-gutter)/2-0.35rem)] z-30 hidden 2xl:block"
+    >
+      {site.disciplines.join(' / ')}
+    </p>
+    <p
+      aria-hidden="true"
+      class="v-label text-meta pointer-events-none fixed right-[calc(var(--spacing-gutter)/2-0.35rem)] bottom-8 z-30 hidden 2xl:block"
+    >
+      {label}
+    </p>
+
+    <SiteHeader />
+    <main id="main">
+      <slot />
+    </main>
+    {hideBooking ? <div class="mt-32 sm:mt-48" /> : <BookingBand />}
+    <SiteFooter />
+    <FullscreenNav />
+
+    <script>
+      import '@/scripts/motion';
+      import '@/scripts/film';
+    </script>
+  </body>
+</html>

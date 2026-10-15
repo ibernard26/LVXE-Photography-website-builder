@@ -1,0 +1,35 @@
+---
+/**
+ * Interior page opening: section number, an oversized grotesk title with an
+ * italic serif counter-line on an offset column, and an optional lede.
+ */
+interface Props {
+  number: string;
+  section: string;
+  title: string;
+  /** Italic serif second line, offset right. */
+  counter?: string;
+  lede?: string;
+}
+const { number, section, title, counter, lede } = Astro.props;
+---
+
+<header class="mx-auto max-w-screen-2xl px-gutter pt-16 pb-16 sm:pt-24 sm:pb-24">
+  <div class="grid grid-cols-12 gap-x-4 gap-y-10 lg:gap-x-8">
+    <p class="text-meta reveal-fade col-span-12 lg:col-span-2">
+      {number}<br />{section}
+    </p>
+    <h1 class="reveal-lines col-span-12 lg:col-span-10">
+      <span class="line-mask"><span class="text-display text-[clamp(3.5rem,13vw,12rem)]" style="--i:0">{title}</span></span>
+      {counter && ' '}
+      {
+        counter && (
+          <span class="line-mask pl-[20%] sm:pl-[34%]">
+            <span class="text-display-serif" style="--i:1">{counter}</span>
+          </span>
+        )
+      }
+    </h1>
+    {lede && <p class="text-body col-span-12 max-w-[46ch] text-bone sm:col-span-7 sm:col-start-6 lg:col-span-4 lg:col-start-7" style="--i:2">{lede}</p>}
+  </div>
+</header>

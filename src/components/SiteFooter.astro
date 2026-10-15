@@ -1,42 +1,77 @@
 ---
-/** Restrained footer: identity, index, verified contact channels. */
-import { navigation, site } from '@/data/site';
+/**
+ * Colophon. Verified contact channels only (empty values are not rendered).
+ */
+import { issue, navigation, site } from '@/data/site';
 
-const { email, instagramHandle, instagramUrl, archiveUrl } = site.contact;
-const year = 2026; // Hard-coded per owner; switch to new Date().getFullYear() if preferred.
-const footerLinks = [...navigation, { label: 'Contact', href: '/contact' }];
+const year = new Date().getFullYear();
+const { email, instagram } = site.contact;
+const instagramHandle = instagram.replace(/^@/, '');
 ---
 
-<footer class="mt-32 border-t border-hairline sm:mt-48">
-  <div class="mx-auto grid max-w-screen-2xl gap-y-12 px-gutter pt-12 pb-10 sm:grid-cols-12 sm:gap-x-8 sm:pt-16">
-    <div class="sm:col-span-6 lg:col-span-5">
-      <p class="font-display text-[1.375rem] leading-none tracking-[0.18em] text-bone">
-        {site.name} <span class="text-soft-gray" aria-hidden="true">/</span>
-        <span class="sr-only">,</span>
-        <span class="text-meta align-middle tracking-[0.08em]">{site.tagline}</span>
+<footer id="colophon" class="border-t border-border">
+  <div class="mx-auto grid max-w-screen-2xl gap-y-12 px-gutter pt-14 pb-8 sm:grid-cols-12 sm:gap-x-8">
+    <div class="sm:col-span-6">
+      <p class="text-meta">Colophon — Issue {issue.number}</p>
+      <p class="text-heading mt-6 max-w-[22ch]">
+        An independent photography and visual arts practice by {site.artist}.
       </p>
     </div>
 
-    <nav aria-label="Footer" class="sm:col-span-3 lg:col-start-8 lg:col-span-2">
-      <p class="text-meta text-bone">Index</p>
+    <div class="sm:col-span-3">
+      <p class="text-meta text-bone">Contents</p>
       <ul class="mt-4 space-y-2">
-        {footerLinks.map((item) => (
-          <li><a href={item.href} class="text-meta transition-colors duration-200 ease-editorial hover:text-bone">{item.label}</a></li>
-        ))}
-      </ul>
-    </nav>
-
-    <div class="sm:col-span-3 lg:col-span-3">
-      <p class="text-meta text-bone">Contact</p>
-      <ul class="mt-4 space-y-2">
-        <li><a href={`mailto:${email}`} class="text-body link-quiet">{email}</a></li>
-        <li><a href={instagramUrl} class="text-body link-quiet" rel="me noopener noreferrer">Instagram @{instagramHandle}</a></li>
-        <li><a href={archiveUrl} class="text-body link-quiet" rel="noopener noreferrer">Portfolio archive</a></li>
+        {
+          navigation.map((item, i) => (
+            <li>
+              <a href={item.href} class="text-meta transition-colors duration-300 ease-editorial hover:text-bone">
+                <span class="text-bone">{String(i + 1).padStart(2, '0')}</span> {item.label}
+                {item.note && <span> ({item.note})</span>}
+              </a>
+            </li>
+          ))
+        }
       </ul>
     </div>
 
-    <div class="border-t border-hairline pt-6 sm:col-span-12">
-      <p class="text-meta">&copy; {year} {site.name}. All rights reserved.</p>
+    <div class="sm:col-span-3">
+      <p class="text-meta text-bone">Practice</p>
+      <ul class="mt-4 space-y-2">
+        {site.disciplines.map((d) => <li class="text-meta">{d}</li>)}
+        <li class="text-meta pt-2">{site.region}</li>
+      </ul>
+      {
+        (email || instagramHandle) && (
+          <ul class="mt-8 space-y-2">
+            {email && (
+              <li>
+                <a href={`mailto:${email}`} class="text-body link-quiet">
+                  {email}
+                </a>
+              </li>
+            )}
+            {instagramHandle && (
+              <li>
+                <a href={`https://www.instagram.com/${instagramHandle}/`} class="text-body link-quiet" rel="me noopener" target="_blank">
+                  Instagram
+                </a>
+              </li>
+            )}
+          </ul>
+        )
+      }
+    </div>
+
+    <p
+      aria-hidden="true"
+      class="text-mega col-span-full -mb-[0.12em] select-none text-charcoal sm:mt-8"
+    >
+      {site.name}
+    </p>
+
+    <div class="col-span-full flex flex-wrap justify-between gap-4 border-t border-border pt-6">
+      <p class="text-meta">&copy; {year} {site.name}. All photographs {site.artist}.</p>
+      <p class="text-meta">All rights reserved</p>
     </div>
   </div>
 </footer>

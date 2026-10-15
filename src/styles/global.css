@@ -1,175 +1,424 @@
 @import "tailwindcss";
-@config "../../tailwind.config.mjs";
 
 /* ==========================================================================
-   LVXE design tokens (README §3, approved by the owner).
-   Colours, fonts and aspect ratios live in tailwind.config.mjs; the raw values
-   live here as --lvxe-* so [data-theme="light-gallery"] / .theme-light can swap them.
+   LVXE — Issue 01 design system
+   Plan: docs/redesign-plan.md · Tokens: README §3 + redesign brief.
+
+   Tokens live in `@theme static` so Tailwind emits them on :root under the
+   spec names AND generates utilities (bg-obsidian, text-bone…) that read the
+   variables — which lets a light "gallery wall" section re-skin itself by
+   redefining the same variables. Tailwind's default palette, radii, shadows
+   and blur are wiped so off-brand utilities cannot be generated.
    ========================================================================== */
 
-@theme {
-  /* Remove off-brand defaults: no rounded pills, shadows or glass blur. */
+@theme static {
+  --color-*: initial;
+  --font-*: initial;
   --radius-*: initial;
   --shadow-*: initial;
   --inset-shadow-*: initial;
   --drop-shadow-*: initial;
   --text-shadow-*: initial;
   --blur-*: initial;
-  --backdrop-blur-*: initial;
 
-  --container-measure: 34rem;
-  --spacing-gutter: clamp(1.25rem, 4vw, 3rem);
-  --ease-editorial: cubic-bezier(0.2, 0, 0, 1);
+  --color-obsidian: #0B0B0D;  /* Room / canvas */
+  --color-charcoal: #1B1B1F;  /* Raised surface */
+  --color-bone: #F2EFE9;      /* Ink on dark, wall in light sections */
+  --color-soft-gray: #A7A4A0; /* Captions, metadata */
+  --color-burgundy: #54252D;  /* Booking, active index, the one accent */
+  --color-border: #1F1F24;    /* Hairline rules */
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  /* Injected by Astro's Fonts API with metric-matched fallbacks. */
+  --font-serif: var(--font-newsreader), 'Newsreader', Georgia, serif;
+  --font-sans: var(--font-geist), 'Geist Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace;
+}
+
+@theme {
+  --spacing-gutter: clamp(1rem, 3.2vw, 3rem);
+  --container-measure: 36rem;
+  --ease-cine: cubic-bezier(0.7, 0, 0.2, 1);   /* reveals, wipes */
+  --ease-editorial: cubic-bezier(0.2, 0, 0, 1); /* hovers, settles */
 }
 
 :root {
-  --lvxe-obsidian: #0B0B0D;
-  --lvxe-charcoal: #1B1B1F;
-  --lvxe-bone: #F2EFE9;
-  --lvxe-soft-gray: #A7A4A0;
-  --lvxe-burgundy: #54252D;
-  --lvxe-hairline: #1F1F24;
-  /* Font stacks, sourced from tailwind.config.mjs so there is one source of truth. */
-  --font-display: theme(fontFamily.display);
-  --font-sans: theme(fontFamily.sans);
-  --font-mono: theme(fontFamily.mono);
   color-scheme: dark;
+  --dur-fast: 300ms;
+  --dur-mid: 500ms;
+  --dur-slow: 800ms;
+  --stagger: 90ms;
 }
 
-/* Light exhibition mode: <html data-theme="light-gallery"> or any .theme-light wrapper */
-[data-theme="light-gallery"],
-.theme-light {
-  --lvxe-obsidian: #FDFCFA; /* gallery background */
-  --lvxe-charcoal: #EDEAE4; /* surface */
-  --lvxe-bone: #141416;     /* ink */
-  --lvxe-soft-gray: #686561;
-  --lvxe-burgundy: #54252D;
-  --lvxe-hairline: #E5E2DC;
+/* Gallery wall — a light "white cube" section or page. The wall is Bone and
+   the ink is Obsidian; notes use a darker gray so they keep AA contrast. */
+.wall,
+[data-theme="light-gallery"] {
+  --color-obsidian: #F2EFE9;
+  --color-charcoal: #E4E0D8;
+  --color-bone: #0B0B0D;
+  --color-soft-gray: #5F5C58;
+  --color-border: #D6D1C8;
   color-scheme: light;
+  background-color: var(--color-obsidian);
+  color: var(--color-bone);
 }
 
-/* Type scale: max 4 levels per viewport */
+/* ==========================================================================
+   Type — editorial serif display (roman + italic, -0.02em), Geist grotesk
+   reserved for the LVXE wordmark and running text, Geist Mono metadata
+   (11px, +0.15em, uppercase). Max four levels per viewport (README §3).
+   ========================================================================== */
+
+@utility text-mega {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: clamp(6rem, 25.5vw, 26rem);
+  line-height: 0.78;
+  letter-spacing: -0.065em;
+  text-transform: uppercase;
+}
+
 @utility text-display {
-  font-family: var(--font-display);
-  font-size: clamp(2.25rem, 6vw, 4.5rem);
+  font-family: var(--font-serif);
   font-weight: 400;
-  line-height: 1.05;
+  font-size: clamp(2.75rem, 8vw, 7.5rem);
+  line-height: 0.95;
   letter-spacing: -0.02em;
-  color: var(--lvxe-bone);
+  color: var(--color-bone);
 }
+
+@utility text-display-serif {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(2.75rem, 8vw, 7.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--color-bone);
+}
+
 @utility text-heading {
-  font-family: var(--font-display);
-  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-family: var(--font-serif);
+  font-style: italic;
   font-weight: 400;
-  line-height: 1.15;
-  color: var(--lvxe-bone);
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--color-bone);
 }
+
 @utility text-body {
   font-family: var(--font-sans);
-  font-size: 0.9375rem;
+  font-size: 1rem;
   line-height: 1.6;
-  color: var(--lvxe-soft-gray);
+  color: var(--color-soft-gray);
 }
+
 @utility text-meta {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   line-height: 1.4;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--lvxe-soft-gray);
+  color: var(--color-soft-gray);
 }
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
 
 @layer base {
   html {
-    background-color: var(--lvxe-obsidian);
-    color: var(--lvxe-bone);
+    background-color: var(--color-obsidian);
+    color: var(--color-bone);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
     -webkit-text-size-adjust: 100%;
   }
+
   body {
     min-height: 100dvh;
-    background-color: var(--lvxe-obsidian);
+    background-color: var(--color-obsidian);
+    overflow-x: clip;
   }
-  /* Image integrity: proportional scaling only, never crop or stretch. */
+
+  /* Image integrity: proportional scaling only. Never crop, never stretch. */
   img,
   picture {
     display: block;
     max-width: 100%;
     height: auto;
   }
-  ::selection {
-    background-color: var(--lvxe-burgundy);
-    color: #F2EFE9;
-  }
-  :focus-visible {
-    outline: 1px solid var(--lvxe-bone);
-    outline-offset: 4px;
-  }
-  summary {
-    list-style: none;
-    cursor: pointer;
-  }
-  summary::-webkit-details-marker {
-    display: none;
+
+  /* Zero roundness, everywhere: frames, rules, buttons and inputs are all
+     square-cornered, including anything a browser rounds by default. */
+  :where(*, *::before, *::after) {
+    border-radius: 0;
   }
 
-  /* Reduced motion: neutralise every transition/animation site-wide. */
-  @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-      transition-duration: 0.01ms !important;
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      scroll-behavior: auto !important;
-    }
+  ::selection {
+    background-color: var(--color-burgundy);
+    color: #F2EFE9;
+  }
+
+  :focus-visible {
+    outline: 1px solid currentColor;
+    outline-offset: 4px;
   }
 }
 
+/* ==========================================================================
+   Graphic system
+   ========================================================================== */
+
 @layer components {
-  /* Visible hairline underline that firms up on hover. */
+  /* Static film grain over the whole page — CSS only, no runtime cost. */
+  .grain::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.045;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+
+  /* Vertical margin label, read bottom-to-top like a spine. */
+  .v-label {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
+  }
+
+  /* Hairline editorial rule and the burgundy rule that grows on interaction. */
+  .rule-grow {
+    display: block;
+    height: 2px;
+    background-color: var(--color-burgundy);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-mid) var(--ease-cine);
+  }
+  :is(a, button):is(:hover, :focus-visible) .rule-grow,
+  .is-active .rule-grow {
+    transform: scaleX(1);
+  }
+
   .link-quiet {
     text-decoration-line: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 0.35em;
-    text-decoration-color: color-mix(in srgb, var(--lvxe-soft-gray) 55%, transparent);
-    transition: text-decoration-color 200ms var(--ease-editorial), color 200ms var(--ease-editorial);
+    text-decoration-color: var(--color-soft-gray);
+    transition: text-decoration-color var(--dur-fast) var(--ease-editorial),
+      color var(--dur-fast) var(--ease-editorial);
   }
   .link-quiet:hover {
-    color: var(--lvxe-bone);
-    text-decoration-color: var(--lvxe-bone);
+    color: var(--color-bone);
+    text-decoration-color: var(--color-bone);
+  }
+
+  /* The booking accent: the only place burgundy appears as a line. */
+  .link-book {
+    text-decoration-line: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.45em;
+    text-decoration-color: var(--color-burgundy);
+    color: var(--color-bone);
+    transition: text-underline-offset var(--dur-fast) var(--ease-editorial);
+  }
+  .link-book:hover {
+    text-underline-offset: 0.6em;
+  }
+
+  /* Project hover set: siblings recede while one plate is attended to. */
+  @media (hover: hover) {
+    .dim-set .dim-item {
+      transition: opacity var(--dur-mid) var(--ease-editorial);
+    }
+    .dim-set:has(.dim-item:hover) .dim-item:not(:hover) {
+      opacity: 0.35;
+    }
+  }
+
+  /* Target size (WCAG 2.2 AA 2.5.8): small mono links and buttons keep their
+     11px type but get a 24px hit area, 44px on touch screens. The extra
+     height is padding-free (min-height + centering) so rules and underlines
+     stay where they are. */
+  :where(a, button).text-meta,
+  :where(a, button).link-quiet,
+  :where(a, button).link-book,
+  .hit-target {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+  }
+  @media (pointer: coarse) {
+    :where(a, button).text-meta,
+    :where(a, button).link-quiet,
+    :where(a, button).link-book,
+    .hit-target {
+      min-height: 44px;
+    }
+  }
+
+  /* [Index / Ledger] and discipline filters: the active option is Bone with
+     the burgundy booking rule beneath it; the rest stay Soft Gray. State is
+     carried by aria-pressed, so it is never conveyed by colour alone. */
+  .toggle-opt {
+    color: var(--color-soft-gray);
+    transition: color var(--dur-fast) var(--ease-editorial);
+  }
+  .toggle-opt:hover,
+  .toggle-opt[aria-pressed="true"] {
+    color: var(--color-bone);
+  }
+  .toggle-label {
+    text-decoration-line: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.45em;
+    text-decoration-color: transparent;
+    transition: text-decoration-color var(--dur-fast) var(--ease-editorial);
+  }
+  [aria-pressed="true"] > .toggle-label {
+    text-decoration-color: var(--color-burgundy);
+  }
+
+  /* Ledger rows are one link each; when that link has keyboard focus the
+     whole row carries the focus outline, not just the small "Open" label. */
+  .ledger-row:has(a:focus-visible) {
+    outline: 1px solid var(--color-bone);
+    outline-offset: -1px;
   }
 
   .skip-link {
     position: absolute;
     left: var(--spacing-gutter);
     top: -100%;
-    z-index: 50;
+    z-index: 80;
     padding: 0.5rem 0.75rem;
-    background-color: var(--lvxe-bone);
-    color: var(--lvxe-obsidian);
+    background-color: var(--color-bone);
+    color: var(--color-obsidian);
   }
   .skip-link:focus {
     top: 0.75rem;
   }
+}
 
-  .field {
+/* ==========================================================================
+   Exhibition views — state on <html data-view / data-filter> (scripts/views).
+   Without JS neither attribute is honoured: both views render in sequence
+   and the controls that need a script are hidden.
+   ========================================================================== */
+
+html:not(.js) [data-js-only] {
+  display: none !important;
+}
+html.js[data-view="index"] [data-mode="ledger"],
+html.js[data-view="ledger"] [data-mode="index"] {
+  display: none;
+}
+html.js[data-filter="editorial"] [data-item]:not([data-tags~="editorial"]),
+html.js[data-filter="portraits"] [data-item]:not([data-tags~="portraits"]),
+html.js[data-filter="architecture"] [data-item]:not([data-tags~="architecture"]),
+html.js[data-filter="commercial"] [data-item]:not([data-tags~="commercial"]) {
+  display: none;
+}
+
+/* ==========================================================================
+   Motion — progressive. Start states apply only under html.js, so without
+   JavaScript (or with reduced motion) everything is visible at rest.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Masked image reveal: the frame unveils top-down, uncropped at rest. */
+  html.js .reveal-mask {
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path var(--dur-slow) var(--ease-cine);
+    transition-delay: calc(var(--i, 0) * 120ms);
+  }
+  html.js .reveal-mask.is-in {
+    clip-path: inset(0 0 0 0);
+  }
+
+  /* Staggered lines: each line rises out of its own mask. */
+  .line-mask {
     display: block;
-    width: 100%;
-    margin-top: 0.5rem;
-    padding: 0.75rem;
-    background-color: var(--lvxe-charcoal);
-    color: var(--lvxe-bone);
-    border: 1px solid var(--lvxe-hairline);
-    font-family: var(--font-sans);
-    font-size: 1rem;
+    overflow: clip;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
   }
-  .field:focus-visible {
-    outline-offset: 2px;
+  .line-mask > span {
+    display: block;
   }
-  .field:user-invalid {
-    border-color: var(--lvxe-burgundy);
+  html.js .reveal-lines .line-mask > span {
+    transform: translateY(108%);
+    transition: transform 700ms var(--ease-cine);
+    transition-delay: calc(var(--i, 0) * var(--stagger));
+  }
+  html.js .reveal-lines.is-in .line-mask > span {
+    transform: none;
+  }
+
+  html.js .reveal-fade {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity var(--dur-mid) var(--ease-editorial), transform var(--dur-mid) var(--ease-editorial);
+    transition-delay: calc(var(--i, 0) * 80ms);
+  }
+  html.js .reveal-fade.is-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Scroll choreography — native scrolling, never hijacked. */
+  @supports (animation-timeline: view()) {
+    .scroll-drift {
+      animation: drift linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 100%;
+    }
+    .scroll-settle {
+      animation: settle linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 45%;
+    }
+  }
+}
+
+@keyframes drift {
+  to { transform: translateY(-18%); }
+}
+@keyframes settle {
+  from { transform: scale(0.94); opacity: 0.4; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Page transitions (View Transitions API via Astro's ClientRouter). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 500ms;
+  animation-timing-function: cubic-bezier(0.7, 0, 0.2, 1);
+}
+::view-transition-group(*) {
+  animation-duration: 700ms;
+  animation-timing-function: cubic-bezier(0.7, 0, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }

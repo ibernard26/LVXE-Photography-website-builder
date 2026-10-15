@@ -1,38 +1,60 @@
 /**
- * Editable site content. Change copy here, never hard-code it in components.
- * Do not add clients, publications, awards or quotes that Isaiah has not verified.
+ * Editable site content.
+ *
+ * Sources: README.md (master spec) and the LVXE Website Vision Board
+ * (October 2026). Anything marked `draft` awaits Isaiah's sign-off.
+ * Change copy here — never hard-code it in components.
  */
+
 export const site = {
   name: 'LVXE',
   artist: 'Isaiah Bernard',
-  slogan: 'The Art of Being Seen.',
-  proposition:
-    'Portraiture, fashion, and visual narratives shaped by atmosphere, identity, and intention.',
-  disciplines: ['Fashion', 'Portraits', 'Creative', 'Commercial'],
-  description:
-    'LVXE is the independent photography and visual arts practice of Isaiah Bernard: editorial fashion, intimate portraiture, cinematic visual storytelling and contemporary fine art.',
-  brandStatement: 'LVXE — The Art of Being Seen.',
-  philosophy:
-    'LVXE is an independent photography and visual arts practice exploring the relationship between identity, atmosphere, and expression. Through fashion, portraiture, and cinematic visual storytelling, each composition is approached with intention—balancing light, form, movement, and emotion to create imagery that feels both intimate and commanding.',
-  /** No pricing on the site. Used on the homepage strip and /commercial. */
-  commercialPreview:
-    'LVXE creates distinctive visual assets for brands, creative professionals, and organizations. From editorial campaigns and portraits to corporate headshots and workplace imagery, each commission is developed around the client’s objectives while maintaining a deliberate approach to composition, lighting, and visual quality.',
-  inquiryIntro:
-    'Have a project in mind? Share your concept, location, timeline, and creative references. Every inquiry is reviewed according to its scope, production requirements, and artistic direction.',
-  tagline: 'Photography & Visual Arts',
-  contact: {
-    email: 'lvxevisuals@gmail.com',
-    instagramHandle: 'luxe_editorials',
-    instagramUrl: 'https://www.instagram.com/luxe_editorials/',
-    archiveUrl: 'https://luxeeditorials.mypixieset.com/',
+
+  /** Working draft — README §1 "Proposed Directions". */
+  slogan: { text: 'The Art of Being Seen.', lines: ['The Art of', 'Being', 'Seen'], draft: true },
+
+  /** Working draft — README §1 "Proposed Directions". */
+  proposition: {
+    text: 'Portraiture, fashion, and visual narratives shaped by atmosphere, identity, and intention.',
+    draft: true,
   },
+
+  disciplines: ['Editorial', 'Portraiture', 'Cinematic', 'Fine Art'],
+
+  /** Service area, from the Vision Board. */
+  region: 'New Jersey / New York',
+
+  description:
+    'LVXE is the independent photography and visual arts practice of Isaiah Bernard — editorial fashion, intimate portraiture, and cinematic visual storytelling across New Jersey and New York.',
+
+  /** Contact details are left empty until confirmed; empty values are not rendered. */
+  contact: {
+    email: '',
+    instagram: '',
+  },
+
+  /**
+   * Where the booking form posts (a Formspree, Basin or Netlify Forms URL that
+   * accepts a POST and answers JSON when sent `Accept: application/json`).
+   * Set PUBLIC_BOOKING_ENDPOINT in the host's environment, never in code.
+   * While empty, the form stays visible but tells visitors it is not yet connected.
+   */
+  bookingEndpoint: (import.meta.env.PUBLIC_BOOKING_ENDPOINT ?? '') as string,
 } as const;
 
-export type NavItem = { label: string; href: string };
+/** Masthead issue line — a publication device, not a claim. */
+export const issue = { number: '01', year: '2026' };
 
+export type NavItem = { label: string; href: string; note: string; accent?: boolean };
+
+/**
+ * Primary navigation, shown in the full-screen menu and the footer.
+ * Commissions is the separate scope page (README §2.3); Book carries the
+ * burgundy accent.
+ */
 export const navigation: NavItem[] = [
-  { label: 'Portfolio', href: '/portfolio' },
-  { label: 'Commercial', href: '/commercial' },
-  { label: 'About', href: '/about' },
-  { label: 'Inquire', href: '/inquire' },
+  { label: 'Index', href: '/', note: '' },
+  { label: 'Work', href: '/work', note: 'Series & Plates' },
+  { label: 'Commissions', href: '/commissions', note: 'Editorial & Commercial Scopes' },
+  { label: 'Book', href: '/book', note: 'Inquiry & Brief', accent: true },
 ];

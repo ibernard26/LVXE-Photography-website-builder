@@ -1,0 +1,103 @@
+---
+/**
+ * Commissions — the two scopes LVXE works in. Scope I (editorial & creative)
+ * lists portrait sittings on a light gallery wall; Scope II (commercial &
+ * corporate) is a separate dark block quoted per brief. Each scope has its
+ * own booking path.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHead from '@/components/PageHead.astro';
+import { commercial, onRequest, scopes, sittings } from '@/data/commissions';
+import { site } from '@/data/site';
+
+const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<BaseLayout
+  title="Commissions"
+  label="Issue 01 / Commissions"
+  description={`Editorial and commercial commissions with LVXE across ${site.region}.`}
+>
+  <PageHead
+    number="No. 03"
+    section="Commissions"
+    title="Commissions"
+    counter="In Two Scopes."
+    lede={`Editorial and creative sittings, and commercial and corporate work, across ${site.region}.`}
+  />
+
+  <!-- Scope I on a light gallery wall. -->
+  <section aria-labelledby="scope-editorial" class="wall py-20 sm:py-32">
+    <div class="mx-auto grid max-w-screen-2xl grid-cols-12 gap-x-4 gap-y-10 px-gutter lg:gap-x-8">
+      <div class="col-span-12 lg:col-span-3">
+        <p class="text-meta">Scope I</p>
+        <h2 id="scope-editorial" class="text-heading mt-6 max-w-[14ch]">{scopes.editorial.label}</h2>
+        <p class="text-meta mt-6">{scopes.editorial.for}</p>
+      </div>
+
+      <div class="col-span-12 lg:col-span-8 lg:col-start-5">
+        <table class="w-full border-collapse">
+          <caption class="sr-only">Portrait sittings and rates</caption>
+          <thead>
+            <tr class="border-b border-bone">
+              <th scope="col" class="text-meta w-16 pb-4 text-left font-normal">No.</th>
+              <th scope="col" class="text-meta pb-4 text-left font-normal">Sitting</th>
+              <th scope="col" class="text-meta pb-4 text-right font-normal">Rate</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              sittings.map((p, i) => (
+                <tr class="reveal-fade border-b border-border" style={`--i:${i}`}>
+                  <td class="text-meta py-7 align-top sm:py-10">{pad(i + 1)}</td>
+                  <th scope="row" class="py-7 pr-6 text-left font-normal sm:py-10">
+                    <span class="block font-serif text-[clamp(1.75rem,4.5vw,3.5rem)] leading-none tracking-[-0.02em]">{p.name}</span>
+                    <span class="text-meta mt-3 block">{p.detail}</span>
+                  </th>
+                  <td class="py-7 text-right align-top font-serif text-[clamp(1.75rem,4.5vw,3.5rem)] font-[300] leading-none tracking-[-0.02em] tabular-nums sm:py-10">
+                    {p.price === null ? 'On request' : usd.format(p.price)}
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+
+        <p class="text-body mt-8">Also available, rate on request: {onRequest.join(', ').toLowerCase()}.</p>
+        <a href="/book?type=editorial" class="text-meta link-book mt-8 inline-block">Inquire about an editorial commission</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scope II: a separate, darker door. -->
+  <section aria-labelledby="scope-commercial" class="mx-auto mt-28 max-w-screen-2xl px-gutter sm:mt-40">
+    <div class="grid grid-cols-12 gap-x-4 gap-y-10 lg:gap-x-8">
+      <div class="col-span-12 lg:col-span-3">
+        <p class="text-meta">Scope II</p>
+        <p class="text-meta mt-6">{scopes.commercial.for}</p>
+      </div>
+      <h2 id="scope-commercial" class="reveal-lines col-span-12 lg:col-span-9">
+        <span class="line-mask"><span class="text-display" style="--i:0">Commercial Campaigns</span></span>{' '}
+        <span class="line-mask pl-[12%]"><span class="text-display-serif" style="--i:1">&amp; Corporate Identity.</span></span>
+      </h2>
+      <ul class="col-span-12 border-t border-border lg:col-span-6 lg:col-start-7">
+        {
+          commercial.map((c, i) => (
+            <li class="reveal-fade flex items-baseline justify-between gap-6 border-b border-border py-4" style={`--i:${i}`}>
+              <span class="text-heading text-[1.25rem]">{c}</span>
+              <span class="text-meta">{pad(i + 1)}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="col-span-12 lg:col-span-6 lg:col-start-7">
+        <p class="text-body max-w-measure">
+          Send the brief, dates, deliverables and usage. Campaign, workplace and event work is scoped and quoted for each
+          project.
+        </p>
+        <a href="/book?type=commercial" class="text-meta link-book mt-8 inline-block">Send a commercial brief</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

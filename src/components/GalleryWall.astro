@@ -1,0 +1,103 @@
+---
+/**
+ * Gallery wall — a light, white-cube magazine sequence.
+ *
+ * Instead of repeating one placement pattern, the wall is composed from
+ * editorial blocks so the rhythm keeps changing:
+ *   feature  — a large plate offset left, an optional smaller plate low right
+ *   diptych  — one plate set against a deep negative-space text block
+ *   spread   — two plates side by side across the full layout width
+ *   single   — one plate pushed off-axis to the left or right
+ * Every frame keeps its native ratio and links to its room with a
+ * shared-element transition. A plate should appear only once per wall.
+ */
+import Plate from '@/components/Plate.astro';
+import { frameOf, plateNumber, type Plate as PlateT } from '@/data/plates';
+
+export type WallBlock =
+  | { kind: 'feature'; plate: PlateT; aside?: PlateT }
+  | { kind: 'diptych'; plate: PlateT; eyebrow: string; heading: string; text: string; side?: 'left' | 'right' }
+  | { kind: 'spread'; a: PlateT; b: PlateT }
+  | { kind: 'single'; plate: PlateT; align: 'left' | 'right' };
+
+interface Props {
+  heading?: string;
+  intro?: string;
+  blocks: WallBlock[];
+}
+const { heading = 'Plates', intro, blocks } = Astro.props;
+
+const count = new Set(
+  blocks.flatMap((b) => (b.kind === 'spread' ? [b.a.id, b.b.id] : b.kind === 'feature' && b.aside ? [b.plate.id, b.aside.id] : [b.plate.id])),
+).size;
+const label = (p: PlateT) => `Pl. ${plateNumber(p)}`;
+const note = (p: PlateT) => `${p.tone} · ${frameOf(p).ratio}`;
+---
+
+<section aria-labelledby="gallery-wall" class="wall py-24 sm:py-36">
+  <div class="mx-auto max-w-screen-2xl px-gutter">
+    <div class="grid grid-cols-12 items-end gap-x-4 gap-y-6 border-b border-border pb-6 lg:gap-x-8">
+      <h2 id="gallery-wall" class="reveal-lines col-span-12 sm:col-span-8">
+        <span class="line-mask"><span class="text-display">{heading}</span></span>
+      </h2>
+      <p class="text-meta col-span-12 sm:col-span-4 sm:text-right">
+        {String(count).padStart(2, '0')} frames · native ratios, uncropped
+      </p>
+      {intro && <p class="text-body col-span-12 max-w-measure sm:col-span-6">{intro}</p>}
+    </div>
+
+    <div class="dim-set mt-16 grid gap-y-28 sm:mt-24 sm:gap-y-40">
+      {
+        blocks.map((b) => {
+          if (b.kind === 'feature')
+            return (
+              <div class="grid grid-cols-12 items-end gap-x-4 gap-y-16 lg:gap-x-8">
+                <div class="dim-item col-span-12 sm:col-span-7 lg:col-span-6">
+                  <Plate plate={b.plate} href={`/work/${b.plate.id}`} transitionName={`plate-${b.plate.id}`} label={label(b.plate)} note={note(b.plate)} sizes="(min-width: 1024px) 48vw, (min-width: 640px) 56vw, 100vw" />
+                </div>
+                {b.aside && (
+                  <div class="dim-item col-span-7 col-start-6 sm:col-span-4 sm:col-start-9 lg:col-span-3 lg:col-start-9">
+                    <Plate plate={b.aside} i={1} href={`/work/${b.aside.id}`} transitionName={`plate-${b.aside.id}`} label={label(b.aside)} note={note(b.aside)} sizes="(min-width: 1024px) 24vw, (min-width: 640px) 32vw, 58vw" />
+                  </div>
+                )}
+              </div>
+            );
+          if (b.kind === 'diptych') {
+            const right = b.side === 'right';
+            return (
+              <div class="grid grid-cols-12 items-center gap-x-4 gap-y-12 lg:gap-x-8">
+                <div class:list={['dim-item col-span-10 sm:col-span-5 lg:col-span-4', right && 'col-start-3 sm:order-2 sm:col-start-8 lg:col-start-9']}>
+                  <Plate plate={b.plate} href={`/work/${b.plate.id}`} transitionName={`plate-${b.plate.id}`} label={label(b.plate)} note={note(b.plate)} sizes="(min-width: 1024px) 32vw, (min-width: 640px) 40vw, 84vw" />
+                </div>
+                <div class:list={['col-span-12 sm:col-span-6 lg:col-span-5', right ? 'sm:order-1 sm:col-start-1 lg:col-start-2' : 'sm:col-start-7 lg:col-start-7']}>
+                  <p class="text-meta">{b.eyebrow}</p>
+                  <h3 class="reveal-lines mt-8">
+                    <span class="line-mask"><span class="text-display-serif text-[clamp(2.25rem,4.5vw,4rem)]">{b.heading}</span></span>
+                  </h3>
+                  <p class="text-body mt-8 max-w-[40ch]">{b.text}</p>
+                </div>
+              </div>
+            );
+          }
+          if (b.kind === 'spread')
+            return (
+              <div class="grid grid-cols-2 gap-x-4 sm:gap-x-6">
+                {[b.a, b.b].map((p, i) => (
+                  <div class="dim-item">
+                    <Plate plate={p} i={i} href={`/work/${p.id}`} transitionName={`plate-${p.id}`} label={label(p)} note={note(p)} sizes="(min-width: 1536px) 760px, 50vw" />
+                  </div>
+                ))}
+              </div>
+            );
+          return (
+            <div class="grid grid-cols-12 gap-x-4 lg:gap-x-8">
+              <div class:list={['dim-item col-span-9 sm:col-span-5 lg:col-span-4', b.align === 'right' ? 'col-start-4 sm:col-start-8 lg:col-start-8' : 'sm:col-start-2']}>
+                <Plate plate={b.plate} href={`/work/${b.plate.id}`} transitionName={`plate-${b.plate.id}`} label={label(b.plate)} note={note(b.plate)} sizes="(min-width: 1024px) 32vw, (min-width: 640px) 40vw, 75vw" />
+              </div>
+            </div>
+          );
+        })
+      }
+    </div>
+  </div>
+</section>

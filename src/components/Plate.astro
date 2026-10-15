@@ -1,61 +1,90 @@
 ---
 /**
- * Plate: the single image primitive.
- *  - variant "full" (default): proportional resize only, intrinsic width/height,
- *    width:100%/height:auto, NO object-fit. Charcoal background while loading.
- *  - variant "thumb": the one sanctioned exception (grid/index thumbnails only),
- *    a fixed frame from tailwind.config.mjs aspectRatio with object-fit: cover.
+ * Plate — the single image primitive for the whole site.
+ *
+ * Integrity rules (README §2.2):
+ *  - Only `widths` are passed to the optimiser, never a target height, so
+ *    every derivative is a proportional resize of the original frame.
+ *  - The <img> carries intrinsic width/height and is sized `width:100%;
+ *    height:auto` — the exact native-ratio box is reserved before decode
+ *    (zero CLS). No object-fit, no rounding, no card chrome.
+ *  - The masked reveal animates `clip-path` on the frame and ends at
+ *    `inset(0)`: the photograph is never cropped at rest.
+ *
+ * `transitionName` pairs the plate with the same plate on another page so
+ * the View Transitions API can morph it during navigation.
  */
 import { Picture } from 'astro:assets';
-import type { ImageMetadata } from 'astro';
+import type { Plate } from '@/data/plates';
 
 interface Props {
-  image: ImageMetadata;
-  alt: string;
+  plate: Plate;
+  /** Responsive `sizes` attribute describing the rendered width. */
   sizes: string;
-  caption?: string;
-  index?: string;
+  /** Caption line under the frame, e.g. "Pl. 03". */
+  label?: string;
+  /** Secondary caption on the right, e.g. "Monochrome". */
+  note?: string;
+  /** Set on the single LCP image only. */
   priority?: boolean;
-  variant?: 'full' | 'thumb';
-  thumbAspect?: '4/5' | '3/2' | '2/3' | '16/9';
+  /** Animate the frame in with a masked reveal. */
+  reveal?: boolean;
+  /** Stagger index for the reveal. */
+  i?: number;
+  href?: string;
+  transitionName?: string;
   class?: string;
+  imgClass?: string;
 }
 
 const {
-  image, alt, sizes, caption, index, priority = false,
-  variant = 'full', thumbAspect = '4/5', class: className,
+  plate,
+  sizes,
+  label,
+  note,
+  priority = false,
+  reveal = true,
+  i = 0,
+  href,
+  transitionName,
+  class: className,
+  imgClass,
 } = Astro.props;
 
+const nativeWidth = plate.image.width;
 const candidateWidths = [480, 720, 960, 1280, 1600, 2000, 2400];
-const widths = [...candidateWidths.filter((w) => w < image.width), image.width]; // never upscale
-
-const thumbFrame = {
-  '4/5': 'aspect-4/5', '3/2': 'aspect-3/2', '2/3': 'aspect-2/3', '16/9': 'aspect-16/9',
-}[thumbAspect];
-const imgClass = variant === 'thumb'
-  ? `w-full h-auto ${thumbFrame} object-cover bg-charcoal`
-  : 'w-full h-auto bg-charcoal';
+// Never upscale: cap derivatives at the master's own width.
+const widths = [...candidateWidths.filter((w) => w < nativeWidth), nativeWidth];
+const Wrapper = href ? 'a' : 'div';
 ---
 
 <figure class:list={['plate', className]}>
-  <Picture
-    src={image}
-    alt={alt}
-    widths={widths}
-    sizes={sizes}
-    formats={['avif', 'webp']}
-    fallbackFormat="jpg"
-    quality={80}
-    loading={priority ? 'eager' : 'lazy'}
-    fetchpriority={priority ? 'high' : 'auto'}
-    decoding="async"
-    class={imgClass}
-  />
+  <Wrapper
+    href={href}
+    class:list={['block', reveal && 'reveal-mask', href && 'group']}
+    style={`--i:${i}`}
+  >
+    <div transition:name={transitionName}>
+    <Picture
+      src={plate.image}
+      alt={plate.alt}
+      widths={widths}
+      sizes={sizes}
+      formats={['webp']}
+      fallbackFormat="jpg"
+      quality={82}
+      loading={priority ? 'eager' : 'lazy'}
+      fetchpriority={priority ? 'high' : 'auto'}
+      decoding={priority ? 'sync' : 'async'}
+      class:list={['h-auto w-full bg-charcoal', imgClass]}
+    />
+    </div>
+  </Wrapper>
   {
-    (index || caption) && (
-      <figcaption class="text-meta mt-3 flex gap-4">
-        {index && <span aria-hidden="true">{index}</span>}
-        {caption && <span>{caption}</span>}
+    (label || note) && (
+      <figcaption class="text-meta mt-3 flex items-baseline justify-between gap-4">
+        <span>{label}</span>
+        {note && <span>{note}</span>}
       </figcaption>
     )
   }

@@ -1,0 +1,81 @@
+---
+/**
+ * Series catalogue (Vision Board "Monolith" skeleton).
+ * Catalogue numbers are real order. Hover/focus: the title slides, the
+ * burgundy rule grows and the concept line opens (400–500ms). On touch and
+ * with `withConcepts`, concepts are always shown.
+ */
+import { series } from '@/data/series';
+
+interface Props {
+  heading?: string;
+  withConcepts?: boolean;
+  linked?: boolean;
+}
+
+const { heading = 'Series', withConcepts = false, linked = true } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<section aria-labelledby="series-index" class="mx-auto max-w-screen-2xl px-gutter">
+  <div class="grid grid-cols-12 items-baseline gap-x-4 border-b border-border pb-5 lg:gap-x-8">
+    <h2 id="series-index" class="text-meta col-span-6 text-bone">{heading}</h2>
+    <p class="text-meta col-span-6 text-right">{pad(series.length)} series · catalogue</p>
+  </div>
+
+  <ol class="dim-set">
+    {
+      series.map((s, i) => {
+        const Row = linked ? 'a' : 'div';
+        return (
+          <li id={linked ? undefined : s.slug} class="dim-item scroll-mt-8 border-b border-border">
+            <Row
+              href={linked ? `/work#${s.slug}` : undefined}
+              class:list={['series-row group grid grid-cols-12 items-baseline gap-x-4 py-7 sm:py-9 lg:gap-x-8', withConcepts && 'show-concept']}
+            >
+              <span class="text-meta col-span-2 sm:col-span-1">S—{pad(i + 1)}</span>
+              <span class="col-span-10 min-w-0 sm:col-span-8">
+                <span class="reveal-lines block">
+                  <span class="line-mask">
+                    <span
+                      class="block font-serif text-[clamp(2rem,5.6vw,5rem)] font-[400] leading-[0.95] tracking-[-0.02em] text-bone transition-transform duration-500 ease-editorial group-hover:translate-x-4 group-focus-visible:translate-x-4"
+                      style={`--i:${i}`}
+                    >
+                      {s.title}
+                    </span>
+                  </span>
+                </span>
+                <span class="rule-grow mt-4 w-28" aria-hidden="true" />
+                {s.concept && (
+                  <span class="concept grid">
+                    <span class="min-h-0 overflow-hidden">
+                      <span class="text-heading block max-w-[36ch] pt-4 text-[1.25rem] text-soft-gray">{s.concept}</span>
+                    </span>
+                  </span>
+                )}
+              </span>
+              <span class="text-meta col-span-10 col-start-3 mt-3 sm:col-span-3 sm:col-start-auto sm:mt-0 sm:text-right">
+                {s.status}
+              </span>
+            </Row>
+          </li>
+        );
+      })
+    }
+  </ol>
+</section>
+
+<style>
+  .concept {
+    grid-template-rows: 1fr;
+  }
+  @media (hover: hover) {
+    .series-row:not(.show-concept) .concept {
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 500ms var(--ease-cine);
+    }
+    .series-row:not(.show-concept):is(:hover, :focus-visible) .concept {
+      grid-template-rows: 1fr;
+    }
+  }
+</style>

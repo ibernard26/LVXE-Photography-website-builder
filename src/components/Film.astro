@@ -1,0 +1,78 @@
+---
+/**
+ * Film — the moving-image counterpart to <Plate>.
+ *
+ * - Native ratio: width/height attributes plus `aspect-ratio` reserve the
+ *   exact box before load (zero CLS). No object-fit, never cropped.
+ * - Muted, inline, looping; `preload="none"` until it nears the viewport.
+ *   It plays only while on screen (src/scripts/film.ts).
+ * - A visible Pause/Play control on every film (WCAG 2.2.2). With reduced
+ *   motion it never autoplays and starts on the poster.
+ * - The poster is optimised through Astro's image pipeline. Off the lead
+ *   position it is attached only as the film nears the viewport, so it never
+ *   competes with the page's largest image (noscript keeps it without JS).
+ */
+import { getImage } from 'astro:assets';
+import type { Film } from '@/data/films';
+
+interface Props {
+  film: Film;
+  label?: string;
+  note?: string;
+  reveal?: boolean;
+  /** Load eagerly (the film is the page's main subject). */
+  priority?: boolean;
+  transitionName?: string;
+  class?: string;
+}
+
+const { film, label, note, reveal = true, priority = false, transitionName, class: className } = Astro.props;
+const poster = await getImage({ src: film.poster, width: Math.min(1080, film.poster.width), format: 'webp', quality: 80 });
+---
+
+<figure class:list={['film', className]}>
+  <div class:list={['relative', reveal && 'reveal-mask']}>
+    <div transition:name={transitionName}>
+      <video
+        class="block h-auto w-full bg-charcoal"
+        style={`aspect-ratio: ${film.width} / ${film.height}`}
+        width={film.width}
+        height={film.height}
+        poster={priority ? poster.src : undefined}
+        data-poster={priority ? undefined : poster.src}
+        muted
+        loop={film.loop}
+        playsinline
+        preload={priority ? 'metadata' : 'none'}
+        data-film
+        aria-label={film.description}
+      >
+        <source src={`${film.sources.small}.mp4`} type="video/mp4" media="(max-width: 767px)" />
+        <source src={`${film.sources.small}.webm`} type="video/webm" media="(max-width: 767px)" />
+        <source src={`${film.sources.large}.mp4`} type="video/mp4" />
+        <source src={`${film.sources.large}.webm`} type="video/webm" />
+      </video>
+      {!priority && (
+        <noscript>
+          <img src={poster.src} alt="" width={film.width} height={film.height} class="absolute inset-0 block h-full w-full" />
+        </noscript>
+      )}
+    </div>
+    <button
+      type="button"
+      data-film-toggle
+      class="text-meta absolute right-3 bottom-3 cursor-pointer bg-obsidian/70 px-3 py-2 text-bone transition-colors duration-300 hover:bg-obsidian"
+      aria-pressed="false"
+    >
+      <span data-film-state>Pause</span><span class="sr-only"> film</span>
+    </button>
+  </div>
+  {
+    (label || note) && (
+      <figcaption class="text-meta mt-3 flex items-baseline justify-between gap-4">
+        <span>{label}</span>
+        {note && <span>{note}</span>}
+      </figcaption>
+    )
+  }
+</figure>

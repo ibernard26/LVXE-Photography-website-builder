@@ -1,11 +1,23 @@
 ---
-import Layout from '@/layouts/Layout.astro';
+/**
+ * Not found. Static hosts serve this for any unknown path; it keeps the
+ * masthead and menu so the visitor can continue from here.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHead from '@/components/PageHead.astro';
 ---
 
-<Layout title="Not found" noindex>
-  <section class="mx-auto max-w-screen-2xl px-gutter pt-16 sm:pt-24">
-    <p class="text-meta">404</p>
-    <h1 class="text-display mt-4">This page is out of frame.</h1>
-    <p class="mt-10"><a href="/" class="text-meta link-quiet text-bone">Return home</a></p>
-  </section>
-</Layout>
+<BaseLayout title="Not found" label="Issue 01 / Not found" hideBooking description="This page is not part of the LVXE archive.">
+  <PageHead
+    number="404"
+    section="Not found"
+    title="Not on"
+    counter="the wall."
+    lede="This address is not part of the archive. The index and the ledger list every published work."
+  />
+  <div class="mx-auto flex max-w-screen-2xl flex-wrap gap-x-10 gap-y-4 px-gutter">
+    <a href="/" class="text-meta link-quiet text-bone">Index</a>
+    <a href="/?view=ledger" class="text-meta link-quiet text-bone">Ledger</a>
+    <a href="/book" class="text-meta link-book">Book</a>
+  </div>
+</BaseLayout>

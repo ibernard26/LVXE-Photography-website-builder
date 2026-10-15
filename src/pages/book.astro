@@ -1,0 +1,333 @@
+---
+/**
+ * Booking — two explicit pathways (Editorial & Creative Commissions, or
+ * Commercial Campaigns & Corporate Identity) sharing one form. Every control
+ * is borderless except a single bottom rule. Progressive enhancement:
+ * without JS both sections show and only shared fields are required; with
+ * JS the chosen path's section is shown, the other disabled, and
+ * `?type=editorial|commercial` preselects.
+ *
+ * Field rules use Gray at 60% rather than the #1F1F24 hairline: the hairline
+ * is ~1.2:1 against Obsidian and would fail WCAG 1.4.11 (3:1 for input
+ * boundaries). Focus brightens the rule to Bone.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHead from '@/components/PageHead.astro';
+import { commercial, onRequest, scopes, sittings } from '@/data/commissions';
+import { site } from '@/data/site';
+
+const endpoint = site.bookingEndpoint;
+const field =
+  'mt-3 w-full rounded-none border-0 border-b border-soft-gray/60 bg-transparent py-3 text-[1.0625rem] text-bone placeholder:text-soft-gray/80 focus:border-bone focus:outline-none';
+const label = 'text-meta block';
+const usage = ['Web', 'Social', 'Print', 'Campaign / out of home', 'Internal'];
+---
+
+<BaseLayout title="Book" label="Issue 01 / Book" hideBooking description={`Inquire about an editorial commission or send a commercial brief to LVXE, ${site.region}.`}>
+  <PageHead
+    number="No. 04"
+    section="Book"
+    title="Book"
+    counter="Inquiry & Brief."
+    lede="Choose the scope of your project. Both pathways arrive in the same place."
+  />
+
+  <section class="mx-auto max-w-screen-2xl px-gutter">
+    <form
+      id="inquiry"
+      method="post"
+      novalidate
+      action={endpoint || undefined}
+      data-connected={endpoint ? 'true' : 'false'}
+      class="grid grid-cols-12 gap-x-4 gap-y-14 border-t border-border pt-12 lg:gap-x-8"
+    >
+      <!-- Error summary: shown and focused only after a failed send. -->
+      <div id="form-errors" class="col-span-12 border-l-2 border-bone py-2 pl-6" role="alert" tabindex="-1" aria-labelledby="form-errors-title" hidden>
+        <p id="form-errors-title" class="text-heading text-[1.5rem]">Two details are needed.</p>
+        <ul class="mt-4 space-y-1" data-error-list></ul>
+      </div>
+
+      <!-- Pathway choice: borderless options; the burgundy rule and the word
+           "Selected" mark the choice, so it never relies on colour alone. -->
+      <fieldset class="col-span-12">
+        <legend class="text-meta mb-8">01 — Scope</legend>
+        <div class="grid gap-y-10 sm:grid-cols-2 sm:gap-x-8">
+          {
+            [scopes.editorial, scopes.commercial].map((scope, i) => (
+              <label class="path-option group cursor-pointer">
+                <input type="radio" name="type" value={scope.id} class="peer sr-only" checked={i === 0} />
+                <span class="text-meta flex justify-between gap-4">
+                  <span>{scope.for}</span>
+                  <span class="path-selected text-bone" aria-hidden="true">Selected</span>
+                </span>
+                <span class="path-label mt-4 block font-serif text-[clamp(1.75rem,3.2vw,2.75rem)] leading-[1.05] tracking-[-0.02em] text-soft-gray transition-colors duration-300">
+                  {scope.label}
+                </span>
+                <span class="mt-6 block h-px w-full bg-soft-gray/40" aria-hidden="true"></span>
+                <span class="rule-grow -mt-px w-full" aria-hidden="true"></span>
+              </label>
+            ))
+          }
+        </div>
+      </fieldset>
+
+      <!-- Shared -->
+      <fieldset class="col-span-12 grid grid-cols-12 gap-x-4 gap-y-10 lg:gap-x-8">
+        <legend class="text-meta mb-6">02 — Contact</legend>
+        <div class="col-span-12 md:col-span-6">
+          <label for="name" class={label}>Name <span class="text-soft-gray">(required)</span></label>
+          <input id="name" name="name" type="text" autocomplete="name" required aria-describedby="name-error" class={field} />
+          <p id="name-error" class="field-error text-body mt-2 text-bone" hidden></p>
+        </div>
+        <div class="col-span-12 md:col-span-6">
+          <label for="email" class={label}>Email <span class="text-soft-gray">(required)</span></label>
+          <input id="email" name="email" type="email" autocomplete="email" required aria-describedby="email-error" class={field} />
+          <p id="email-error" class="field-error text-body mt-2 text-bone" hidden></p>
+        </div>
+      </fieldset>
+
+      <!-- Portrait path -->
+      <fieldset data-path="editorial" class="col-span-12 grid grid-cols-12 gap-x-4 gap-y-10 lg:gap-x-8">
+        <legend class="text-meta mb-6">03 — Editorial &amp; creative</legend>
+        <div class="col-span-12 md:col-span-6">
+          <label for="sitting" class={label}>Sitting</label>
+          <select id="sitting" name="sitting" class={`${field} appearance-none`}>
+            <option value="" class="bg-obsidian">Choose one</option>
+            {sittings.map((p) => <option class="bg-obsidian">{p.name}</option>)}
+            {onRequest.map((p) => <option class="bg-obsidian">{p}</option>)}
+          </select>
+        </div>
+        <div class="col-span-12 md:col-span-6">
+          <label for="instagram" class={label}>Instagram</label>
+          <input id="instagram" name="instagram" type="text" placeholder="@handle" class={field} />
+        </div>
+        <div class="col-span-12 md:col-span-6">
+          <label for="references" class={label}>References</label>
+          <input id="references" name="references" type="text" placeholder="Links to moodboards or images" class={field} />
+        </div>
+      </fieldset>
+
+      <!-- Commercial path -->
+      <fieldset data-path="commercial" class="col-span-12 grid grid-cols-12 gap-x-4 gap-y-10 lg:gap-x-8">
+        <legend class="text-meta mb-6">03 — Commercial &amp; corporate</legend>
+        <div class="col-span-12 md:col-span-6">
+          <label for="company" class={label}>Company</label>
+          <input id="company" name="company" type="text" autocomplete="organization" class={field} />
+        </div>
+        <div class="col-span-12 md:col-span-6">
+          <label for="service" class={label}>Work required</label>
+          <select id="service" name="service" class={`${field} appearance-none`}>
+            <option value="" class="bg-obsidian">Choose one</option>
+            {commercial.map((c) => <option class="bg-obsidian">{c}</option>)}
+          </select>
+        </div>
+        <div class="col-span-12 md:col-span-6">
+          <label for="deliverables" class={label}>Deliverables</label>
+          <input id="deliverables" name="deliverables" type="text" placeholder="e.g. 12 portraits, 3 campaign images" class={field} />
+        </div>
+        <fieldset class="col-span-12 md:col-span-6">
+          <legend class={label}>Usage</legend>
+          <div class="mt-4 flex flex-wrap gap-x-6 gap-y-3">
+            {
+              usage.map((u, i) => (
+                <label class="cursor-pointer">
+                  <input type="checkbox" name="usage" value={u} id={`usage-${i}`} class="peer sr-only" />
+                  <span class="text-meta inline-block border-b border-soft-gray/60 pb-1 transition-colors duration-300 peer-checked:border-burgundy peer-checked:text-bone peer-focus-visible:outline peer-focus-visible:outline-1 peer-focus-visible:outline-offset-4">
+                    {u}
+                  </span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+      </fieldset>
+
+      <!-- Shared closing -->
+      <fieldset class="col-span-12 grid grid-cols-12 gap-x-4 gap-y-10 lg:gap-x-8">
+        <legend class="text-meta mb-6">04 — Timing &amp; concept</legend>
+        <div class="col-span-6 md:col-span-3">
+          <label for="date-from" class={label}>From</label>
+          <input id="date-from" name="date_from" type="date" class={field} />
+        </div>
+        <div class="col-span-6 md:col-span-3">
+          <label for="date-to" class={label}>To</label>
+          <input id="date-to" name="date_to" type="date" class={field} />
+        </div>
+        <div class="col-span-12">
+          <label for="message" class={label}>Concept or brief</label>
+          <textarea id="message" name="message" rows="4" class={`${field} resize-y`}></textarea>
+        </div>
+      </fieldset>
+
+      <!-- Spam trap: invisible to people and assistive technology, filled by bots. -->
+      <div class="hidden" aria-hidden="true">
+        <label>Leave this empty <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" /></label>
+      </div>
+
+      <div class="col-span-12 flex flex-wrap items-center gap-x-10 gap-y-4 border-t border-border pt-10">
+        <button
+          type="submit"
+          class="cursor-pointer border-b-2 border-burgundy bg-transparent px-0 pb-2 font-serif text-[clamp(1.75rem,3vw,2.5rem)] leading-none tracking-[-0.02em] text-bone transition-[padding] duration-300 ease-editorial hover:pr-6 disabled:cursor-wait disabled:opacity-60"
+        >
+          <span data-submit-label>Send inquiry</span>
+        </button>
+        <p id="inquiry-status" role="status" tabindex="-1" class="text-meta data-[state=error]:text-bone data-[state=sent]:text-bone"></p>
+      </div>
+    </form>
+  </section>
+</BaseLayout>
+
+<style>
+  .path-option:has(:checked) .path-label,
+  .path-option:hover .path-label {
+    color: var(--color-bone);
+  }
+  .path-option:has(:checked) .rule-grow {
+    transform: scaleX(1);
+  }
+  .path-selected {
+    visibility: hidden;
+  }
+  .path-option:has(:checked) .path-selected {
+    visibility: visible;
+  }
+  input[aria-invalid='true'] {
+    border-bottom-color: var(--color-bone);
+    border-bottom-width: 2px;
+  }
+  .path-option:has(:focus-visible) {
+    outline: 1px solid var(--color-bone);
+    outline-offset: 8px;
+  }
+</style>
+
+<script>
+  function setup() {
+    const form = document.getElementById('inquiry') as HTMLFormElement | null;
+    if (!form) return;
+    const status = document.getElementById('inquiry-status')!;
+    const label = form.querySelector('[data-submit-label]')!;
+    const radios = form.querySelectorAll<HTMLInputElement>('input[name="type"]');
+    const paths = form.querySelectorAll<HTMLFieldSetElement>('[data-path]');
+
+    const apply = (type: string) => {
+      paths.forEach((p) => {
+        const on = p.dataset.path === type;
+        p.hidden = !on;
+        p.disabled = !on;
+      });
+      label.textContent = type === 'commercial' ? 'Send brief' : 'Send inquiry';
+    };
+
+    // `portrait` is kept as an alias for links made before the rename.
+    const raw = new URLSearchParams(location.search).get('type');
+    const preset = raw === 'portrait' ? 'editorial' : raw;
+    if (preset === 'commercial' || preset === 'editorial') {
+      radios.forEach((r) => (r.checked = r.value === preset));
+    }
+    apply(form.querySelector<HTMLInputElement>('input[name="type"]:checked')?.value ?? 'editorial');
+    radios.forEach((r) => r.addEventListener('change', () => apply(r.value)));
+
+    // Inline validation: each required field gets its own message, linked by
+    // aria-describedby; checked on blur once touched, and all at once on send.
+    const summary = document.getElementById('form-errors')!;
+    const summaryList = summary.querySelector('[data-error-list]')!;
+    const summaryTitle = document.getElementById('form-errors-title')!;
+    const rules: Record<string, (v: string) => string> = {
+      name: (v) => (v.trim() ? '' : 'Enter your name.'),
+      email: (v) =>
+        !v.trim() ? 'Enter your email address.' : /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? '' : 'Enter an email address like name@example.com.',
+    };
+    const check = (id: string) => {
+      const input = document.getElementById(id) as HTMLInputElement;
+      const msg = rules[id](input.value);
+      const out = document.getElementById(`${id}-error`)!;
+      out.textContent = msg;
+      out.hidden = !msg;
+      input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+      return msg;
+    };
+    Object.keys(rules).forEach((id) => {
+      const input = document.getElementById(id) as HTMLInputElement;
+      input.addEventListener('blur', () => input.value && check(id));
+      input.addEventListener('input', () => input.getAttribute('aria-invalid') === 'true' && check(id));
+    });
+
+    form.addEventListener('submit', (e) => {
+      const errors = Object.keys(rules)
+        .map((id) => [id, check(id)] as const)
+        .filter(([, msg]) => msg);
+      if (errors.length) {
+        e.preventDefault();
+        summaryTitle.textContent = errors.length === 1 ? 'One detail is needed.' : 'Two details are needed.';
+        summaryList.innerHTML = '';
+        for (const [id, msg] of errors) {
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+          a.href = `#${id}`;
+          a.className = 'text-body link-quiet text-bone';
+          a.textContent = msg;
+          a.addEventListener('click', (ev) => {
+            ev.preventDefault();
+            document.getElementById(id)?.focus();
+          });
+          li.append(a);
+          summaryList.append(li);
+        }
+        summary.hidden = false;
+        summary.focus();
+        setStatus('', '');
+        return;
+      }
+      summary.hidden = true;
+      // Until PUBLIC_BOOKING_ENDPOINT is set the form cannot deliver anything:
+      // say so plainly instead of pretending it was sent.
+      if (form.dataset.connected !== 'true') {
+        e.preventDefault();
+        setStatus('error', 'Online inquiries are not connected yet. Nothing was sent.');
+        return;
+      }
+      e.preventDefault();
+      send();
+    });
+
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    const setStatus = (state: '' | 'sending' | 'sent' | 'error', text: string) => {
+      status.dataset.state = state;
+      status.textContent = text;
+    };
+
+    // Sent with fetch so the visitor stays on the page and every outcome is
+    // reported in place. Nothing typed is cleared unless the send succeeded.
+    async function send() {
+      if (form!.dataset.sending === 'true') return;
+      form!.dataset.sending = 'true';
+      button.disabled = true;
+      const idle = label.textContent;
+      label.textContent = 'Sending…';
+      setStatus('sending', 'Sending your inquiry.');
+      try {
+        const res = await fetch(form!.action, {
+          method: 'POST',
+          body: new FormData(form!),
+          headers: { Accept: 'application/json' },
+          signal: AbortSignal.timeout(20000),
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        form!.reset();
+        Object.keys(rules).forEach((id) => document.getElementById(id)?.removeAttribute('aria-invalid'));
+        apply(form!.querySelector<HTMLInputElement>('input[name="type"]:checked')?.value ?? 'editorial');
+        setStatus('sent', 'Thank you. Your inquiry was sent.');
+      } catch {
+        label.textContent = idle;
+        setStatus('error', 'Your inquiry could not be sent. Nothing you typed has been lost; please try again in a moment.');
+      } finally {
+        delete form!.dataset.sending;
+        button.disabled = false;
+        if (status.dataset.state === 'sent') label.textContent = idle;
+        status.focus();
+      }
+    }
+  }
+  document.addEventListener('astro:page-load', setup);
+</script>
