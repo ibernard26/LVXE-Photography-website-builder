@@ -1,5 +1,11 @@
 # LVXE Redesign — Visual Implementation Plan
 
+> **Superseded (17 Oct 2026).** The homepage contact strip, WebGL darkroom
+> light and gallery wall described here were replaced by the exhibition
+> rooms (one work per room, lights up, rolling room counter) and have been
+> removed from the code. They remain in git history. The tokens, type and
+> integrity rules below still apply.
+
 Issue 01 · October 2026 · Branch `claude/laughing-ptolemy-vww0ug`
 
 The goal: in the first five seconds a visitor should meet a photographer, not a template.
