@@ -3,12 +3,17 @@
  * Commissions — the two scopes LVXE works in. Scope I (editorial & creative)
  * lists portrait sittings on a light gallery wall; Scope II (commercial &
  * corporate) is a separate dark block quoted per brief. Each scope has its
- * own booking path.
+ * own booking path, and each hangs one photograph from the archive, labelled
+ * as such (never presented as client work).
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHead from '@/components/PageHead.astro';
 import { commercial, onRequest, scopes, sittings } from '@/data/commissions';
 import { site } from '@/data/site';
+import Plate from '@/components/Plate.astro';
+import { plateNumber, plates } from '@/data/plates';
+
+const scopePlates = { editorial: plates.dropEarringProfile, commercial: plates.studioPair };
 
 const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -35,6 +40,16 @@ import { link } from '@/lib/link';
         <p class="text-meta">Scope I</p>
         <h2 id="scope-editorial" class="text-heading mt-6 max-w-[14ch]">{scopes.editorial.label}</h2>
         <p class="text-meta mt-6">{scopes.editorial.for}</p>
+        <div class="mt-10 w-3/5 max-w-[20rem] sm:w-2/5 lg:mt-16 lg:w-full">
+          <Plate
+            plate={scopePlates.editorial}
+            href={link(`/work/${scopePlates.editorial.id}`)}
+            transitionName={`plate-${scopePlates.editorial.id}`}
+            label={`Pl. ${plateNumber(scopePlates.editorial)}`}
+            note="From the archive"
+            sizes="(min-width: 1024px) 20vw, 40vw"
+          />
+        </div>
       </div>
 
       <div class="col-span-12 lg:col-span-8 lg:col-start-5">
@@ -72,7 +87,7 @@ import { link } from '@/lib/link';
   </section>
 
   <!-- Scope II: a separate, darker door. -->
-  <section aria-labelledby="scope-commercial" class="mx-auto mt-28 max-w-screen-2xl px-gutter sm:mt-40">
+  <section aria-labelledby="scope-commercial" class="mx-auto max-w-screen-2xl px-gutter py-28 sm:py-40">
     <div class="grid grid-cols-12 gap-x-4 gap-y-10 lg:gap-x-8">
       <div class="col-span-12 lg:col-span-3">
         <p class="text-meta">Scope II</p>
@@ -82,18 +97,28 @@ import { link } from '@/lib/link';
         <span class="line-mask"><span class="text-display" style="--i:0">Commercial Campaigns</span></span>{' '}
         <span class="line-mask pl-[12%]"><span class="text-display-serif" style="--i:1">&amp; Corporate Identity.</span></span>
       </h2>
-      <ul class="col-span-12 border-t border-border lg:col-span-6 lg:col-start-7">
-        {
-          commercial.map((c, i) => (
-            <li class="reveal-fade flex items-baseline justify-between gap-6 border-b border-border py-4" style={`--i:${i}`}>
-              <span class="text-heading text-[1.25rem]">{c}</span>
-              <span class="text-meta">{pad(i + 1)}</span>
-            </li>
-          ))
-        }
-      </ul>
+      <div class="col-span-8 sm:col-span-5 lg:col-span-4">
+        <Plate
+          plate={scopePlates.commercial}
+          href={link(`/work/${scopePlates.commercial.id}`)}
+          transitionName={`plate-${scopePlates.commercial.id}`}
+          label={`Pl. ${plateNumber(scopePlates.commercial)}`}
+          note="From the archive"
+          sizes="(min-width: 1024px) 30vw, (min-width: 640px) 40vw, 66vw"
+        />
+      </div>
       <div class="col-span-12 lg:col-span-6 lg:col-start-7">
-        <p class="text-body max-w-measure">
+        <ul class="border-t border-border">
+          {
+            commercial.map((c, i) => (
+              <li class="reveal-fade flex items-baseline justify-between gap-6 border-b border-border py-4" style={`--i:${i}`}>
+                <span class="text-heading text-[1.25rem]">{c}</span>
+                <span class="text-meta">{pad(i + 1)}</span>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="text-body mt-10 max-w-measure">
           Send the brief, dates, deliverables and usage. Campaign, workplace and event work is scoped and quoted for each
           project.
         </p>
