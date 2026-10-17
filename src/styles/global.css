@@ -309,6 +309,50 @@
 }
 
 /* ==========================================================================
+   Exhibition rooms (home). Each work hangs alone in a room the height of the
+   window. `--r` (set inline per work) is its native width / height; on wide
+   screens the frame's width is the tallest size the room allows times that
+   ratio, capped so the frame and its 20rem wall label always fit side by
+   side. Phones hang it full width. Rooms are normal flow: no snapping, no scroll-jacking.
+   ========================================================================== */
+
+.room {
+  position: relative;
+  scroll-margin-top: 4rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.room-inner {
+  display: grid;
+  gap: 1.75rem 3rem;
+  max-width: var(--container-screen-2xl, 96rem);
+  margin-inline: auto;
+  padding: 3rem var(--spacing-gutter) 3.5rem;
+}
+.hang {
+  width: 100%;
+}
+@media (min-width: 1024px) {
+  .room {
+    min-height: calc(100svh - 4rem);
+    display: grid;
+  }
+  .room-inner {
+    width: 100%;
+    align-items: center;
+    padding-block: 2.5rem;
+  }
+  .hang {
+    width: min(
+      calc(100vw - 2 * var(--spacing-gutter) - 23rem),
+      calc((100svh - 9rem) * var(--r, 1))
+    );
+  }
+  .hang-lead {
+    width: min(100%, calc((100svh - 9rem) * var(--r, 1)));
+  }
+}
+
+/* ==========================================================================
    Exhibition views — state on <html data-view / data-filter> (scripts/views).
    Without JS neither attribute is honoured: both views render in sequence
    and the controls that need a script are hidden.
@@ -321,10 +365,10 @@ html.js[data-view="index"] [data-mode="ledger"],
 html.js[data-view="ledger"] [data-mode="index"] {
   display: none;
 }
-html.js[data-filter="editorial"] [data-item]:not([data-tags~="editorial"]),
-html.js[data-filter="portraits"] [data-item]:not([data-tags~="portraits"]),
-html.js[data-filter="architecture"] [data-item]:not([data-tags~="architecture"]),
-html.js[data-filter="commercial"] [data-item]:not([data-tags~="commercial"]) {
+html.js[data-filter="editorial"] [data-mode="ledger"] [data-item]:not([data-tags~="editorial"]),
+html.js[data-filter="portraits"] [data-mode="ledger"] [data-item]:not([data-tags~="portraits"]),
+html.js[data-filter="architecture"] [data-mode="ledger"] [data-item]:not([data-tags~="architecture"]),
+html.js[data-filter="commercial"] [data-mode="ledger"] [data-item]:not([data-tags~="commercial"]) {
   display: none;
 }
 
@@ -348,8 +392,8 @@ html.js[data-filter="commercial"] [data-item]:not([data-tags~="commercial"]) {
   .line-mask {
     display: block;
     overflow: clip;
-    padding-bottom: 0.08em;
-    margin-bottom: -0.08em;
+    padding-bottom: 0.16em;
+    margin-bottom: -0.16em;
   }
   .line-mask > span {
     display: block;
