@@ -2,11 +2,14 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHead from '@/components/PageHead.astro';
 import SeriesIndex from '@/components/SeriesIndex.astro';
-import GalleryWall from '@/components/GalleryWall.astro';
-import { plates, type Plate } from '@/data/plates';
+import Plate from '@/components/Plate.astro';
+import { chapters, frameOf, plateNumber } from '@/data/plates';
 import Film from '@/components/Film.astro';
 import { filmFrame, filmNumber, films } from '@/data/films';
 import { link } from '@/lib/link';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
 ---
 
 <BaseLayout title="Work" label="Issue 01 / Work">
@@ -20,23 +23,45 @@ import { link } from '@/lib/link';
 
   <SeriesIndex heading="Catalogue" withConcepts linked={false} />
 
+  <!-- Chapters: the archive by subject, light and dark walls in turn. Each
+       plate hangs whole at its native ratio in a column flow, so frames of
+       any shape sit together without cropping. -->
   <div id="plates" class="mt-28 scroll-mt-8 sm:mt-40">
-    <GalleryWall
-      heading="The wall"
-      intro="Select a plate to enter its room."
-      blocks={[
-        { kind: 'feature', plate: plates.fingersCloseup, aside: plates.earringPortrait },
-        {
-          kind: 'diptych',
-          plate: plates.handsPortrait,
-          eyebrow: 'Diptych — Monochrome',
-          heading: (plates.handsPortrait as Plate).title ?? 'Untitled',
-          text: plates.handsPortrait.alt,
-        },
-        { kind: 'spread', a: plates.cathedral, b: plates.meshPair },
-        { kind: 'single', plate: plates.recordStore, align: 'right' },
-      ]}
-    />
+    {
+      chapters.map((chapter, i) => (
+        <section
+          id={chapter.slug}
+          aria-labelledby={`chapter-${chapter.slug}`}
+          class:list={['scroll-mt-8 py-20 sm:py-28', i % 2 === 0 && 'wall']}
+        >
+          <div class="mx-auto max-w-screen-2xl px-gutter">
+            <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-3 border-b border-border pb-6">
+              <h2 id={`chapter-${chapter.slug}`} class="text-display text-[clamp(2.5rem,6vw,5.5rem)]">
+                <span class="text-meta mb-4 block">Chapter {roman[i]}</span>
+                {chapter.name}
+              </h2>
+              <p class="text-meta">
+                {pad(chapter.plates.length)} {chapter.plates.length === 1 ? 'plate' : 'plates'}
+              </p>
+            </div>
+            <div class="chapter-wall mt-12 sm:mt-16">
+              {chapter.plates.map((plate) => (
+                <div class="chapter-item">
+                  <Plate
+                    plate={plate}
+                    href={link(`/work/${plate.id}`)}
+                    transitionName={`plate-${plate.id}`}
+                    label={`Pl. ${plateNumber(plate)}`}
+                    note={`${plate.tone} · ${frameOf(plate).ratio}`}
+                    sizes="(min-width: 1024px) 30vw, (min-width: 640px) 46vw, calc(100vw - 2rem)"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      ))
+    }
   </div>
 
   <!-- Films: moving pieces, each screened at its native ratio. -->
