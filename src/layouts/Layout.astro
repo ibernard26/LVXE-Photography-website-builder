@@ -43,7 +43,7 @@ import { link } from '@/lib/link';
             var root = document.documentElement;
             root.dataset.view = q.get('view') === 'ledger' ? 'ledger' : 'index';
             var d = (q.get('d') || '').toLowerCase();
-            if (/^(editorial|portraits|architecture|commercial)$/.test(d)) root.dataset.filter = d;
+            if (/^(portraits|editorial|street|masks|automotive|city|coast)$/.test(d)) root.dataset.filter = d;
           })();
         </script>
       )

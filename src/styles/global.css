@@ -352,6 +352,23 @@
   }
 }
 
+/* Work page chapters: plates in a column flow, each whole at its own ratio. */
+.chapter-wall {
+  columns: 1;
+  column-gap: 2rem;
+}
+.chapter-item {
+  break-inside: avoid;
+  margin-bottom: 3rem;
+}
+@media (min-width: 640px) {
+  .chapter-wall { columns: 2; }
+}
+@media (min-width: 1024px) {
+  .chapter-wall { columns: 3; column-gap: 3rem; }
+  .chapter-item { margin-bottom: 4rem; }
+}
+
 /* ==========================================================================
    Exhibition views — state on <html data-view / data-filter> (scripts/views).
    Without JS neither attribute is honoured: both views render in sequence
@@ -365,10 +382,13 @@ html.js[data-view="index"] [data-mode="ledger"],
 html.js[data-view="ledger"] [data-mode="index"] {
   display: none;
 }
-html.js[data-filter="editorial"] [data-mode="ledger"] [data-item]:not([data-tags~="editorial"]),
 html.js[data-filter="portraits"] [data-mode="ledger"] [data-item]:not([data-tags~="portraits"]),
-html.js[data-filter="architecture"] [data-mode="ledger"] [data-item]:not([data-tags~="architecture"]),
-html.js[data-filter="commercial"] [data-mode="ledger"] [data-item]:not([data-tags~="commercial"]) {
+html.js[data-filter="editorial"] [data-mode="ledger"] [data-item]:not([data-tags~="editorial"]),
+html.js[data-filter="street"] [data-mode="ledger"] [data-item]:not([data-tags~="street"]),
+html.js[data-filter="masks"] [data-mode="ledger"] [data-item]:not([data-tags~="masks"]),
+html.js[data-filter="automotive"] [data-mode="ledger"] [data-item]:not([data-tags~="automotive"]),
+html.js[data-filter="city"] [data-mode="ledger"] [data-item]:not([data-tags~="city"]),
+html.js[data-filter="coast"] [data-mode="ledger"] [data-item]:not([data-tags~="coast"]) {
   display: none;
 }
 

@@ -19,7 +19,7 @@ import { getImage } from 'astro:assets';
 import Layout from '@/layouts/Layout.astro';
 import Plate from '@/components/Plate.astro';
 import Film from '@/components/Film.astro';
-import { disciplines, frameOf, plateList, plateNumber, plates, type Plate as PlateT } from '@/data/plates';
+import { chapters, frameOf, plateList, plateNumber, plates, type Plate as PlateT } from '@/data/plates';
 import { films, filmFrame, filmNumber, type Film as FilmT } from '@/data/films';
 import { series } from '@/data/series';
 import { issue, site } from '@/data/site';
@@ -38,12 +38,18 @@ type Room =
 
 // The entrance (Pl. 01) is hung separately; these follow it.
 const rooms: Room[] = [
+  { kind: 'plate', plate: plates.halfShadow, wall: false },
+  { kind: 'plate', plate: plates.longCoat, wall: true },
   { kind: 'plate', plate: plates.cathedral, wall: false },
-  { kind: 'plate', plate: plates.earringPortrait, wall: true },
-  { kind: 'plate', plate: plates.handsPortrait, wall: false },
-  { kind: 'plate', plate: plates.recordStore, wall: true },
+  { kind: 'plate', plate: plates.handsPortrait, wall: true },
+  { kind: 'plate', plate: plates.masksDark, wall: false },
+  { kind: 'plate', plate: plates.whiteSkirt, wall: true },
   { kind: 'film', film: films[0], wall: false },
   { kind: 'plate', plate: plates.meshPair, wall: true },
+  { kind: 'plate', plate: plates.lighter, wall: false },
+  { kind: 'plate', plate: plates.earringPortrait, wall: true },
+  { kind: 'plate', plate: plates.red911, wall: false },
+  { kind: 'plate', plate: plates.pastelHorizon, wall: true },
 ];
 const lead = plates.fingersCloseup;
 const roomCount = rooms.length + 1;
@@ -77,7 +83,7 @@ const filmLabel = (f: FilmT) => ({
 const totalWorks = plateList.length + films.length;
 const filters = [
   { label: 'All', value: '', count: totalWorks },
-  ...disciplines.map((d) => ({ label: d, value: slug(d), count: plateList.filter((p) => p.disciplines.includes(d)).length })),
+  ...chapters.map((c) => ({ label: c.name, value: c.slug, count: c.plates.length })),
 ];
 
 /* ---- Ledger rows, with a small native-ratio preview for each. ---------- */

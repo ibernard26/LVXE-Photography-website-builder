@@ -46,7 +46,7 @@ import { link } from '@/lib/link';
 >
   <article aria-labelledby="plate-title" class="mx-auto max-w-screen-2xl px-gutter">
     <div class="flex flex-wrap items-baseline justify-between gap-4 border-b border-border pt-6 pb-4">
-      <a href={link('/work#plates')} class="text-meta link-quiet">Back to the wall</a>
+      <a href={link(`/work#${plate.disciplines[0].toLowerCase()}`)} class="text-meta link-quiet">Back to {plate.disciplines[0]}</a>
       <p class="text-meta">Plate {no} of {total}</p>
     </div>
 
