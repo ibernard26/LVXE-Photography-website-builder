@@ -7,6 +7,8 @@
  *   room stays lit. CSS in global.css owns timing and the start state, which
  *   applies only under `html.js` and `prefers-reduced-motion: no-preference`,
  *   so without this script or with reduced motion every work is fully lit.
+ * Rooms with `data-label-in` (plate and film pages) keep the work lit and
+ *   only set their wall label line by line on arrival.
  * Room counter: the header's two-digit counter rolls to the room that
  *   crosses the middle of the window.
  *
@@ -19,7 +21,8 @@ function setup() {
   cleanup?.();
   cleanup = null;
   const rooms = document.querySelectorAll<HTMLElement>('[data-room]');
-  if (!rooms.length) return;
+  const lights = document.querySelectorAll<HTMLElement>('[data-lights], [data-label-in]');
+  if (!rooms.length && !lights.length) return;
 
   const lit = new IntersectionObserver(
     (entries) => {
@@ -31,9 +34,7 @@ function setup() {
     },
     { threshold: 0.33 },
   );
-  rooms.forEach((room) => {
-    if (room.hasAttribute('data-lights')) lit.observe(room);
-  });
+  lights.forEach((room) => lit.observe(room));
 
   const strips = document.querySelectorAll<HTMLElement>('[data-room-counter] [data-odo]');
   const show = (n: string) => strips.forEach((strip, i) => strip.style.setProperty('--d', n[i] ?? '0'));

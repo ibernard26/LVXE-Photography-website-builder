@@ -1,11 +1,12 @@
 ---
 /**
- * Plate exhibition room — one real photograph per page, hung like a single
- * work in a dark gallery: the frame at native ratio (max 86vh), a wall label
- * with only verified facts, and the neighbouring plates as small frames that
+ * Plate room — one photograph per page, hung exactly like a room of the
+ * homepage exhibition: the frame as tall as the window allows at its native
+ * ratio, the wall label beside it (below it on phones), on a Bone wall or in
+ * an Obsidian room in turn. The label sets line by line on arrival
+ * (src/scripts/rooms.ts). The neighbouring plates are small frames that
  * morph into this room's position when followed (shared-element view
- * transitions). Series rooms will reuse this template once plates are
- * assigned to series.
+ * transitions).
  */
 import type { GetStaticPaths } from 'astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
@@ -35,6 +36,8 @@ const no = plateNumber(plate);
 const total = String(plateList.length).padStart(2, '0');
 const { orientation, ratio } = frameOf(plate);
 const r = plate.image.width / plate.image.height;
+const chapter = plate.disciplines[0];
+const wall = Number(no) % 2 === 0;
 const seriesTitle = plate.series ? series.find((s) => s.slug === plate.series)?.title : undefined;
 import { link } from '@/lib/link';
 ---
@@ -44,75 +47,63 @@ import { link } from '@/lib/link';
   description={`Plate ${no} from the LVXE archive by ${site.artist}. ${plate.alt}`}
   label={`Plate ${no} of ${total}`}
 >
-  <article aria-labelledby="plate-title" class="mx-auto max-w-screen-2xl px-gutter">
-    <div class="flex flex-wrap items-baseline justify-between gap-4 border-b border-border pt-6 pb-4">
-      <a href={link(`/work#${plate.disciplines[0].toLowerCase()}`)} class="text-meta link-quiet">Back to {plate.disciplines[0]}</a>
-      <p class="text-meta">Plate {no} of {total}</p>
-    </div>
-
-    <!-- The room: frame centred, sized by height, native ratio. -->
-    <div class="flex justify-center pt-10 sm:pt-16">
-      <div class="w-full" style={`max-width: calc(86vh * ${r.toFixed(4)})`}>
-        <Plate
-          plate={plate}
-          priority
-          reveal={false}
-          transitionName={`plate-${plate.id}`}
-          sizes="(min-width: 1024px) 58vh, 100vw"
-        />
+  <article aria-labelledby="plate-title" class:list={['room', wall ? 'wall' : 'bg-obsidian']} data-label-in>
+    <div class="room-inner lg:grid-cols-[auto_minmax(0,20rem)] lg:justify-center">
+      <div class="flex justify-center">
+        <div class="hang" style={`--r: ${r.toFixed(4)}`}>
+          <Plate
+            plate={plate}
+            priority
+            reveal={false}
+            transitionName={`plate-${plate.id}`}
+            sizes={`(min-width: 1024px) ${Math.round(r * 100)}vh, calc(100vw - 2rem)`}
+          />
+        </div>
       </div>
-    </div>
 
-    <!-- Wall label -->
-    <div class="mt-16 grid grid-cols-12 gap-x-4 gap-y-10 border-t border-border pt-10 sm:mt-24 lg:gap-x-8">
-      <p aria-hidden="true" class="reveal-lines col-span-12 lg:col-span-5">
-        <span class="line-mask">
-          <span class="block font-sans text-[clamp(7rem,22vw,20rem)] font-[800] leading-[0.78] tracking-[-0.07em] text-charcoal" style="--i:0">
-            {no}
-          </span>
-        </span>
-      </p>
-
-      <div class="col-span-12 lg:col-span-6 lg:col-start-7">
-        <h1 id="plate-title" class="text-display-serif text-[clamp(2.5rem,5vw,4.5rem)]">
+      <div class="wall-label lg:self-end">
+        <p class="text-meta">Plate {no} of {total} · {chapter}</p>
+        <h1 id="plate-title" class="text-heading mt-4 text-[clamp(1.75rem,2.6vw,2.5rem)] lg:mt-6">
           {plate.title ?? 'Untitled'}<span class="sr-only">, plate {no}</span>
         </h1>
-        <dl class="mt-10 grid grid-cols-[8rem_minmax(0,1fr)] gap-y-3 border-t border-border pt-6">
+        <dl class="mt-6 grid grid-cols-[5.5rem_minmax(0,1fr)] gap-y-2 border-t border-border pt-4">
           <dt class="text-meta">Artist</dt>
-          <dd class="text-body text-bone">{site.artist}</dd>
-          {seriesTitle && (<><dt class="text-meta">Series</dt><dd class="text-body text-bone">{seriesTitle}</dd></>)}
+          <dd class="text-meta text-bone">{site.artist}</dd>
+          {seriesTitle && (<><dt class="text-meta">Series</dt><dd class="text-meta text-bone">{seriesTitle}</dd></>)}
+          {plate.year && (<><dt class="text-meta">Year</dt><dd class="text-meta text-bone">{plate.year}</dd></>)}
           <dt class="text-meta">Tone</dt>
-          <dd class="text-body text-bone">{plate.tone}</dd>
+          <dd class="text-meta text-bone">{plate.tone}</dd>
           <dt class="text-meta">Frame</dt>
-          <dd class="text-body text-bone">{orientation}, {ratio}, shown uncropped</dd>
+          <dd class="text-meta text-bone">{orientation}, {ratio}, uncropped</dd>
         </dl>
-        <p class="text-body mt-8 max-w-[52ch]">{plate.caption ?? plate.alt}</p>
+        <p class="text-body mt-6 max-w-[36ch] text-[0.875rem] leading-[1.55]">{plate.caption ?? plate.alt}</p>
+        <a href={link(`/work#${chapter.toLowerCase()}`)} class="text-meta link-quiet mt-6 text-bone">Back to {chapter}</a>
       </div>
     </div>
-
-    <!-- Neighbouring rooms -->
-    <nav aria-label="More plates" class="mt-24 grid grid-cols-2 gap-x-4 border-t border-border pt-8 sm:mt-32 lg:gap-x-8">
-      {
-        [
-          { p: prev, dir: 'Previous' },
-          { p: next, dir: 'Next' },
-        ].map(({ p, dir }) => (
-          <a
-            href={link(`/work/${p.id}`)}
-            class:list={['group flex items-end gap-4 sm:gap-6', dir === 'Next' && 'flex-row-reverse text-right']}
-          >
-            <div class="w-20 shrink-0 sm:w-28" transition:name={`plate-${p.id}`}>
-              <Plate plate={p} reveal={false} sizes="112px" />
-            </div>
-            <span>
-              <span class="text-meta block">{dir}</span>
-              <span class="text-heading mt-2 block transition-transform duration-500 ease-editorial group-hover:-translate-y-1">
-                Plate {plateNumber(p)}
-              </span>
-            </span>
-          </a>
-        ))
-      }
-    </nav>
   </article>
+
+  <!-- Neighbouring rooms -->
+  <nav aria-label="More plates" class="mx-auto grid max-w-screen-2xl grid-cols-2 gap-x-4 px-gutter pt-10 lg:gap-x-8">
+    {
+      [
+        { p: prev, dir: 'Previous' },
+        { p: next, dir: 'Next' },
+      ].map(({ p, dir }) => (
+        <a
+          href={link(`/work/${p.id}`)}
+          class:list={['group flex items-end gap-4 sm:gap-6', dir === 'Next' && 'flex-row-reverse text-right']}
+        >
+          <div class="w-20 shrink-0 sm:w-28" transition:name={`plate-${p.id}`}>
+            <Plate plate={p} reveal={false} sizes="112px" />
+          </div>
+          <span>
+            <span class="text-meta block">{dir}</span>
+            <span class="text-heading mt-2 block transition-transform duration-500 ease-editorial group-hover:-translate-y-1">
+              Plate {plateNumber(p)}
+            </span>
+          </span>
+        </a>
+      ))
+    }
+  </nav>
 </BaseLayout>
