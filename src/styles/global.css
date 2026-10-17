@@ -352,6 +352,55 @@
   }
 }
 
+/* Room counter (header): two digits that roll like an odometer. */
+html[data-view="ledger"] .room-counter {
+  visibility: hidden;
+}
+.odo {
+  display: inline-block;
+  height: 1em;
+  line-height: 1;
+  /* hidden, not clip: it makes the box's bottom edge its baseline, so the
+     ten stacked digits never stretch the line. */
+  overflow: hidden;
+  vertical-align: -0.14em;
+}
+.odo-strip {
+  display: block;
+  transform: translateY(calc(var(--d, 0) * -1em));
+  transition: transform 600ms var(--ease-cine);
+}
+.odo-strip > span {
+  display: block;
+  height: 1em;
+}
+
+/* Lights up: an unlit work comes up to full light as its room is reached,
+   then its wall label sets line by line. At rest every work is untouched. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-lights] .hang {
+    filter: brightness(0.16) saturate(0.4);
+    transition: filter 800ms var(--ease-cine);
+  }
+  html.js [data-lights].is-lit .hang {
+    filter: none;
+  }
+  html.js [data-lights] .wall-label > * {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 500ms var(--ease-editorial), transform 500ms var(--ease-editorial);
+  }
+  html.js [data-lights].is-lit .wall-label > * {
+    opacity: 1;
+    transform: none;
+  }
+  html.js [data-lights].is-lit .wall-label > :nth-child(-n + 2) { transition-delay: 450ms; }
+  html.js [data-lights].is-lit .wall-label > :nth-child(n + 3):nth-child(-n + 5) { transition-delay: 540ms; }
+  html.js [data-lights].is-lit .wall-label > :nth-child(n + 6):nth-child(-n + 7) { transition-delay: 630ms; }
+  html.js [data-lights].is-lit .wall-label > :nth-child(n + 8):nth-child(-n + 9) { transition-delay: 720ms; }
+  html.js [data-lights].is-lit .wall-label > :nth-child(n + 10) { transition-delay: 810ms; }
+}
+
 /* Work page chapters: plates in a column flow, each whole at its own ratio. */
 .chapter-wall {
   columns: 1;

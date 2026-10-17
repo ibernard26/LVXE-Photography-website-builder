@@ -12,6 +12,9 @@
  *         a row floats a native-ratio preview, and every row opens its room.
  *
  * Rooms are plain sections in normal flow: no snapping, no scroll-jacking.
+ * Motion (src/scripts/rooms.ts): the lights come up on each work as its
+ * room is reached, the wall label then sets line by line, and the header's
+ * room counter rolls to the room in view.
  * The view and filter state are attribute-driven (src/scripts/views.ts).
  */
 import type { ImageMetadata } from 'astro';
@@ -122,7 +125,7 @@ const ledger = await Promise.all([
 const leadLabel = plateLabel(lead);
 ---
 
-<Layout views>
+<Layout views rooms={roomCount}>
   <div data-discipline-root>
     <div class="scroll-mt-16" data-views-start></div>
 
@@ -131,7 +134,7 @@ const leadLabel = plateLabel(lead);
       <h2 class="sr-only">Exhibition — one work per room</h2>
 
       <!-- Entrance: the title wall and Pl. 01 -->
-      <section aria-labelledby="entrance-title" class="wall room">
+      <section aria-labelledby="entrance-title" class="wall room" data-room="01">
         <div class="room-inner lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
           <div class="flex flex-col justify-between gap-y-8 lg:h-full lg:py-2">
             <p class="text-meta">Issue {issue.number} · {issue.year} — {site.region}</p>
@@ -194,6 +197,8 @@ const leadLabel = plateLabel(lead);
               id={`room-${n}`}
               aria-label={`Room ${n}: ${label.no}, ${label.title}`}
               class:list={['room', room.wall && 'wall', !room.wall && 'bg-obsidian']}
+              data-room={n}
+              data-lights
               data-item
               data-tags={room.kind === 'plate' ? tagsOf(room.plate) : ''}
             >
@@ -206,9 +211,10 @@ const leadLabel = plateLabel(lead);
                         href={label.href}
                         transitionName={`plate-${room.plate.id}`}
                         sizes={sizesFor(media.width, media.height)}
+                        reveal={false}
                       />
                     ) : (
-                      <Film film={room.film} transitionName={`film-${room.film.id}`} />
+                      <Film film={room.film} transitionName={`film-${room.film.id}`} reveal={false} />
                     )}
                   </div>
                 </div>
