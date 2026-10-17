@@ -102,7 +102,7 @@ export const plates = {
   earringPortrait: {
     disciplines: ['Portraits'],
     id: 'earring-portrait',
-    title: 'Ivory and Silver',
+    title: 'What the Window Kept',
     image: earringPortrait,
     tone: 'Colour',
     alt: 'Close portrait in low window light: a sitter with straight black hair, a square white earring and a sculpted silver necklace, looking back over one shoulder.',
@@ -110,7 +110,7 @@ export const plates = {
   handsPortrait: {
     disciplines: ['Portraits'],
     id: 'hands-portrait',
-    title: 'Veil of Hands',
+    title: 'Self, Withheld',
     image: handsPortrait,
     tone: 'Monochrome',
     alt: 'Black-and-white portrait of a sitter with long braids, hands framing the face and covering the eyes, long sculpted nails and silver rings catching the light.',
@@ -118,7 +118,7 @@ export const plates = {
   cathedral: {
     disciplines: ['Editorial'],
     id: 'cathedral',
-    title: 'Gothic Reach',
+    title: 'Sermon in Chrome',
     image: cathedral,
     tone: 'Colour',
     alt: 'Low-angle portrait of a sitter in chrome wraparound sunglasses and a dark hood beneath a gothic stone archway, one hand reaching toward the lens.',
@@ -142,7 +142,7 @@ export const plates = {
   cupPortrait: {
     disciplines: ['Portraits'],
     id: 'cup-portrait',
-    title: 'Over the Rim',
+    title: 'Steeped',
     image: cupPortrait,
     tone: 'Colour',
     alt: 'Close portrait in warm light: a sitter with winged eyeliner and gold earrings looks into the lens over the rim of a white cup.',
@@ -158,7 +158,7 @@ export const plates = {
   eyesClosed: {
     disciplines: ['Portraits'],
     id: 'eyes-closed',
-    title: 'Somewhere Quiet',
+    title: 'Lullaby in Grey',
     image: eyesClosed,
     tone: 'Colour',
     alt: 'A sitter rests their face against their hands, eyes closed, a nose ring and long nails catching soft light against a grey wall.',
@@ -190,7 +190,7 @@ export const plates = {
   halfShadow: {
     disciplines: ['Portraits'],
     id: 'half-shadow',
-    title: 'Half Light',
+    title: 'Partial Eclipse',
     image: halfShadow,
     tone: 'Colour',
     alt: 'A sitter with dark curly hair looks straight at the lens, half the face falling into deep shadow.',
@@ -198,7 +198,7 @@ export const plates = {
   lighter: {
     disciplines: ['Portraits'],
     id: 'lighter',
-    title: 'Small Flame',
+    title: 'The Pause Before Smoke',
     image: lighter,
     tone: 'Monochrome',
     alt: 'Black-and-white portrait of a sitter with a fringe lighting a cigarette, eyes closed, rings on both hands.',
@@ -206,7 +206,7 @@ export const plates = {
   yankeesCap: {
     disciplines: ['Portraits'],
     id: 'yankees-cap',
-    title: 'Under the Brim',
+    title: 'Low Signal',
     image: yankeesCap,
     tone: 'Colour',
     alt: 'Low-key portrait in teal shadow: a sitter in a black New York Yankees cap and narrow sunglasses looks down, a chain at the neck.',
@@ -222,7 +222,7 @@ export const plates = {
   longCoat: {
     disciplines: ['Editorial'],
     id: 'long-coat',
-    title: 'Long Shadow',
+    title: 'A Coat Like Weather',
     image: longCoat,
     tone: 'Monochrome',
     alt: 'Black-and-white full-length study of a sitter in a long dark coat and lace top against a white backdrop, head turned to one side.',
@@ -254,7 +254,7 @@ export const plates = {
   parapetSit: {
     disciplines: ['Editorial'],
     id: 'parapet-sit',
-    title: 'Parapet',
+    title: 'Sovereign of Concrete',
     image: parapetSit,
     tone: 'Colour',
     alt: 'A sitter in a black leather jacket, sunglasses and wide dark jeans sits on a concrete parapet against a teal sky, shot from below.',
@@ -262,7 +262,7 @@ export const plates = {
   parapetCrouch: {
     disciplines: ['Editorial'],
     id: 'parapet-crouch',
-    title: 'Wingspan',
+    title: 'Icarus, Grounded',
     image: parapetCrouch,
     tone: 'Colour',
     alt: 'A sitter in a black leather jacket and wide jeans crouches with arms spread against a sunlit concrete wall, casting a hard shadow.',
@@ -270,7 +270,7 @@ export const plates = {
   grass: {
     disciplines: ['Editorial'],
     id: 'grass',
-    title: 'Green Reverie',
+    title: 'Supine in Green',
     image: grass,
     tone: 'Colour',
     alt: 'A sitter with curly hair lies back in the grass, gold-rimmed sunglasses pushed up, a white shirt collar in the foreground.',
@@ -278,7 +278,7 @@ export const plates = {
   brickStoop: {
     disciplines: ['Editorial'],
     id: 'brick-stoop',
-    title: 'Copper on Brick',
+    title: 'Rust and Smoke',
     image: brickStoop,
     tone: 'Colour',
     alt: 'A sitter with copper hair, headphones around the neck and a cigarette in hand sits on a brick stoop in a black tank top and flared jeans.',
@@ -286,7 +286,7 @@ export const plates = {
   checkedDress: {
     disciplines: ['Editorial'],
     id: 'checked-dress',
-    title: 'Beneath the Stair',
+    title: 'Grid Theory',
     image: checkedDress,
     tone: 'Colour',
     alt: 'Low-angle editorial of a sitter in cat-eye sunglasses and a black checked dress, one hand raised to the underside of a slatted stairway.',
@@ -294,7 +294,7 @@ export const plates = {
   hoodedStone: {
     disciplines: ['Editorial'],
     id: 'hooded-stone',
-    title: 'Cloister',
+    title: 'Vespers',
     image: hoodedStone,
     tone: 'Colour',
     alt: 'A sitter in a dark hood, chrome sunglasses and dark lipstick sits against a rough stone wall in low light.',
@@ -318,7 +318,7 @@ export const plates = {
   overShoulder: {
     disciplines: ['Editorial'],
     id: 'over-shoulder',
-    title: 'Rearview',
+    title: 'The Glance Back',
     image: overShoulder,
     tone: 'Colour',
     alt: 'A sitter with long brown hair and sunglasses looks back over their shoulder on a blurred city street.',
@@ -326,7 +326,7 @@ export const plates = {
   greyWall: {
     disciplines: ['Editorial'],
     id: 'grey-wall',
-    title: 'Monolith',
+    title: 'Quiet Armor',
     image: greyWall,
     tone: 'Monochrome',
     alt: 'Black-and-white full-length portrait of a sitter in sunglasses and a leather jacket standing before a grey panelled wall.',
@@ -342,7 +342,7 @@ export const plates = {
   skateWall: {
     disciplines: ['Street'],
     id: 'skate-wall',
-    title: 'Wallride',
+    title: 'Gravity, Negotiated',
     image: skateWall,
     tone: 'Monochrome',
     alt: 'Black-and-white image of a skateboarder riding up a graffiti-covered wall behind a chain-link fence.',
@@ -366,7 +366,7 @@ export const plates = {
   streetLeap: {
     disciplines: ['Street'],
     id: 'street-leap',
-    title: 'Live Wire',
+    title: 'Suspended Sentence',
     image: streetLeap,
     tone: 'Monochrome',
     alt: 'Black-and-white low-angle shot of a figure leaping mid-air above a street, overhead wires behind, another sitter crouched below.',
@@ -382,7 +382,7 @@ export const plates = {
   maskHands: {
     disciplines: ['Masks'],
     id: 'mask-hands',
-    title: 'Blank',
+    title: 'Unwritten',
     image: maskHands,
     tone: 'Colour',
     alt: 'Close-up of hands gripping a white featureless mask, its eye holes dark.',
@@ -406,7 +406,7 @@ export const plates = {
   greenF1: {
     disciplines: ['Automotive'],
     id: 'green-f1',
-    title: 'Halo',
+    title: 'Racing Green, Standing Still',
     image: greenF1,
     tone: 'Colour',
     alt: 'Close detail of a Formula 1 car in green Aston Martin livery: the halo, cockpit, nose and a front tyre packed tight in the frame.',
@@ -414,7 +414,7 @@ export const plates = {
   orangeWheel: {
     disciplines: ['Automotive'],
     id: 'orange-wheel',
-    title: 'Five Spokes, Summer',
+    title: 'Chrome Orbit',
     image: orangeWheel,
     tone: 'Colour',
     alt: "Low wide-angle view along the flank of an orange supercar to its polished five-spoke wheel, green trees overhead.",
@@ -422,7 +422,7 @@ export const plates = {
   redSaleen: {
     disciplines: ['Automotive'],
     id: 'red-saleen',
-    title: 'Raised Wings',
+    title: 'Wings at Rest',
     image: redSaleen,
     tone: 'Colour',
     alt: 'A red Saleen S7 seen from behind with both doors raised, parked on paving stones beneath a brick archway that opens onto trees.',
@@ -430,7 +430,7 @@ export const plates = {
   red911: {
     disciplines: ['Automotive'],
     id: 'red-911',
-    title: 'Red in the Dark',
+    title: 'Garage Hymn',
     image: red911,
     tone: 'Colour',
     alt: 'A red Porsche 911 Turbo nose-on in a dark room, standing on a wooden floor with a wall display behind it.',
@@ -446,7 +446,7 @@ export const plates = {
   blueFerrari: {
     disciplines: ['Automotive'],
     id: 'blue-ferrari',
-    title: 'Blue Through the Green',
+    title: 'Electric in the Woods',
     image: blueFerrari,
     tone: 'Colour',
     alt: 'A blue Ferrari SF90 on a narrow paved lane through spring woods, seen from slightly above.',
@@ -454,7 +454,7 @@ export const plates = {
   manhattanBridge: {
     disciplines: ['City'],
     id: 'manhattan-bridge',
-    title: 'Span at Dusk',
+    title: 'Iron Lullaby',
     image: manhattanBridge,
     tone: 'Colour',
     alt: 'The Manhattan Bridge from beside its approach: a steel tower, cables and deck against a pale evening sky, the river below.',
@@ -462,7 +462,7 @@ export const plates = {
   shadowedCorner: {
     disciplines: ['City'],
     id: 'shadowed-corner',
-    title: 'Raking Light',
+    title: 'Afternoon Lattice',
     image: shadowedCorner,
     tone: 'Colour',
     alt: 'A corner shop raked by low sun, half the facade in hard shadow, a bin and a traffic cone at the kerb and a parked car at the edge.',
