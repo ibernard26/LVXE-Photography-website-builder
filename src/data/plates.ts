@@ -518,6 +518,3 @@ export function frameOf(plate: Plate) {
     ratio: match ? match[1] : `${width / g}:${height / g}`,
   };
 }
-
-/** The three frames of the homepage contact strip, left to right. */
-export const heroPlates: [Plate, Plate, Plate] = [plates.fingersCloseup, plates.handsPortrait, plates.cathedral];

@@ -487,28 +487,8 @@ html.js[data-filter="coast"] [data-mode="ledger"] [data-item]:not([data-tags~="c
     transform: none;
   }
 
-  /* Scroll choreography — native scrolling, never hijacked. */
-  @supports (animation-timeline: view()) {
-    .scroll-drift {
-      animation: drift linear both;
-      animation-timeline: view();
-      animation-range: exit 0% exit 100%;
-    }
-    .scroll-settle {
-      animation: settle linear both;
-      animation-timeline: view();
-      animation-range: entry 0% cover 45%;
-    }
-  }
 }
 
-@keyframes drift {
-  to { transform: translateY(-18%); }
-}
-@keyframes settle {
-  from { transform: scale(0.94); opacity: 0.4; }
-  to { transform: scale(1); opacity: 1; }
-}
 
 /* Page transitions (View Transitions API via Astro's ClientRouter). */
 ::view-transition-old(root),
