@@ -5,8 +5,9 @@
 import { issue, navigation, site } from '@/data/site';
 
 const year = new Date().getFullYear();
-const { email, instagram } = site.contact;
+const { email, phone, instagram } = site.contact;
 const instagramHandle = instagram.replace(/^@/, '');
+const telHref = phone.replace(/[^+\d]/g, '');
 ---
 
 <footer id="colophon" class="border-t border-border">
@@ -38,15 +39,22 @@ const instagramHandle = instagram.replace(/^@/, '');
       <p class="text-meta text-bone">Practice</p>
       <ul class="mt-4 space-y-2">
         {site.disciplines.map((d) => <li class="text-meta">{d}</li>)}
-        <li class="text-meta pt-2">{site.region}</li>
+        <li class="text-meta pt-2">{site.locationNote}</li>
       </ul>
       {
-        (email || instagramHandle) && (
+        (email || phone || instagramHandle) && (
           <ul class="mt-8 space-y-2">
             {email && (
               <li>
                 <a href={`mailto:${email}`} class="text-body link-quiet">
                   {email}
+                </a>
+              </li>
+            )}
+            {phone && (
+              <li>
+                <a href={`tel:${telHref}`} class="text-body link-quiet">
+                  {phone}
                 </a>
               </li>
             )}

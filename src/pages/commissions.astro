@@ -7,7 +7,7 @@
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHead from '@/components/PageHead.astro';
-import { commercial, onRequest, scopes, sittings } from '@/data/commissions';
+import { commercial, corporatePhotography, onRequest, scopes, sittings, videoPackages } from '@/data/commissions';
 import { site } from '@/data/site';
 
 const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
@@ -98,6 +98,39 @@ import { link } from '@/lib/link';
           project.
         </p>
         <a href={link('/book?type=commercial')} class="text-meta link-book mt-8 inline-block">Send a commercial brief</a>
+      </div>
+
+      <!-- Published corporate and video rates: coverage hours, people and deliverables stated beside each price. -->
+      <div class="col-span-12 mt-20 lg:col-span-6 lg:col-start-7">
+        <table class="w-full border-collapse">
+          <caption class="sr-only">Corporate photography and video packages</caption>
+          <thead>
+            <tr class="border-b border-soft-gray/40">
+              <th scope="col" class="text-meta pb-4 text-left font-normal">Package</th>
+              <th scope="col" class="text-meta pb-4 text-right font-normal">Rate</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              [corporatePhotography, ...videoPackages].map((p, i) => (
+                <tr class="reveal-fade border-b border-soft-gray/20" style={`--i:${i}`}>
+                  <th scope="row" class="py-6 pr-6 text-left font-normal align-top">
+                    <span class="block font-serif text-[clamp(1.5rem,3.5vw,2.25rem)] leading-none tracking-[-0.02em]">{p.name}</span>
+                    <span class="text-meta mt-2 block">{p.detail}</span>
+                  </th>
+                  <td class="py-6 text-right align-top font-serif text-[clamp(1.5rem,3.5vw,2.25rem)] font-[300] leading-none tracking-[-0.02em] tabular-nums">
+                    {p.startingRate ? `Starting at ${usd.format(p.price)}` : usd.format(p.price)}
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+        <p class="text-meta mt-6 max-w-measure">
+          Video rates are proposed starting prices for local assignments. Travel outside New York — transportation,
+          lodging, additional production time and destination costs — is itemized and quoted separately, and agreed in
+          full before booking.
+        </p>
       </div>
     </div>
   </section>

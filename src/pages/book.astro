@@ -13,10 +13,12 @@
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHead from '@/components/PageHead.astro';
-import { commercial, onRequest, scopes, sittings } from '@/data/commissions';
+import { commercial, commercialPackages, onRequest, scopes, sittings } from '@/data/commissions';
 import { site } from '@/data/site';
 
 const endpoint = site.bookingEndpoint;
+const { email, phone } = site.contact;
+const telHref = phone.replace(/[^+\d]/g, '');
 const field =
   'mt-3 w-full rounded-none border-0 border-b border-soft-gray/60 bg-transparent py-3 text-[1.0625rem] text-bone placeholder:text-soft-gray/80 focus:border-bone focus:outline-none';
 const label = 'text-meta block';
@@ -32,7 +34,17 @@ const usage = ['Web', 'Social', 'Print', 'Campaign / out of home', 'Internal'];
     lede="Choose the scope of your project. Both pathways arrive in the same place."
   />
 
+  <!-- LVXE's own business contact — separate from the client's name/email fields below. -->
   <section class="mx-auto max-w-screen-2xl px-gutter">
+    <p class="text-meta">Contact LVXE directly</p>
+    <p class="text-body mt-3 flex flex-wrap gap-x-8 gap-y-2">
+      {email && <a href={`mailto:${email}`} class="link-quiet">{email}</a>}
+      {phone && <a href={`tel:${telHref}`} class="link-quiet">{phone}</a>}
+    </p>
+    <p class="text-meta mt-3">{site.locationNote} Travel outside New York is quoted separately — see Commissions.</p>
+  </section>
+
+  <section class="mx-auto mt-16 max-w-screen-2xl px-gutter">
     <form
       id="inquiry"
       method="post"
@@ -119,6 +131,7 @@ const usage = ['Web', 'Social', 'Print', 'Campaign / out of home', 'Internal'];
           <select id="service" name="service" class={`${field} appearance-none`}>
             <option value="" class="bg-obsidian">Choose one</option>
             {commercial.map((c) => <option class="bg-obsidian">{c}</option>)}
+            {commercialPackages.map((p) => <option class="bg-obsidian">{p}</option>)}
           </select>
         </div>
         <div class="col-span-12 md:col-span-6">
