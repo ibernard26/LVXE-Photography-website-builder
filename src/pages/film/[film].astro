@@ -1,8 +1,9 @@
 ---
 /**
- * Film room — one moving-image piece, screened like a single work in a dark
- * gallery: the film at native ratio (max 86vh), a pause/play control, and a
- * wall label with verified facts only. Shares the plate rooms' structure.
+ * Film room — one moving-image piece, screened like a room of the homepage
+ * exhibition: the film as tall as the window allows at its native ratio,
+ * with a pause/play control, and the wall label beside it. Shares the plate
+ * rooms' structure.
  */
 import type { GetStaticPaths } from 'astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
@@ -31,43 +32,32 @@ import { link } from '@/lib/link';
   description={`Film ${no} from the LVXE archive by ${site.artist}. ${film.description}`}
   label={`Film ${no} of ${total}`}
 >
-  <article aria-labelledby="film-title" class="mx-auto max-w-screen-2xl px-gutter">
-    <div class="flex flex-wrap items-baseline justify-between gap-4 border-b border-border pt-6 pb-4">
-      <a href={link('/work#films')} class="text-meta link-quiet">Back to the work</a>
-      <p class="text-meta">Film {no} of {total}</p>
-    </div>
-
-    <div class="flex justify-center pt-10 sm:pt-16">
-      <div class="w-full" style={`max-width: calc(86vh * ${r.toFixed(4)})`}>
-        <Film film={film} reveal={false} priority transitionName={`film-${film.id}`} />
+  <article aria-labelledby="film-title" class="room bg-obsidian" data-label-in>
+    <div class="room-inner lg:grid-cols-[auto_minmax(0,20rem)] lg:justify-center">
+      <div class="flex justify-center">
+        <div class="hang" style={`--r: ${r.toFixed(4)}`}>
+          <Film film={film} reveal={false} priority transitionName={`film-${film.id}`} />
+        </div>
       </div>
-    </div>
 
-    <div class="mt-16 grid grid-cols-12 gap-x-4 gap-y-10 border-t border-border pt-10 sm:mt-24 lg:gap-x-8">
-      <p aria-hidden="true" class="reveal-lines col-span-12 lg:col-span-5">
-        <span class="line-mask">
-          <span class="block font-sans text-[clamp(5rem,16vw,15rem)] font-[800] leading-[0.78] tracking-[-0.07em] text-charcoal" style="--i:0">
-            F{no}
-          </span>
-        </span>
-      </p>
-
-      <div class="col-span-12 lg:col-span-6 lg:col-start-7">
-        <h1 id="film-title" class="text-display-serif text-[clamp(2.5rem,5vw,4.5rem)]">
+      <div class="wall-label lg:self-end">
+        <p class="text-meta">Film {no} of {total} · Moving portrait</p>
+        <h1 id="film-title" class="text-heading mt-4 text-[clamp(1.75rem,2.6vw,2.5rem)] lg:mt-6">
           {film.title ?? 'Untitled'}<span class="sr-only">, film {no}</span>
         </h1>
-        <dl class="mt-10 grid grid-cols-[8rem_minmax(0,1fr)] gap-y-3 border-t border-border pt-6">
+        <dl class="mt-6 grid grid-cols-[5.5rem_minmax(0,1fr)] gap-y-2 border-t border-border pt-4">
           <dt class="text-meta">Artist</dt>
-          <dd class="text-body text-bone">{site.artist}</dd>
-          {seriesTitle && (<><dt class="text-meta">Series</dt><dd class="text-body text-bone">{seriesTitle}</dd></>)}
+          <dd class="text-meta text-bone">{site.artist}</dd>
+          {seriesTitle && (<><dt class="text-meta">Series</dt><dd class="text-meta text-bone">{seriesTitle}</dd></>)}
           <dt class="text-meta">Medium</dt>
-          <dd class="text-body text-bone">Moving image, {film.tone.toLowerCase()}, silent{film.loop ? ' loop' : ''}</dd>
+          <dd class="text-meta text-bone">Moving image, {film.tone.toLowerCase()}, silent{film.loop ? ' loop' : ''}</dd>
           <dt class="text-meta">Frame</dt>
-          <dd class="text-body text-bone">{orientation}, {ratio}, shown uncropped</dd>
+          <dd class="text-meta text-bone">{orientation}, {ratio}, uncropped</dd>
           <dt class="text-meta">Runtime</dt>
-          <dd class="text-body text-bone tabular-nums">{runtime}</dd>
+          <dd class="text-meta text-bone tabular-nums">{runtime}</dd>
         </dl>
-        <p class="text-body mt-8 max-w-[52ch]">{film.description}</p>
+        <p class="text-body mt-6 max-w-[36ch] text-[0.875rem] leading-[1.55]">{film.description}</p>
+        <a href={link('/work#films')} class="text-meta link-quiet mt-6 text-bone">Back to the work</a>
       </div>
     </div>
   </article>

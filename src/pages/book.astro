@@ -15,6 +15,12 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHead from '@/components/PageHead.astro';
 import { commercial, commercialPackages, onRequest, scopes, sittings } from '@/data/commissions';
 import { site } from '@/data/site';
+import Plate from '@/components/Plate.astro';
+import { link } from '@/lib/link';
+import { plateNumber, plates } from '@/data/plates';
+
+/** Hung beside the form on wide screens, so the page is never a blank form. */
+const bookPlate = plates.cupPortrait;
 
 const endpoint = site.bookingEndpoint;
 const { email, phone } = site.contact;
@@ -44,7 +50,7 @@ const usage = ['Web', 'Social', 'Print', 'Campaign / out of home', 'Internal'];
     <p class="text-meta mt-3">{site.locationNote} Travel outside New York is quoted separately — see Commissions.</p>
   </section>
 
-  <section class="mx-auto mt-16 max-w-screen-2xl px-gutter">
+  <section class="mx-auto mt-16 grid max-w-screen-2xl gap-x-12 px-gutter lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] xl:gap-x-16">
     <form
       id="inquiry"
       method="post"
@@ -187,6 +193,19 @@ const usage = ['Web', 'Social', 'Print', 'Campaign / out of home', 'Internal'];
         <p id="inquiry-status" role="status" tabindex="-1" class="text-meta data-[state=error]:text-bone data-[state=sent]:text-bone"></p>
       </div>
     </form>
+
+    <aside aria-label="From the archive" class="hidden border-t border-border pt-12 lg:block">
+      <div class="sticky top-10">
+        <Plate
+          plate={bookPlate}
+          href={link(`/work/${bookPlate.id}`)}
+          transitionName={`plate-${bookPlate.id}`}
+          label={`Pl. ${plateNumber(bookPlate)}`}
+          note="From the archive"
+          sizes="20rem"
+        />
+      </div>
+    </aside>
   </section>
 </BaseLayout>
 

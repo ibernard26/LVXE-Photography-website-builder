@@ -36,6 +36,7 @@ export type Film = {
 export const films: Film[] = [
   {
     id: 'chrome-glasses',
+    title: 'Chrome Blink',
     description:
       'Moving portrait: a sitter with platinum hair under a dark hood looks down into the lens while lowering and raising chrome wraparound sunglasses.',
     tone: 'Colour',

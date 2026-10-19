@@ -23,9 +23,13 @@ interface Props {
   description?: string;
   /** Show the [Index / Ledger] control (pages that provide both views). */
   views?: boolean;
+  /** Number of exhibition rooms; shows the rolling room counter. */
+  rooms?: number;
 }
 
-const { title, description, views = false } = Astro.props;
+const { title, description, views = false, rooms } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+const digits = Array.from({ length: 10 }, (_, i) => i);
 import { link } from '@/lib/link';
 ---
 
@@ -43,7 +47,7 @@ import { link } from '@/lib/link';
             var root = document.documentElement;
             root.dataset.view = q.get('view') === 'ledger' ? 'ledger' : 'index';
             var d = (q.get('d') || '').toLowerCase();
-            if (/^(editorial|portraits|architecture|commercial)$/.test(d)) root.dataset.filter = d;
+            if (/^(portraits|editorial|street|masks|automotive|city|coast)$/.test(d)) root.dataset.filter = d;
           })();
         </script>
       )
@@ -52,12 +56,24 @@ import { link } from '@/lib/link';
     <a href="#main" class="skip-link text-meta">Skip to content</a>
 
     <header class="sticky top-0 z-40 border-b border-border bg-obsidian">
-      <div class="mx-auto flex h-16 max-w-screen-2xl items-center justify-between gap-6 px-gutter">
-        <a href={link('/')} class="hit-target lg:invisible" aria-label={`${site.name}, home`}>
-          <span class="font-sans text-[1.0625rem] font-[750] leading-none tracking-[-0.04em] text-bone">
-            {site.name}<span class="text-burgundy">.</span>
-          </span>
-        </a>
+      <div class="mx-auto grid h-16 max-w-screen-2xl grid-cols-[1fr_auto_1fr] items-center gap-6 px-gutter">
+<div class="flex items-center gap-6">
+          <a href={link('/')} class="hit-target" aria-label={`${site.name}, home`}>
+            <span class="font-sans text-[1.0625rem] font-[750] leading-none tracking-[-0.04em] text-bone">
+              {site.name}<span class="text-burgundy">.</span>
+            </span>
+          </a>
+          {
+            rooms && (
+              <p class="room-counter text-meta hidden sm:block" aria-hidden="true" data-room-counter>
+                Room{' '}
+                <span class="odo"><span class="odo-strip" data-odo="0">{digits.map((d) => <span>{d}</span>)}</span></span>
+                <span class="odo"><span class="odo-strip" data-odo="1" style="--d:1">{digits.map((d) => <span>{d}</span>)}</span></span>
+                {' '}/ {pad(rooms)}
+              </p>
+            )
+          }
+        </div>
 
         {
           views && (
@@ -101,6 +117,7 @@ import { link } from '@/lib/link';
       import '@/scripts/motion';
       import '@/scripts/film';
       import '@/scripts/views';
+      import '@/scripts/rooms';
     </script>
   </body>
 </html>

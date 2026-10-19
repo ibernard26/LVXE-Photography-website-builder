@@ -38,7 +38,7 @@ function setup() {
   const filterButtons = scope.querySelectorAll<HTMLButtonElement>('[data-filter-set]');
   const status = scope.querySelector<HTMLElement>('[data-filter-status]');
   const empty = scope.querySelector<HTMLElement>('[data-empty]');
-  const total = scope.querySelectorAll('[data-mode="index"] [data-item]').length;
+  const total = scope.querySelectorAll('[data-mode="ledger"] [data-item]').length;
   const pad = (n: number) => String(n).padStart(2, '0');
 
   function render() {
@@ -48,7 +48,7 @@ function setup() {
     filterButtons.forEach((b) => b.setAttribute('aria-pressed', String((b.dataset.filterSet ?? '') === filter)));
 
     const shown = filter
-      ? scope!.querySelectorAll(`[data-mode="index"] [data-item][data-tags~="${filter}"]`).length
+      ? scope!.querySelectorAll(`[data-mode="ledger"] [data-item][data-tags~="${filter}"]`).length
       : total;
     if (status) status.textContent = `${pad(shown)} of ${pad(total)} works`;
     if (empty) empty.hidden = shown > 0;

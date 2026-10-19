@@ -1,26 +1,28 @@
 ---
 /**
- * Home — Issue 01. The Curatorial Split with the Archival Vault.
+ * Home — Issue 01. The exhibition, one room at a time.
  *
- * Left (35%, sticky on desktop): wordmark, issue line, the proposition,
- * discipline filters, Inquire and the colophon link.
- * Right (65%): one of two views, switched from the header.
- *   Index  — the monographic stream: plates at changing scale and offset,
- *            each whole, at its native ratio, with mono metadata.
- *   Ledger — the archive as a dense table; hovering a row floats a
- *            native-ratio preview, and every row opens its room.
+ * Index — the exhibition: every work hangs alone in its own room, the
+ *         height of the screen, at its native ratio, with a wall label.
+ *         Rooms alternate Bone gallery walls and Obsidian screening rooms,
+ *         so the walk reads as light, dark, light; never one long dark run.
+ *         The entrance is a Bone wall carrying the title and Pl. 01; the
+ *         exit is a Charcoal room that leads to commissions and booking.
+ * Ledger — the archive as a dense table, with discipline filters; hovering
+ *         a row floats a native-ratio preview, and every row opens its room.
  *
- * The right column scrolls with the page while the panel holds still, so
- * there is no nested scroll container and no scroll-jacking. Filters and
- * views are attribute-driven (src/scripts/views.ts), and both apply to both
- * views. Every work appears once per view.
+ * Rooms are plain sections in normal flow: no snapping, no scroll-jacking.
+ * Motion (src/scripts/rooms.ts): the lights come up on each work as its
+ * room is reached, the wall label then sets line by line, and the header's
+ * room counter rolls to the room in view.
+ * The view and filter state are attribute-driven (src/scripts/views.ts).
  */
 import type { ImageMetadata } from 'astro';
 import { getImage } from 'astro:assets';
 import Layout from '@/layouts/Layout.astro';
 import Plate from '@/components/Plate.astro';
 import Film from '@/components/Film.astro';
-import { disciplines, frameOf, plateList, plateNumber, plates, type Plate as PlateT } from '@/data/plates';
+import { chapters, frameOf, plateList, plateNumber, plates, type Plate as PlateT } from '@/data/plates';
 import { films, filmFrame, filmNumber, type Film as FilmT } from '@/data/films';
 import { series } from '@/data/series';
 import { issue, site } from '@/data/site';
@@ -31,36 +33,60 @@ const slug = (s: string) => s.toLowerCase();
 const tagsOf = (p: PlateT) => p.disciplines.map(slug).join(' ');
 const seriesOf = (p: { series?: string }) => series.find((s) => s.slug === p.series)?.title;
 const [l1, l2, l3] = site.slogan.lines;
-const film = films[0];
 
-/* ---- Index stream: the sequence, with each slot's placement. ----------- */
-type Slot =
-  | { kind: 'plate'; plate: PlateT; place: string; sizes: string; priority?: boolean }
-  | { kind: 'pair'; a: PlateT; b: PlateT }
-  | { kind: 'film'; film: FilmT; place: string };
+/* ---- The exhibition: one work per room, in hanging order. -------------- */
+type Room =
+  | { kind: 'plate'; plate: PlateT; wall: boolean }
+  | { kind: 'film'; film: FilmT; wall: boolean };
 
-const stream: Slot[] = [
-  // Pl. 01 — the lead monolith.
-  { kind: 'plate', plate: plates.fingersCloseup, place: 'col-span-12 lg:col-span-9', sizes: '(min-width: 1536px) 720px, (min-width: 1024px) 46vw, 100vw', priority: true },
-  // Pl. 02 — the archway, pushed right.
-  { kind: 'plate', plate: plates.cathedral, place: 'col-span-10 col-start-3 lg:col-span-7 lg:col-start-6', sizes: '(min-width: 1536px) 560px, (min-width: 1024px) 36vw, 84vw' },
-  // Pl. 03 / Pl. 04 — the portrait diptych.
-  { kind: 'pair', a: plates.earringPortrait, b: plates.handsPortrait },
-  // Fl. 01 — the moving portrait, held left.
-  { kind: 'film', film, place: 'col-span-9 lg:col-span-5 lg:col-start-2' },
-  // Pl. 05 — the monochrome study.
-  { kind: 'plate', plate: plates.recordStore, place: 'col-span-11 col-start-2 lg:col-span-8 lg:col-start-5', sizes: '(min-width: 1536px) 640px, (min-width: 1024px) 41vw, 92vw' },
-  // Pl. 06 — the pair, closing low left.
-  { kind: 'plate', plate: plates.meshPair, place: 'col-span-9 lg:col-span-6', sizes: '(min-width: 1536px) 480px, (min-width: 1024px) 31vw, 75vw' },
+// The entrance (Pl. 01) is hung separately; these follow it.
+const rooms: Room[] = [
+  { kind: 'plate', plate: plates.halfShadow, wall: false },
+  { kind: 'plate', plate: plates.longCoat, wall: true },
+  { kind: 'plate', plate: plates.cathedral, wall: false },
+  { kind: 'plate', plate: plates.handsPortrait, wall: true },
+  { kind: 'plate', plate: plates.masksDark, wall: false },
+  { kind: 'plate', plate: plates.whiteSkirt, wall: true },
+  { kind: 'film', film: films[0], wall: false },
+  { kind: 'plate', plate: plates.meshPair, wall: true },
+  { kind: 'plate', plate: plates.lighter, wall: false },
+  { kind: 'plate', plate: plates.earringPortrait, wall: true },
+  { kind: 'plate', plate: plates.red911, wall: false },
+  { kind: 'plate', plate: plates.pastelHorizon, wall: true },
 ];
+const lead = plates.fingersCloseup;
+const roomCount = rooms.length + 1;
 
-const plateNote = (p: PlateT) => `${frameOf(p).ratio} · ${seriesOf(p) ?? p.disciplines.join(' / ')}`;
+/**
+ * A frame hangs as large as the room allows: full width on phones, and on
+ * wider screens no taller than the window minus the header and the room's
+ * margins. Width is derived from the native ratio, so the box is exact
+ * before the image decodes and the photograph is never cropped.
+ */
+const hang = (w: number, h: number) => `--r: ${(w / h).toFixed(4)}`;
+const sizesFor = (w: number, h: number) =>
+  `(min-width: 1024px) ${Math.round((w / h) * 100)}vh, calc(100vw - 2rem)`;
+
+const plateLabel = (p: PlateT) => ({
+  no: `Pl. ${plateNumber(p)}`,
+  title: p.title ?? 'Untitled',
+  facts: [p.tone, frameOf(p).ratio, seriesOf(p) ?? p.disciplines.join(' / ')].join(' · '),
+  text: p.caption ?? p.alt,
+  href: link(`/work/${p.id}`),
+});
+const filmLabel = (f: FilmT) => ({
+  no: `Fl. ${filmNumber(f)}`,
+  title: f.title ?? 'Untitled',
+  facts: [f.tone, filmFrame(f).ratio, filmFrame(f).runtime, seriesOf(f) ?? 'Moving portrait'].join(' · '),
+  text: f.description,
+  href: link(`/film/${f.id}`),
+});
 
 /* ---- Filters: counts are build-time facts. ----------------------------- */
 const totalWorks = plateList.length + films.length;
 const filters = [
   { label: 'All', value: '', count: totalWorks },
-  ...disciplines.map((d) => ({ label: d, value: slug(d), count: plateList.filter((p) => p.disciplines.includes(d)).length })),
+  ...chapters.map((c) => ({ label: c.name, value: c.slug, count: c.plates.length })),
 ];
 
 /* ---- Ledger rows, with a small native-ratio preview for each. ---------- */
@@ -95,45 +121,164 @@ const ledger = await Promise.all([
     preview: await previewOf(f.poster),
   })),
 ]);
+
+const leadLabel = plateLabel(lead);
 ---
 
-<Layout views>
-  <div
-    class="mx-auto max-w-screen-2xl px-gutter lg:grid lg:grid-cols-[minmax(0,35fr)_minmax(0,65fr)] lg:gap-x-12 xl:gap-x-16"
-    data-discipline-root
-  >
-    <!-- ================= Curatorial panel ================= -->
-    <aside
-      aria-label="Curatorial panel"
-      class="flex flex-col gap-y-8 py-8 sm:gap-y-12 sm:py-12 lg:sticky lg:top-16 lg:h-[calc(100dvh-4rem)] lg:justify-between lg:overflow-y-auto lg:border-r lg:border-border lg:py-12 lg:pr-10"
-    >
-      <div>
-        <a href={link('/')} class="hit-target hidden lg:inline-flex" aria-label={`${site.name}, home`}>
-          <span class="font-sans text-[2rem] font-[800] leading-none tracking-[-0.055em] text-bone">
-            {site.name}<span class="text-burgundy">.</span>
-          </span>
-        </a>
-        <p class="text-meta lg:mt-6">Issue {issue.number} · {issue.year}<br />{site.region}</p>
+<Layout views rooms={roomCount}>
+  <div data-discipline-root>
+    <div class="scroll-mt-16" data-views-start></div>
 
-        <h1 class="reveal-lines mt-6 sm:mt-10 text-display text-[clamp(2.75rem,4.6vw,4.75rem)]" data-draft={site.slogan.draft || undefined}>
-          <span class="line-mask"><span style="--i:0">{l1}</span></span>{' '}
-          <span class="line-mask"><span class="font-light italic" style="--i:1">{l2}</span></span>{' '}
-          <span class="line-mask"><span style="--i:2">{l3}<span class="text-burgundy">.</span></span></span>
-        </h1>
-        <p class="text-body mt-5 max-w-[34ch] text-bone sm:mt-8" data-draft={site.proposition.draft || undefined}>
-          {site.proposition.text}
-        </p>
+    <!-- ================= View A — the exhibition ================= -->
+    <div data-mode="index">
+      <h2 class="sr-only">Exhibition — one work per room</h2>
+
+      <!-- Entrance: the title wall and Pl. 01 -->
+      <section aria-labelledby="entrance-title" class="wall room" data-room="01">
+        <div class="room-inner lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+          <div class="flex flex-col justify-between gap-y-8 lg:h-full lg:py-2">
+            <p class="text-meta">Issue {issue.number} · {issue.year} — {site.region}</p>
+
+            <div>
+              <h1 id="entrance-title" class="reveal-lines text-display text-[clamp(2.75rem,6.4vw,6.5rem)]" data-draft={site.slogan.draft || undefined}>
+                <span class="line-mask"><span style="--i:0">{l1}</span></span>{' '}
+                <span class="line-mask"><span class="font-light italic" style="--i:1">{l2}</span></span>{' '}
+                <span class="line-mask"><span style="--i:2">{l3}<span class="text-burgundy">.</span></span></span>
+              </h1>
+              <p class="text-body mt-6 max-w-[34ch] text-bone sm:mt-8" data-draft={site.proposition.draft || undefined}>
+                {site.proposition.text}
+              </p>
+              <div class="mt-8 flex flex-wrap items-baseline gap-x-10 gap-y-2">
+                <a href="#room-02" class="text-meta link-quiet text-bone">Enter the exhibition</a>
+                <a href={link('/book')} class="text-meta link-book">Book a session</a>
+              </div>
+            </div>
+
+            <dl class="wall-label hidden lg:block">
+              <dt class="sr-only">Room</dt>
+              <dd class="text-meta">Room 01 / {pad(roomCount)}</dd>
+              <dt class="sr-only">Plate</dt>
+              <dd class="text-meta mt-3 text-bone">{leadLabel.no} — {leadLabel.title}</dd>
+              <dt class="sr-only">Details</dt>
+              <dd class="text-meta mt-1">{leadLabel.facts}</dd>
+            </dl>
+          </div>
+
+          <div class="flex justify-center lg:justify-end" data-item data-tags={tagsOf(lead)}>
+            <div class="hang hang-lead" style={hang(lead.image.width, lead.image.height)}>
+              <Plate
+                plate={lead}
+                href={leadLabel.href}
+                transitionName={`plate-${lead.id}`}
+                sizes={sizesFor(lead.image.width, lead.image.height)}
+                priority
+                reveal={false}
+              />
+            </div>
+          </div>
+
+          <div class="wall-label lg:hidden" aria-hidden="true">
+            <p class="text-meta">Room 01 / {pad(roomCount)}</p>
+            <p class="text-meta mt-2 text-bone">{leadLabel.no} — {leadLabel.title}</p>
+            <p class="text-meta mt-1">{leadLabel.facts}</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Rooms 02 onward: one work each -->
+      {
+        rooms.map((room, i) => {
+          const n = pad(i + 2);
+          const label = room.kind === 'plate' ? plateLabel(room.plate) : filmLabel(room.film);
+          const media = room.kind === 'plate' ? room.plate.image : room.film;
+          const flip = i % 2 === 1;
+          return (
+            <section
+              id={`room-${n}`}
+              aria-label={`Room ${n}: ${label.no}, ${label.title}`}
+              class:list={['room', room.wall && 'wall', !room.wall && 'bg-obsidian']}
+              data-room={n}
+              data-lights
+              data-item
+              data-tags={room.kind === 'plate' ? tagsOf(room.plate) : ''}
+            >
+              <div class:list={['room-inner lg:justify-center', flip ? 'lg:grid-cols-[auto_minmax(0,20rem)]' : 'lg:grid-cols-[minmax(0,20rem)_auto]']}>
+                <div class:list={['flex justify-center', flip ? 'lg:order-1' : 'lg:order-2']}>
+                  <div class="hang" style={hang(media.width, media.height)}>
+                    {room.kind === 'plate' ? (
+                      <Plate
+                        plate={room.plate}
+                        href={label.href}
+                        transitionName={`plate-${room.plate.id}`}
+                        sizes={sizesFor(media.width, media.height)}
+                        reveal={false}
+                      />
+                    ) : (
+                      <Film film={room.film} transitionName={`film-${room.film.id}`} reveal={false} />
+                    )}
+                  </div>
+                </div>
+
+                <dl class:list={['wall-label lg:self-end', flip ? 'lg:order-2' : 'lg:order-1']}>
+                  <dt class="sr-only">Room</dt>
+                  <dd class="text-meta">Room {n} / {pad(roomCount)}</dd>
+                  <dt class="sr-only">Work</dt>
+                  <dd class="text-meta mt-4 text-bone lg:mt-6">{label.no}</dd>
+                  <dd class="text-heading mt-1 text-[clamp(1.5rem,2.2vw,2rem)]">{label.title}</dd>
+                  <dt class="sr-only">Details</dt>
+                  <dd class="text-meta mt-3">{label.facts}</dd>
+                  <dt class="sr-only">Description</dt>
+                  <dd class="text-body mt-4 max-w-[36ch] text-[0.875rem] leading-[1.55]">{label.text}</dd>
+                  <dd class="mt-5">
+                    <a href={label.href} class="text-meta link-quiet text-bone">
+                      Enter the room<span class="sr-only"> — {label.no}, {label.title}</span>
+                    </a>
+                  </dd>
+                </dl>
+              </div>
+            </section>
+          );
+        })
+      }
+
+      <!-- Exit: commissions and booking -->
+      <section aria-labelledby="exit-title" class="room bg-charcoal">
+        <div class="room-inner content-center lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+          <div>
+            <p class="text-meta">Exit — Issue {issue.number}</p>
+            <h2 id="exit-title" class="text-display mt-6 text-[clamp(2.5rem,6vw,6rem)]">
+              Sit for <span class="font-light italic">the next</span> room<span class="text-burgundy">.</span>
+            </h2>
+          </div>
+          <div class="lg:self-end">
+            <p class="text-body max-w-[38ch]">
+              Portrait sittings, editorial commissions and brand work across {site.region}.
+            </p>
+            <div class="mt-8 flex flex-wrap items-baseline gap-x-10 gap-y-2">
+              <a href={link('/book')} class="text-meta link-book">Book a session</a>
+              <a href={link('/commissions')} class="text-meta link-quiet text-bone">Commissions</a>
+              <a href={link('/?view=ledger')} class="text-meta link-quiet text-bone">The full ledger</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ================= View B — the archival vault ================= -->
+    <section aria-labelledby="ledger-title" data-mode="ledger" class="mx-auto max-w-screen-2xl px-gutter pt-10 pb-28 sm:pt-14">
+      <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-bone pb-4">
+        <h2 id="ledger-title" class="text-meta text-bone">Ledger — Archive, Issue {issue.number}</h2>
+        <p class="text-meta">{pad(totalWorks)} entries</p>
       </div>
 
-      <nav aria-label="Disciplines" data-js-only>
-        <p class="text-meta text-bone">Disciplines</p>
-        <ul class="mt-2 flex flex-wrap gap-x-6 gap-y-0 lg:block lg:border-t lg:border-border">
+      <nav aria-label="Disciplines" class="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2 border-b border-border py-3" data-js-only>
+        <ul class="flex flex-wrap gap-x-6 gap-y-0">
           {
             filters.map((f) => (
-              <li class="lg:border-b lg:border-border">
+              <li>
                 <button
                   type="button"
-                  class="toggle-opt text-meta flex cursor-pointer items-baseline gap-2 bg-transparent py-1 text-left lg:w-full lg:justify-between lg:py-2.5"
+                  class="toggle-opt text-meta flex cursor-pointer items-baseline gap-2 bg-transparent py-1 text-left"
                   data-filter-set={f.value}
                   aria-pressed={f.value === '' ? 'true' : 'false'}
                 >
@@ -145,135 +290,68 @@ const ledger = await Promise.all([
             ))
           }
         </ul>
-        <p class="text-meta mt-2 lg:mt-4" role="status" data-filter-status>{pad(totalWorks)} of {pad(totalWorks)} works</p>
+        <p class="text-meta" role="status" data-filter-status>{pad(totalWorks)} of {pad(totalWorks)} works</p>
       </nav>
 
-      <div class="flex flex-wrap items-baseline gap-x-10 gap-y-4">
-        <a href={link('/book')} class="text-meta link-book">Inquire</a>
-        <a href={link('/commissions')} class="text-meta link-quiet">Commissions</a>
-        <a href="#colophon" class="text-meta link-quiet">Colophon</a>
-      </div>
-    </aside>
-
-    <!-- ================= Right column ================= -->
-    <div class="min-w-0 scroll-mt-16 pb-28 lg:py-12" data-views-start>
-      <!-- View A — the monographic stream -->
-      <section aria-labelledby="stream-title" data-mode="index">
-        <h2 id="stream-title" class="sr-only">Index — plates in sequence</h2>
-        <div class="grid grid-cols-12 gap-x-4 gap-y-24 sm:gap-x-6 sm:gap-y-36">
+      <table class="w-full border-collapse text-left">
+        <caption class="sr-only">
+          Archive ledger. Each row opens that work's room. Years not yet recorded are shown as a dash.
+        </caption>
+        <thead>
+          <tr class="border-b border-border">
+            <th scope="col" class="text-meta py-3 pr-4 font-normal">Plate / Series</th>
+            <th scope="col" class="text-meta py-3 pr-4 font-normal">Title &amp; Context</th>
+            <th scope="col" class="text-meta hidden py-3 pr-4 font-normal md:table-cell">Year</th>
+            <th scope="col" class="text-meta py-3 pr-4 font-normal">Ratio</th>
+            <th scope="col" class="text-meta hidden py-3 pr-4 font-normal md:table-cell">Medium</th>
+            <th scope="col" class="text-meta py-3 text-right font-normal">Action</th>
+          </tr>
+        </thead>
+        <tbody>
           {
-            stream.map((slot) => {
-              if (slot.kind === 'plate')
-                return (
-                  <div class={slot.place} data-item data-tags={tagsOf(slot.plate)}>
-                    <Plate
-                      plate={slot.plate}
-                      href={link(`/work/${slot.plate.id}`)}
-                      transitionName={`plate-${slot.plate.id}`}
-                      label={`Pl. ${plateNumber(slot.plate)}`}
-                      note={plateNote(slot.plate)}
-                      sizes={slot.sizes}
-                      priority={slot.priority}
-                      reveal={!slot.priority}
-                    />
-                  </div>
-                );
-              if (slot.kind === 'pair')
-                return [slot.a, slot.b].map((p, i) => (
-                  <div class:list={['col-span-6', i === 1 && 'mt-20 sm:mt-40']} data-item data-tags={tagsOf(p)}>
-                    <Plate
-                      plate={p}
-                      i={i}
-                      href={link(`/work/${p.id}`)}
-                      transitionName={`plate-${p.id}`}
-                      label={`Pl. ${plateNumber(p)}`}
-                      note={plateNote(p)}
-                      sizes="(min-width: 1536px) 440px, (min-width: 1024px) 29vw, 48vw"
-                    />
-                  </div>
-                ));
-              return (
-                <div class={slot.place} data-item data-tags="">
-                  <Film
-                    film={slot.film}
-                    transitionName={`film-${slot.film.id}`}
-                    label={`Fl. ${filmNumber(slot.film)}`}
-                    note={`${filmFrame(slot.film).ratio} · ${seriesOf(slot.film) ?? 'Moving portrait'}`}
-                  />
-                </div>
-              );
-            })
+            ledger.map((row) => (
+              <tr
+                class="ledger-row group relative border-b border-border align-top transition-colors duration-300 ease-editorial hover:bg-charcoal focus-within:bg-charcoal"
+                data-item
+                data-tags={row.tags}
+                data-preview={row.preview.src}
+                data-preview-w={row.preview.w}
+                data-preview-h={row.preview.h}
+              >
+                <td class="text-meta py-5 pr-4 whitespace-nowrap text-bone">
+                  {row.no}
+                  <span class="mt-1 block text-soft-gray">
+                    {row.series ?? <><span aria-hidden="true">—</span><span class="sr-only">No series</span></>}
+                  </span>
+                </td>
+                <td class="py-5 pr-4">
+                  <span class="text-heading block text-[1.25rem] transition-transform duration-500 ease-editorial group-hover:translate-x-2">
+                    {row.title}
+                  </span>
+                  <span class="text-body mt-2 line-clamp-2 max-w-[56ch] text-[0.875rem] leading-[1.5]">{row.context}</span>
+                </td>
+                <td class="text-meta hidden py-5 pr-4 md:table-cell">
+                  {row.year ?? <><span aria-hidden="true">—</span><span class="sr-only">Not recorded</span></>}
+                </td>
+                <td class="text-meta py-5 pr-4 whitespace-nowrap">{row.ratio}</td>
+                <td class="text-meta hidden py-5 pr-4 md:table-cell">{row.medium}</td>
+                <td class="py-5 text-right">
+                  <a href={row.href} class="text-meta link-quiet text-bone after:absolute after:inset-0 after:content-['']">
+                    Open<span class="sr-only"> {row.no}, {row.title}</span>
+                  </a>
+                </td>
+              </tr>
+            ))
           }
-        </div>
-      </section>
+        </tbody>
+      </table>
 
-      <!-- View B — the archival vault -->
-      <section aria-labelledby="ledger-title" data-mode="ledger" class="mt-28 lg:mt-0">
-        <div class="flex items-baseline justify-between gap-6 border-b border-bone pb-4">
-          <h2 id="ledger-title" class="text-meta text-bone">Ledger — Archive, Issue {issue.number}</h2>
-          <p class="text-meta">{pad(totalWorks)} entries</p>
-        </div>
-
-        <table class="w-full border-collapse text-left">
-          <caption class="sr-only">
-            Archive ledger. Each row opens that work's room. Years not yet recorded are shown as a dash.
-          </caption>
-          <thead>
-            <tr class="border-b border-border">
-              <th scope="col" class="text-meta py-3 pr-4 font-normal">Plate / Series</th>
-              <th scope="col" class="text-meta py-3 pr-4 font-normal">Title &amp; Context</th>
-              <th scope="col" class="text-meta hidden py-3 pr-4 font-normal md:table-cell">Year</th>
-              <th scope="col" class="text-meta py-3 pr-4 font-normal">Ratio</th>
-              <th scope="col" class="text-meta hidden py-3 pr-4 font-normal md:table-cell">Medium</th>
-              <th scope="col" class="text-meta py-3 text-right font-normal">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              ledger.map((row) => (
-                <tr
-                  class="ledger-row group relative border-b border-border align-top transition-colors duration-300 ease-editorial hover:bg-charcoal focus-within:bg-charcoal"
-                  data-item
-                  data-tags={row.tags}
-                  data-preview={row.preview.src}
-                  data-preview-w={row.preview.w}
-                  data-preview-h={row.preview.h}
-                >
-                  <td class="text-meta py-5 pr-4 whitespace-nowrap text-bone">
-                    {row.no}
-                    <span class="mt-1 block text-soft-gray">
-                      {row.series ?? <><span aria-hidden="true">—</span><span class="sr-only">No series</span></>}
-                    </span>
-                  </td>
-                  <td class="py-5 pr-4">
-                    <span class="text-heading block text-[1.25rem] transition-transform duration-500 ease-editorial group-hover:translate-x-2">
-                      {row.title}
-                    </span>
-                    <span class="text-body mt-2 line-clamp-2 max-w-[56ch] text-[0.875rem] leading-[1.5]">{row.context}</span>
-                  </td>
-                  <td class="text-meta hidden py-5 pr-4 md:table-cell">
-                    {row.year ?? <><span aria-hidden="true">—</span><span class="sr-only">Not recorded</span></>}
-                  </td>
-                  <td class="text-meta py-5 pr-4 whitespace-nowrap">{row.ratio}</td>
-                  <td class="text-meta hidden py-5 pr-4 md:table-cell">{row.medium}</td>
-                  <td class="py-5 text-right">
-                    <a href={row.href} class="text-meta link-quiet text-bone after:absolute after:inset-0 after:content-['']">
-                      Open<span class="sr-only"> {row.no}, {row.title}</span>
-                    </a>
-                  </td>
-                </tr>
-              ))
-            }
-          </tbody>
-        </table>
-
-        <div data-ledger-preview hidden aria-hidden="true" class="pointer-events-none fixed top-0 left-0 z-50 w-44 xl:w-52">
-          <img alt="" class="block h-auto w-full bg-charcoal" decoding="async" />
-        </div>
-      </section>
+      <div data-ledger-preview hidden aria-hidden="true" class="pointer-events-none fixed top-0 left-0 z-50 w-44 xl:w-52">
+        <img alt="" class="block h-auto w-full bg-charcoal" decoding="async" />
+      </div>
 
       <!-- Shown when a discipline has no published work yet. -->
-      <div data-empty hidden class="border-t border-border pt-10">
+      <div data-empty hidden class="pt-10">
         <p class="text-heading max-w-[24ch]">No published plates in this discipline yet.</p>
         <p class="text-body mt-6 max-w-measure">
           Commercial and brand work is commissioned per project. The scopes and the brief form are one step away.
@@ -283,6 +361,6 @@ const ledger = await Promise.all([
           <a href={link('/book?type=commercial')} class="text-meta link-book">Send a commercial brief</a>
         </div>
       </div>
-    </div>
+    </section>
   </div>
 </Layout>
