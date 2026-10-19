@@ -30,6 +30,40 @@ export const commercial: string[] = [
   'Event coverage',
 ];
 
+export type Package = {
+  name: string;
+  /** Coverage hours, people and deliverables, stated explicitly. */
+  detail: string;
+  price: number;
+  /** Set only for a proposed starting rate, not a fixed published price. */
+  startingRate?: boolean;
+};
+
+/**
+ * Corporate photography — fixed introductory package, confirmed Oct 2026.
+ * Scope II's only priced photography item; the video packages below are a
+ * separate service and must not be applied to this or any other photography rate.
+ */
+export const corporatePhotography: Package = {
+  name: 'Corporate Headshots & Workplace Photography',
+  detail: 'Up to 2 hours · up to 10 finished headshots + 12 workplace/team images',
+  price: 850,
+};
+
+/**
+ * Video packages — proposed starting prices, confirmed Oct 2026. These rates
+ * are for video only; do not apply them to photography sittings or the
+ * corporate photography package above.
+ */
+export const videoPackages: Package[] = [
+  { name: 'Social Video', detail: '2 hours', price: 800, startingRate: true },
+  { name: 'Half-Day Video', detail: '4 hours', price: 1200, startingRate: true },
+  { name: 'Full-Day Video', detail: '8 hours', price: 1800, startingRate: true },
+];
+
+/** Names shown in the booking form's commercial "Work required" select, alongside `commercial`. */
+export const commercialPackages: string[] = [corporatePhotography, ...videoPackages].map((p) => p.name);
+
 /** The two booking pathways, shared by /commissions, /book and the booking band. */
 export const scopes = {
   editorial: { id: 'editorial', label: 'Editorial & Creative Commissions', for: 'Models, creatives, publications, private clients' },
