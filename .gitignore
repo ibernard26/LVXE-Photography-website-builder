@@ -4,3 +4,6 @@ dist/
 .env
 .env.*
 .DS_Store
+
+# Playwright MCP snapshots and screenshots
+.playwright-mcp/
