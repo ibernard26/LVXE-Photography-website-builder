@@ -64,6 +64,20 @@ export const videoPackages: Package[] = [
 /** Names shown in the booking form's commercial "Work required" select, alongside `commercial`. */
 export const commercialPackages: string[] = [corporatePhotography, ...videoPackages].map((p) => p.name);
 
+/**
+ * Destination-quote policy, confirmed Nov 2026. For assignments outside New
+ * York, the relevant package fee above is itemized alongside a travel day
+ * rate, a per diem, and airfare/lodging/ground transport billed at cost (no
+ * markup) — the full quote is agreed before booking. These figures apply
+ * only to the corporate photography and video packages above, not to
+ * Scope I sittings.
+ */
+export const travelPolicy = {
+  corporatePhotographyDayRate: 425,
+  videoDayRate: 900,
+  perDiem: 75,
+} as const;
+
 /** The two booking pathways, shared by /commissions, /book and the booking band. */
 export const scopes = {
   editorial: { id: 'editorial', label: 'Editorial & Creative Commissions', for: 'Models, creatives, publications, private clients' },
