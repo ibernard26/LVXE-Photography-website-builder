@@ -23,15 +23,19 @@ export const site = {
 
   disciplines: ['Editorial', 'Portraiture', 'Cinematic', 'Fine Art'],
 
-  /** Service area, from the Vision Board. */
-  region: 'New Jersey / New York',
+  /** Short form, for inline/brief mentions. Confirmed Oct 2026. */
+  region: 'New York',
+
+  /** Exact approved copy (Oct 2026) — use verbatim in footer, contact and booking placements. */
+  locationNote: 'Based in New York. Available for assignments nationwide and internationally.',
 
   description:
-    'LVXE is the independent photography and visual arts practice of Isaiah Bernard — editorial fashion, intimate portraiture, and cinematic visual storytelling across New Jersey and New York.',
+    'LVXE is the independent photography and visual arts practice of Isaiah Bernard — editorial fashion, intimate portraiture, and cinematic visual storytelling. Based in New York, available for assignments nationwide and internationally.',
 
-  /** Contact details are left empty until confirmed; empty values are not rendered. */
+  /** Verified Oct 2026. LVXE's business channels — kept separate from a client's own contact fields on the booking form. */
   contact: {
-    email: '',
+    email: 'lvxevisuals@gmail.com',
+    phone: '929-248-9384',
     instagram: '',
   },
 
