@@ -63,13 +63,59 @@ A website for the brand LVXE the photographer
   --color-soft-gray: #686561;    /* Gallery notes, metadata */
   --color-burgundy: #54252D;
   --color-border: #E5E2DC;
-}/* Scale & Line Height */
---font-display: 'Newsreader', serif;
---font-sans: 'Geist Sans', -apple-system, sans-serif;
---font-mono: 'Geist Mono', monospace;
+}
+```
 
-/* Type Scale: Max 4 distinct levels per viewport */
-.text-display  { font-family: var(--font-display); font-size: clamp(2.25rem, 6vw, 4.5rem); line-height: 1.05; letter-spacing: -0.02em; }
-.text-heading  { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2.25rem); line-height: 1.15; }
-.text-body     { font-family: var(--font-sans); font-size: 0.9375rem; line-height: 1.6; color: var(--color-soft-gray); }
-.text-meta     { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-soft-gray); }
+### Type
+
+Defined in `src/styles/global.css`. Newsreader is the display serif (roman and italic). Geist Sans is the wordmark and running text. Geist Mono is metadata. A viewport uses at most four of these levels; `text-mega` is the colophon wordmark and `text-display-serif` is the italic pair of `text-display`.
+
+```css
+--font-serif: var(--font-newsreader), 'Newsreader', Georgia, serif;
+--font-sans: var(--font-geist), 'Geist Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+--font-mono: var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace;
+
+.text-mega {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: clamp(6rem, 25.5vw, 26rem);
+  line-height: 0.78;
+  letter-spacing: -0.065em;
+  text-transform: uppercase;
+}
+.text-display {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(2.75rem, 8vw, 7.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+.text-display-serif {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(2.75rem, 8vw, 7.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+.text-heading {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.text-body {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+.text-meta {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+```

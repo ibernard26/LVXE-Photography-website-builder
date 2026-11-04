@@ -22,7 +22,7 @@ import { getImage } from 'astro:assets';
 import Layout from '@/layouts/Layout.astro';
 import Plate from '@/components/Plate.astro';
 import Film from '@/components/Film.astro';
-import { chapters, frameOf, plateList, plateNumber, plates, type Plate as PlateT } from '@/data/plates';
+import { chapters, frameOf, leadPlate, plateList, plateNumber, plates, type Plate as PlateT } from '@/data/plates';
 import { films, filmFrame, filmNumber, type Film as FilmT } from '@/data/films';
 import { series } from '@/data/series';
 import { issue, site } from '@/data/site';
@@ -54,7 +54,7 @@ const rooms: Room[] = [
   { kind: 'plate', plate: plates.red911, wall: false },
   { kind: 'plate', plate: plates.pastelHorizon, wall: true },
 ];
-const lead = plates.fingersCloseup;
+const lead = leadPlate;
 const roomCount = rooms.length + 1;
 
 /**

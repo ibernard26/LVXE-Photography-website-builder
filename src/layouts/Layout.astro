@@ -13,10 +13,10 @@
  * every ClientRouter swap. Without JavaScript both views render in sequence
  * and the control is hidden.
  */
-import SiteHead from '@/components/SiteHead.astro';
-import SiteFooter from '@/components/SiteFooter.astro';
-import FullscreenNav from '@/components/FullscreenNav.astro';
+import type { ImageMetadata } from 'astro';
+import Document from '@/layouts/Document.astro';
 import { site } from '@/data/site';
+import { link } from '@/lib/link';
 
 interface Props {
   title?: string;
@@ -25,20 +25,18 @@ interface Props {
   views?: boolean;
   /** Number of exhibition rooms; shows the rolling room counter. */
   rooms?: number;
+  /** Photograph for the link preview. Falls back to the exhibition lead. */
+  image?: ImageMetadata;
+  imageAlt?: string;
 }
 
-const { title, description, views = false, rooms } = Astro.props;
+const { title, description, views = false, rooms, image, imageAlt } = Astro.props;
 const pad = (n: number) => String(n).padStart(2, '0');
 const digits = Array.from({ length: 10 }, (_, i) => i);
-import { link } from '@/lib/link';
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <SiteHead title={title} description={description} />
-  </head>
-  <body class="grain">
+<Document title={title} description={description} image={image} imageAlt={imageAlt}>
+  <Fragment slot="prelude">
     {
       views && (
         <script is:inline>
@@ -52,12 +50,12 @@ import { link } from '@/lib/link';
         </script>
       )
     }
+  </Fragment>
 
-    <a href="#main" class="skip-link text-meta">Skip to content</a>
-
+  <Fragment slot="chrome">
     <header class="sticky top-0 z-40 border-b border-border bg-obsidian">
       <div class="mx-auto grid h-16 max-w-screen-2xl grid-cols-[1fr_auto_1fr] items-center gap-6 px-gutter">
-<div class="flex items-center gap-6">
+        <div class="flex items-center gap-6">
           <a href={link('/')} class="hit-target" aria-label={`${site.name}, home`}>
             <span class="font-sans text-[1.0625rem] font-[750] leading-none tracking-[-0.04em] text-bone">
               {site.name}<span class="text-burgundy">.</span>
@@ -105,19 +103,16 @@ import { link } from '@/lib/link';
         </div>
       </div>
     </header>
+  </Fragment>
 
-    <main id="main">
-      <slot />
-    </main>
+  <slot />
 
-    <SiteFooter />
-    <FullscreenNav />
-
+  <Fragment slot="scripts">
     <script>
       import '@/scripts/motion';
       import '@/scripts/film';
       import '@/scripts/views';
       import '@/scripts/rooms';
     </script>
-  </body>
-</html>
+  </Fragment>
+</Document>

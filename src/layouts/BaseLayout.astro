@@ -1,10 +1,8 @@
 ---
+import type { ImageMetadata } from 'astro';
+import Document from '@/layouts/Document.astro';
 import SiteHeader from '@/components/SiteHeader.astro';
-import SiteFooter from '@/components/SiteFooter.astro';
-import FullscreenNav from '@/components/FullscreenNav.astro';
 import BookingBand from '@/components/BookingBand.astro';
-import { site } from '@/data/site';
-import SiteHead from '@/components/SiteHead.astro';
 
 interface Props {
   title?: string;
@@ -13,45 +11,28 @@ interface Props {
   label?: string;
   /** Hide the closing booking band (used on /book itself). */
   hideBooking?: boolean;
+  /** Photograph for the link preview. Falls back to the exhibition lead. */
+  image?: ImageMetadata;
+  imageAlt?: string;
 }
 
-const { title, description, label = 'Issue 01', hideBooking = false } = Astro.props;
+const { title, description, label = 'Issue 01', hideBooking = false, image, imageAlt } = Astro.props;
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <SiteHead title={title} description={description} />
-  </head>
-  <body class="grain">
-    <a href="#main" class="skip-link text-meta">Skip to content</a>
+<Document title={title} description={description} image={image} imageAlt={imageAlt} spine={label}>
+  <SiteHeader slot="chrome" />
 
-    <!-- Margin spines (wide screens): the practice on the left, place in the issue on the right. -->
-    <p
-      aria-hidden="true"
-      class="v-label text-meta pointer-events-none fixed bottom-8 left-[calc(var(--spacing-gutter)/2-0.35rem)] z-30 hidden 2xl:block"
-    >
-      {site.disciplines.join(' / ')}
-    </p>
-    <p
-      aria-hidden="true"
-      class="v-label text-meta pointer-events-none fixed right-[calc(var(--spacing-gutter)/2-0.35rem)] bottom-8 z-30 hidden 2xl:block"
-    >
-      {label}
-    </p>
+  <slot />
 
-    <SiteHeader />
-    <main id="main">
-      <slot />
-    </main>
+  <Fragment slot="close">
     {hideBooking ? <div class="mt-32 sm:mt-48" /> : <BookingBand />}
-    <SiteFooter />
-    <FullscreenNav />
+  </Fragment>
 
+  <Fragment slot="scripts">
     <script>
       import '@/scripts/motion';
       import '@/scripts/film';
       import '@/scripts/rooms';
     </script>
-  </body>
-</html>
+  </Fragment>
+</Document>

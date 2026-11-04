@@ -22,6 +22,12 @@ export const sittings: Sitting[] = [
 /** Also offered under Scope I, no published rate yet. */
 export const onRequest: string[] = ['Split session', 'Beginner digitals', 'Headshots', 'Comp cards'];
 
+/**
+ * Editorial booking choice for models and creatives. No rate is published,
+ * so it is listed on /book only and does not appear on the commissions table.
+ */
+export const portfolioCollaborations = ['Creative collaboration / portfolio'] as const;
+
 /** Scope II — Commercial Campaigns & Corporate Identity (README §1). Quoted per brief. */
 export const commercial: string[] = [
   'Brand and commercial campaigns',
