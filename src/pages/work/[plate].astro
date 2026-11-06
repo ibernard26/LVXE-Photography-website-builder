@@ -46,6 +46,8 @@ import { link } from '@/lib/link';
   title={`Plate ${no}${plate.title ? ` — ${plate.title}` : ''}`}
   description={`Plate ${no} from the LVXE archive by ${site.artist}. ${plate.alt}`}
   label={`Plate ${no} of ${total}`}
+  image={plate.image}
+  imageAlt={plate.alt}
 >
   <article aria-labelledby="plate-title" class:list={['room', wall ? 'wall' : 'bg-obsidian']} data-label-in>
     <div class="room-inner lg:grid-cols-[auto_minmax(0,20rem)] lg:justify-center">

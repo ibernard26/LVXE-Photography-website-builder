@@ -31,6 +31,8 @@ import { link } from '@/lib/link';
   title={`Film ${no}${film.title ? ` — ${film.title}` : ''}`}
   description={`Film ${no} from the LVXE archive by ${site.artist}. ${film.description}`}
   label={`Film ${no} of ${total}`}
+  image={film.poster}
+  imageAlt={film.description}
 >
   <article aria-labelledby="film-title" class="room bg-obsidian" data-label-in>
     <div class="room-inner lg:grid-cols-[auto_minmax(0,20rem)] lg:justify-center">

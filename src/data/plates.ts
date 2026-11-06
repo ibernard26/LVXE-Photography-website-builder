@@ -485,6 +485,9 @@ export const plates = {
   },
 } satisfies Record<string, Plate>;
 
+/** Homepage entrance (Pl. 01) and the default photograph for link previews. */
+export const leadPlate = plates.fingersCloseup;
+
 /**
  * Catalogue order: this order defines plate numbers across the site. Plates
  * are grouped by chapter, in the order of `disciplines`.

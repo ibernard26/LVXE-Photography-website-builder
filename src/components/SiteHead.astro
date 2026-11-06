@@ -1,22 +1,67 @@
 ---
 /**
- * Document head shared by every layout: meta, canonical, Open Graph, the
- * `html.js` flag, self-hosted fonts and the ClientRouter.
+ * Document head shared by every layout: meta, canonical, Open Graph and
+ * Twitter card, schema.org, the `html.js` flag, self-hosted fonts and the
+ * ClientRouter.
  */
+import type { ImageMetadata } from 'astro';
 import { Font } from 'astro:assets';
 import { ClientRouter } from 'astro:transitions';
 import { site } from '@/data/site';
+import { leadPlate } from '@/data/plates';
+import { link } from '@/lib/link';
+import { shareImage } from '@/lib/share-image';
 import '@/styles/global.css';
 
 interface Props {
   title?: string;
   description?: string;
+  /** Photograph for this page. Falls back to the exhibition lead. */
+  image?: ImageMetadata;
+  imageAlt?: string;
 }
 
-const { title, description = site.description } = Astro.props;
+const { title, description = site.description, image, imageAlt } = Astro.props;
+const picture = image ?? leadPlate.image;
+const alt = imageAlt ?? leadPlate.alt;
 const pageTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.artist}`;
-const canonical = new URL(Astro.url.pathname, Astro.site);
-import { link } from '@/lib/link';
+const origin = Astro.site ?? new URL('https://lvxe.duckdns.org');
+const canonical = new URL(Astro.url.pathname, origin);
+const home = new URL(import.meta.env.BASE_URL, origin);
+const sitemapUrl = new URL(`${import.meta.env.BASE_URL}sitemap-index.xml`, origin);
+const share = await shareImage(picture);
+const shareUrl = new URL(share.src, origin);
+const shareWidth = share.attributes.width;
+const shareHeight = share.attributes.height;
+
+const handle = site.contact.instagram.replace(/^@/, '').trim();
+const sameAs = handle ? [`https://www.instagram.com/${handle}/`] : undefined;
+const practiceId = new URL('#practice', home).href;
+const artistId = new URL('#artist', home).href;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': practiceId,
+      name: site.name,
+      description: site.description,
+      url: home.href,
+      ...(site.contact.email ? { email: site.contact.email } : {}),
+      ...(site.contact.phone ? { telephone: site.contact.phone } : {}),
+      ...(sameAs ? { sameAs } : {}),
+      founder: { '@id': artistId },
+      knowsAbout: [...site.disciplines],
+    },
+    {
+      '@type': 'Person',
+      '@id': artistId,
+      name: site.artist,
+      url: home.href,
+      worksFor: { '@id': practiceId },
+    },
+  ],
+};
 ---
 
 <meta charset="utf-8" />
@@ -25,6 +70,7 @@ import { link } from '@/lib/link';
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
 <link rel="icon" href={link('/favicon.svg')} type="image/svg+xml" />
+<link rel="sitemap" type="application/xml" href={sitemapUrl.href} />
 <meta name="theme-color" content="#0B0B0D" />
 
 <meta property="og:type" content="website" />
@@ -32,6 +78,19 @@ import { link } from '@/lib/link';
 <meta property="og:title" content={pageTitle} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonical} />
+<meta property="og:image" content={shareUrl.href} />
+{shareWidth && <meta property="og:image:width" content={shareWidth} />}
+{shareHeight && <meta property="og:image:height" content={shareHeight} />}
+<meta property="og:image:type" content="image/jpeg" />
+<meta property="og:image:alt" content={alt} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={pageTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={shareUrl.href} />
+<meta name="twitter:image:alt" content={alt} />
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 
 <!-- Enables motion start states. Without JS, everything renders at rest. -->
 <script is:inline>document.documentElement.classList.add('js');</script>

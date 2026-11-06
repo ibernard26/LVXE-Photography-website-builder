@@ -13,7 +13,7 @@
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHead from '@/components/PageHead.astro';
-import { commercial, commercialPackages, onRequest, scopes, sittings } from '@/data/commissions';
+import { commercial, commercialPackages, onRequest, portfolioCollaborations, scopes, sittings } from '@/data/commissions';
 import { site } from '@/data/site';
 import Plate from '@/components/Plate.astro';
 import { link } from '@/lib/link';
@@ -31,7 +31,14 @@ const label = 'text-meta block';
 const usage = ['Web', 'Social', 'Print', 'Campaign / out of home', 'Internal'];
 ---
 
-<BaseLayout title="Book" label="Issue 01 / Book" hideBooking description={`Inquire about an editorial commission or send a commercial brief to LVXE, ${site.region}.`}>
+<BaseLayout
+  title="Book"
+  label="Issue 01 / Book"
+  hideBooking
+  description={`Inquire about an editorial commission or send a commercial brief to LVXE, ${site.region}.`}
+  image={bookPlate.image}
+  imageAlt={bookPlate.alt}
+>
   <PageHead
     number="No. 04"
     section="Book"
@@ -48,6 +55,29 @@ const usage = ['Web', 'Social', 'Print', 'Campaign / out of home', 'Internal'];
       {phone && <a href={`tel:${telHref}`} class="link-quiet">{phone}</a>}
     </p>
     <p class="text-meta mt-3">{site.locationNote} Travel outside New York is quoted separately — see Commissions.</p>
+    {
+      !endpoint && (email || phone) && (
+        <p class="text-body mt-6 max-w-measure">
+          Online inquiries are not connected yet.{' '}
+          {
+            email && phone ? (
+              <>
+                Write to <a href={`mailto:${email}`} class="link-quiet">{email}</a> or call{' '}
+                <a href={`tel:${telHref}`} class="link-quiet">{phone}</a>.
+              </>
+            ) : email ? (
+              <>
+                Write to <a href={`mailto:${email}`} class="link-quiet">{email}</a>.
+              </>
+            ) : (
+              <>
+                Call <a href={`tel:${telHref}`} class="link-quiet">{phone}</a>.
+              </>
+            )
+          }
+        </p>
+      )
+    }
   </section>
 
   <section class="mx-auto mt-16 grid max-w-screen-2xl gap-x-12 px-gutter lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] xl:gap-x-16">
@@ -57,6 +87,8 @@ const usage = ['Web', 'Social', 'Print', 'Campaign / out of home', 'Internal'];
       novalidate
       action={endpoint || undefined}
       data-connected={endpoint ? 'true' : 'false'}
+      data-email={email}
+      data-phone={phone}
       class="grid grid-cols-12 gap-x-4 gap-y-14 border-t border-border pt-12 lg:gap-x-8"
     >
       <!-- Error summary: shown and focused only after a failed send. -->
@@ -113,6 +145,7 @@ const usage = ['Web', 'Social', 'Print', 'Campaign / out of home', 'Internal'];
             <option value="" class="bg-obsidian">Choose one</option>
             {sittings.map((p) => <option class="bg-obsidian">{p.name}</option>)}
             {onRequest.map((p) => <option class="bg-obsidian">{p}</option>)}
+            {portfolioCollaborations.map((p) => <option class="bg-obsidian">{p}</option>)}
           </select>
         </div>
         <div class="col-span-12 md:col-span-6">
@@ -316,7 +349,10 @@ const usage = ['Web', 'Social', 'Print', 'Campaign / out of home', 'Internal'];
       // say so plainly instead of pretending it was sent.
       if (form.dataset.connected !== 'true') {
         e.preventDefault();
-        setStatus('error', 'Online inquiries are not connected yet. Nothing was sent.');
+        const mail = form.dataset.email ?? '';
+        const tel = form.dataset.phone ?? '';
+        const via = [mail && `Write to ${mail}.`, tel && `Call ${tel}.`].filter(Boolean).join(' ');
+        setStatus('error', `Online inquiries are not connected yet. Nothing was sent.${via ? ` ${via}` : ''}`);
         return;
       }
       e.preventDefault();

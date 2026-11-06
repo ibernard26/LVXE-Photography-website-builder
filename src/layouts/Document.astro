@@ -1,0 +1,61 @@
+---
+/**
+ * Shared document shell: head, skip link, footer and menu.
+ * Page layouts fill the named slots; this file does not add its own chrome,
+ * so each layout's rendered body stays its own.
+ */
+import type { ImageMetadata } from 'astro';
+import SiteHead from '@/components/SiteHead.astro';
+import SiteFooter from '@/components/SiteFooter.astro';
+import FullscreenNav from '@/components/FullscreenNav.astro';
+import { site } from '@/data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: ImageMetadata;
+  imageAlt?: string;
+  /** Right-hand spine label. When set, both margin spines render. */
+  spine?: string;
+}
+
+const { title, description, image, imageAlt, spine } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SiteHead title={title} description={description} image={image} imageAlt={imageAlt} />
+  </head>
+  <body class="grain">
+    <slot name="prelude" />
+    <a href="#main" class="skip-link text-meta">Skip to content</a>
+    {
+      spine && (
+        <>
+          <!-- Margin spines (wide screens): the practice on the left, place in the issue on the right. -->
+          <p
+            aria-hidden="true"
+            class="v-label text-meta pointer-events-none fixed bottom-8 left-[calc(var(--spacing-gutter)/2-0.35rem)] z-30 hidden 2xl:block"
+          >
+            {site.disciplines.join(' / ')}
+          </p>
+          <p
+            aria-hidden="true"
+            class="v-label text-meta pointer-events-none fixed right-[calc(var(--spacing-gutter)/2-0.35rem)] bottom-8 z-30 hidden 2xl:block"
+          >
+            {spine}
+          </p>
+        </>
+      )
+    }
+    <slot name="chrome" />
+    <main id="main">
+      <slot />
+    </main>
+    <slot name="close" />
+    <SiteFooter />
+    <FullscreenNav />
+    <slot name="scripts" />
+  </body>
+</html>

@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig, fontProviders } from 'astro/config';
+import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
 /**
@@ -15,9 +16,11 @@ export default defineConfig({
   // Address and sub-path come from GitHub Pages at build time (see
   // .github/workflows/deploy.yml): the free address serves the site under
   // /LVXE-Photography-website-builder/, a custom domain serves it at the root.
-  // Locally both fall back to the root of the GitHub address.
-  site: process.env.SITE_URL || 'https://ibernard26.github.io',
+  // The default is the live domain, used for local builds and canonical URLs.
+  site: process.env.SITE_URL || 'https://lvxe.duckdns.org',
   base: process.env.BASE_PATH || '/',
+
+  integrations: [sitemap()],
 
   // Fonts: self-hosted from the installed @fontsource-variable packages via the
   // `local` provider, so builds never depend on a CDN. Only the Latin subset
