@@ -8,7 +8,7 @@
  */
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHead from '@/components/PageHead.astro';
-import { commercial, corporatePhotography, onRequest, scopes, sittings, videoPackages } from '@/data/commissions';
+import { commercial, corporatePhotography, onRequest, scopes, sittings, travelPolicy, videoPackages } from '@/data/commissions';
 import { site } from '@/data/site';
 import Plate from '@/components/Plate.astro';
 import { plateNumber, plates } from '@/data/plates';
@@ -152,9 +152,11 @@ import { link } from '@/lib/link';
           </tbody>
         </table>
         <p class="text-meta mt-6 max-w-measure">
-          Video rates are proposed starting prices for local assignments. Travel outside New York — transportation,
-          lodging, additional production time and destination costs — is itemized and quoted separately, and agreed in
-          full before booking.
+          Video rates are proposed starting prices for local assignments. For work outside New York, the package fee
+          above is itemized alongside a travel day rate ({usd.format(travelPolicy.videoDayRate)}/day for video,{' '}
+          {usd.format(travelPolicy.corporatePhotographyDayRate)}/day for corporate photography), a{' '}
+          {usd.format(travelPolicy.perDiem)}/day per diem, and airfare, lodging and ground transport billed at cost.
+          The full quote is itemized and agreed before booking.
         </p>
       </div>
     </div>
